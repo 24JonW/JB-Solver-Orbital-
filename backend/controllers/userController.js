@@ -1,5 +1,74 @@
 //Create the controller logic: 
 const db= require('../config/db'); 
+const bcrypt= require('bcrypt'); 
+const jwt= require('jsonwebtoken'); 
+
+const registerUser= async (req, res)=> {
+    const {username, password, email}= req.body; 
+    if (!username || !password || !email) {
+        return res.status(400).json({error: 'Please enter all fields'}); 
+    }
+    try {
+        //check if username or email already exists
+        const userExist= await db.query('SELECT * FROM account WHERE username = $1 OR email= $2', [username, email]);
+        if (userExist.rows.length >0) {
+            return res.status(400).json({error: 'Username or email already registered'});
+        }
+        // Encrypt/Hash the password before saving to DB
+        const saltRounds= 10; 
+        const hashPassword= await bcrypt.hash(password, saltRounds);
+
+        const queryText= `
+            INSERT INTO account (username, password, email, created_on)
+            VALUES ($1, $2, $3, NOW()) RETURNING user_id, username, email`;
+        const result= await db.query(queryText, [username, hashPassword, email ]); 
+        res.status(201).json({message: 'User registered successfully!', user: result.rows[0] });
+
+    } catch (err) {
+        console.log(err); 
+        res.status(500).json({error: 'Registration failed'});
+    }
+}
+
+const loginUser= async (req, res)=> {
+    const {username, password} = req.body;
+    if (!username || !password) {
+        res.status(400).json({error: 'Please enter all fields'}); 
+
+    }
+    try {
+        // Check if user exists
+        const result= await db.query('SELECT * FROM account WHERE username= $1', [username]);
+        if (result.rows.length === 0) {
+            res.status(400).json({error: 'Invalid username or password'});
+        }
+        const user= result.rows[0]; 
+
+        const isMatch= await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({error: 'Invalid username or password'}); 
+        }
+        
+        //Generate a secure JWT token 
+        const token=  jwt.sign(
+            {id: user.user_id, username: user.username}, 
+            process.env.JWT_SECRET, 
+            {expiresIn: '1h'}
+
+        )
+        await db.query('UPDATE account SET last_login= NOW() WHERE user_id = $1', [user.user_id]);
+
+        res.json({
+            message: 'Login sucessful!', 
+            token: token, 
+            user: {user_id: user.user_id, username: user.username, email: user.email}
+        })
+    } catch (err) {
+        console.error(err); 
+        res.status(500).json({error: 'Login server error'}); 
+    }
+};
+
 
 const getAccounts= async (req, res)=> {
     try {
@@ -22,7 +91,7 @@ const createAccount = async (req, res) => {
 
     } catch(err) {
         console.log(err); 
-        res.status(500).json(error= 'Database write error')
+        res.status(500).json({error: 'Database write error'})
     }
 }
 
@@ -60,5 +129,7 @@ module.exports= {
     getAccounts, 
     createAccount, 
     updateAccount, 
-    deleteAccount
+    deleteAccount, 
+    registerUser, 
+    loginUser
 }

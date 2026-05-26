@@ -5,59 +5,250 @@ import axios from 'axios';
 // import heroImg from './assets/hero.png'
 import './App.css'
 
+
 function App() {
-  const [accounts, setAccounts]= useState([]);
-  const [isLoading, setIsLoading]= useState(true); 
+  const [view, setView]= useState('login'); // 'login', 'register', or 'homepage'
+  const [username, setUsername]= useState(''); 
+  const [email, setEmail] = useState(''); 
+  const [password, setPassword]= useState(''); 
+  const [loggedInUser, setLoggedInUser] = useState(null); 
+  const [errorMessage, setErrorMessage] = useState('');
 
-  useEffect(()=> {
-    axios.get('http://localhost:5432/account')
-    .then(response=> {
-      setAccounts(response.data);
-      setIsLoading(false);
-     }).catch(error=> {
-      console.error("Error fetching data from backend:", error);
-      setLoading(false);
+  const API_URL = 'http://localhost:5432/api/accounts';
+  const handleRegister = (e)=> {
+    e.preventDefault(); 
+    setErrorMessage(''); 
 
-     })
-  })
+    axios.post(`${API_URL}/register`, {username, password, email})
+      .then((res)=> {
+        alert(res.data.message); 
+        setView('login'); 
+        setPassword('');
+      })
+      .catch((err)=> {
+        setErrorMessage(err.response?.data?.error || 'Registration failed');
+      });
+  };
+  const handleLogin= (e) => {
+    e.preventDefault(); 
+    setErrorMessage(''); 
+    
+    axios.post(`${API_URL}/login`, {username, password})
+    .then((res)=> {
+      setLoggedInUser(res.data.user); 
+      setView('homepage');
+      localStorage.setItem('token', res.data.token);
+    })
+    .catch((err)=> {
+      setErrorMessage(err.response?.data?.error || 'Login failed');
+    });
+  }; 
 
+  const handleLogout = ()=> {
+    setLoggedInUser(null); 
+    setView('login'); 
+    localStorage.removeItem('token');
+    setUsername(''); 
+    setPassword(''); 
+    setEmail(''); 
+
+
+  }
+
+  // ------------------------------------
+  // VIEW 1: PROTECTED HOMEPAGE VIEW
+  // ------------------------------------
+  if (view === 'homepage') {
+    return (
+      <div style={{ padding: '40px', fontFamily: 'sans-serif', maxWidth: '600px', margin: '50px auto', textAlign: 'center' }}>
+        <h1 style= {{lineHeight: '1.4'}}>🏠 Welcome to the Protected Homepage!</h1>
+        <p style={{ fontSize: '18px', color: '#4b5563' }}>
+          Hello, <strong>{loggedInUser?.username}</strong>! You have successfully authenticated.
+        </p>
+        <div style={{ background: '#f3f4f6', padding: '15px', borderRadius: '6px', margin: '20px 0', fontSize: '14px', textAlign: 'left' }}>
+          <strong>Your Session Account Profile:</strong>
+          <p>ID: {loggedInUser?.user_id}</p>
+          <p>Email: {loggedInUser?.email}</p>
+        </div>
+        <button onClick={handleLogout} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '4px', cursor: 'pointer' }}>
+          Log Out
+        </button>
+      </div>
+    );
+  }
+
+  // ------------------------------------
+  // VIEW 2: LOGIN / REGISTER FORMS
+  // ------------------------------------
   return (
-    <div style={{padding: '40px', fontFamily: 'sans-serif'}}> 
-      <h1>🚀 JBSolver User Dashboard</h1>
-      <h2>User Account details:</h2>
-      {
-        isLoading ? (
-          <p>Loading records from PostgreSQL...</p>
-        ) : (
-          <table border="1" cellPadding="10" style={{ borderCollapse: 'collapse', marginTop: '20px' }}> 
-            <thead> 
-              <tr> 
-                <th>ID</th>
-                <th>Username</th>
-                <th>Email</th>
-              </tr>
-            </thead>
-            <tbody> 
-              {accounts.map(user=> (
-                <tr key= {user.user_id}> 
-                  <td> {user.user_id} </td>
-                  <td> {user.username} </td>
-                  <td> {user.email} </td>
+    <div style={{ padding: '40px', fontFamily: 'sans-serif', maxWidth: '400px', margin: '10px auto' }}>
+      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <h2>🚀 JB-Solver-Orbital Secure Access</h2>
+        <p>Please enter your database registration keys.</p>
+      </div>
 
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {errorMessage && (
+        <div style={{ backgroundColor: '#fee2e2', color: '#991b1b', padding: '10px', borderRadius: '4px', marginBottom: '15px', fontSize: '14px' }}>
+          ⚠️ {errorMessage}
+        </div>
+      )}
 
-        )
-
-      }
+      {view === 'login' ? (
+        /* LOGIN UI SCREEN */
+        <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <h3>Sign In</h3>
+          <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} required style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }} />
+          <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }} />
+          <button type="submit" style={{ background: '#2563eb', color: 'white', border: 'none', padding: '12px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>Login</button>
+          <p style={{ fontSize: '14px', textAlign: 'center' }}>
+            Don't have an account? <span onClick={() => { setView('register'); setErrorMessage(''); }} style={{ color: '#2563eb', cursor: 'pointer', textDecoration: 'underline' }}>Register Here</span>
+          </p>
+        </form>
+      ) : (
+        /* REGISTER UI SCREEN */
+        <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <h3>Create Account</h3>
+          <input type="text" placeholder="Choose Username" value={username} onChange={e => setUsername(e.target.value)} required style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }} />
+          <input type="email" placeholder="Email Address" value={email} onChange={e => setEmail(e.target.value)} required style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }} />
+          <input type="password" placeholder="Create Password" value={password} onChange={e => setPassword(e.target.value)} required style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }} />
+          <button type="submit" style={{ background: '#16a34a', color: 'white', border: 'none', padding: '12px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>Register</button>
+          <p style={{ fontSize: '14px', textAlign: 'center' }}>
+            Already registered? <span onClick={() => { setView('login'); setErrorMessage(''); }} style={{ color: '#2563eb', cursor: 'pointer', textDecoration: 'underline' }}>Sign In Here</span>
+          </p>
+        </form>
+      )}
     </div>
-  )
-
+  );
 }
 
-export default App
+export default App;
+
+
+
+
+
+//_____________First Practice______________
+// function App() {
+//   const [accounts, setAccounts] = useState([]);
+//   const [username, setUsername] = useState('');
+//   const [password, setPassword] = useState('');
+//   const [email, setEmail] = useState('');
+//   const [editEmail, setEditEmail] = useState('');
+//   const [editingId, setEditingId] = useState(null);
+
+//   const API_URL = 'http://localhost:5432/api/accounts';
+
+//   // 1. READ: Fetch records automatically on load
+//   const fetchAccounts = () => {
+//     axios.get(API_URL)
+//       .then(res => setAccounts(res.data))
+//       .catch(err => console.error("Error fetching data:", err));
+//   };
+
+//   useEffect(() => {
+//     fetchAccounts();
+//   }, []);
+
+//   // 2. CREATE: Submit new user form
+//   const handleCreate = (e) => {
+//     e.preventDefault();
+//     if (!username || !password || !email) return alert("Fill in all fields!");
+
+//     axios.post(API_URL, { username, password, email })
+//       .then(() => {
+//         fetchAccounts(); // Refresh the list
+//         setUsername(''); setPassword(''); setEmail(''); // Clear form inputs
+//       })
+//       .catch(err => console.error("Error creating account:", err));
+//   };
+
+//   // 3. UPDATE: Submit edited email change
+//   const handleUpdate = (id) => {
+//     axios.put(`${API_URL}/${id}`, { email: editEmail })
+//       .then(() => {
+//         setEditingId(null); // Close editing mode input
+//         setEditEmail('');
+//         fetchAccounts(); // Refresh the list
+//       })
+//       .catch(err => console.error("Error updating account:", err));
+//   };
+
+//   // 4. DELETE: Trigger account removal
+//   const handleDelete = (id) => {
+//     if (window.confirm("Are you sure you want to delete this account?")) {
+//       axios.delete(`${API_URL}/${id}`)
+//         .then(() => fetchAccounts())
+//         .catch(err => console.error("Error deleting account:", err));
+//     }
+//   };
+
+//   return (
+//     <div style={{ padding: '40px', fontFamily: 'sans-serif', maxWidth: '800px', margin: '0 auto' }}>
+//       <h1>🚀 JB-Solver-Orbital Full-Stack CRUD Dashboard</h1>
+//       <hr />
+
+//       {/* CREATE FORM */}
+//       <div style={{ backgroundColor: '#f4f4f5', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
+//         <h3>Add New Account (CREATE)</h3>
+//         <form onSubmit={handleCreate} style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+//           <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
+//           <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
+//           <input type="email" placeholder="Email Address" value={email} onChange={e => setEmail(e.target.value)} />
+//           <button type="submit" style={{ cursor: 'pointer', background: '#22c55e', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px' }}>Add User</button>
+//         </form>
+//       </div>
+
+//       {/* READ & DISPLAY TABLE WITH UPDATE/DELETE ACTIONS */}
+//       <h3>Current Database Records (READ)</h3>
+//       <table border="1" cellPadding="10" style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+//         <thead>
+//           <tr style={{ backgroundColor: '#e4e4e7' }}>
+//             <th>ID</th>
+//             <th>Username</th>
+//             <th>Email</th>
+//             <th>Actions</th>
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {accounts.map((user) => (
+//             <tr key={user.user_id}>
+//               <td>{user.user_id}</td>
+//               <td>{user.username}</td>
+//               <td>
+//                 {editingId === user.user_id ? (
+//                   <input 
+//                     type="email" 
+//                     value={editEmail} 
+//                     placeholder="New Email"
+//                     onChange={e => setEditEmail(e.target.value)} 
+//                   />
+//                 ) : (
+//                   user.email
+//                 )}
+//               </td>
+//               <td>
+//                 {editingId === user.user_id ? (
+//                   <>
+//                     <button onClick={() => handleUpdate(user.user_id)} style={{ marginRight: '5px', background: '#3b82f6', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}>Save</button>
+//                     <button onClick={() => setEditingId(null)} style={{ background: '#71717a', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}>Cancel</button>
+//                   </>
+//                 ) : (
+//                   <>
+//                     <button onClick={() => { setEditingId(user.user_id); setEditEmail(user.email); }} style={{ marginRight: '5px', background: '#f59e0b', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}>Edit (UPDATE)</button>
+//                     <button onClick={() => handleDelete(user.user_id)} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}>Delete (DELETE)</button>
+//                   </>
+//                 )}
+//               </td>
+//             </tr>
+//           ))}
+//         </tbody>
+//       </table>
+//     </div>
+//   );
+// }
+//export default App;
+
+//_____________original________________
 // function App() {
 //   const [count, setCount] = useState(0)
 
