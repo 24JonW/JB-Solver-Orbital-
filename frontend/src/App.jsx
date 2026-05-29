@@ -1,127 +1,127 @@
-import { useState, useEffect } from 'react'; 
+import { useState } from 'react';
 import axios from 'axios';
-// import reactLogo from './assets/react.svg'
-// import viteLogo from './assets/vite.svg'
-// import heroImg from './assets/hero.png'
-import './App.css'
-
+import './App.css'; // Importing your separate stylesheet!
+import JBSolverLogo from './JBSolverLogo.png';
 
 function App() {
-  const [view, setView]= useState('login'); // 'login', 'register', or 'homepage'
-  const [username, setUsername]= useState(''); 
-  const [email, setEmail] = useState(''); 
-  const [password, setPassword]= useState(''); 
-  const [loggedInUser, setLoggedInUser] = useState(null); 
+  const [view, setView] = useState('login'); 
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [loggedInUser, setLoggedInUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
 
   const API_URL = 'http://localhost:5432/api/accounts';
-  const handleRegister = (e)=> {
-    e.preventDefault(); 
-    setErrorMessage(''); 
 
-    axios.post(`${API_URL}/register`, {username, password, email})
-      .then((res)=> {
-        alert(res.data.message); 
-        setView('login'); 
+  const handleRegister = (e) => {
+    e.preventDefault();
+    setErrorMessage('');
+
+    axios.post(`${API_URL}/register`, { username, password, email })
+      .then((res) => {
+        alert(res.data.message);
+        setView('login');
         setPassword('');
       })
-      .catch((err)=> {
+      .catch((err) => {
         setErrorMessage(err.response?.data?.error || 'Registration failed');
       });
   };
-  const handleLogin= (e) => {
-    e.preventDefault(); 
-    setErrorMessage(''); 
-    
-    axios.post(`${API_URL}/login`, {username, password})
-    .then((res)=> {
-      setLoggedInUser(res.data.user); 
-      setView('homepage');
-      localStorage.setItem('token', res.data.token);
-    })
-    .catch((err)=> {
-      setErrorMessage(err.response?.data?.error || 'Login failed');
-    });
-  }; 
 
-  const handleLogout = ()=> {
-    setLoggedInUser(null); 
-    setView('login'); 
+  const handleLogin = (e) => {
+    e.preventDefault();
+    setErrorMessage('');
+
+    axios.post(`${API_URL}/login`, { username, password })
+      .then((res) => {
+        setLoggedInUser(res.data.user);
+        setView('homepage');
+        localStorage.setItem('token', res.data.token);
+      })
+      .catch((err) => {
+        setErrorMessage(err.response?.data?.error || 'Login failed');
+      });
+  };
+
+  const handleLogout = () => {
+    setLoggedInUser(null);
     localStorage.removeItem('token');
-    setUsername(''); 
-    setPassword(''); 
-    setEmail(''); 
+    setUsername('');
+    setPassword('');
+    setEmail('');
+    setView('login');
+  };
 
-
-  }
-
-  // ------------------------------------
-  // VIEW 1: PROTECTED HOMEPAGE VIEW
-  // ------------------------------------
   if (view === 'homepage') {
     return (
-      <div style={{ padding: '40px', fontFamily: 'sans-serif', maxWidth: '600px', margin: '50px auto', textAlign: 'center' }}>
-        <h1 style= {{lineHeight: '1.4'}}>🏠 Welcome to the Protected Homepage!</h1>
+      <div className="homepage-container">
+        
+        <h1>🏠 Welcome to the Protected Homepage!</h1>
         <p style={{ fontSize: '18px', color: '#4b5563' }}>
           Hello, <strong>{loggedInUser?.username}</strong>! You have successfully authenticated.
         </p>
-        <div style={{ background: '#f3f4f6', padding: '15px', borderRadius: '6px', margin: '20px 0', fontSize: '14px', textAlign: 'left' }}>
+        <div className="profile-card">
           <strong>Your Session Account Profile:</strong>
           <p>ID: {loggedInUser?.user_id}</p>
           <p>Email: {loggedInUser?.email}</p>
         </div>
-        <button onClick={handleLogout} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '4px', cursor: 'pointer' }}>
+        <button onClick={handleLogout} className="btn-logout">
           Log Out
         </button>
       </div>
     );
   }
 
-  // ------------------------------------
-  // VIEW 2: LOGIN / REGISTER FORMS
-  // ------------------------------------
   return (
-    <div style={{ padding: '40px', fontFamily: 'sans-serif', maxWidth: '400px', margin: '10px auto' }}>
-      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-        <h2>🚀 JB-Solver-Orbital Secure Access</h2>
-        <p>Please enter your database registration keys.</p>
+    <div className= "entirePage"> 
+    <div className="auth-container">
+      
+      <div className="auth-header">
+        {/* <h2>🚀 JB-Solver-Orbital Secure Access</h2>
+        <p>Please enter your database registration keys.</p> */}
+        <img src={JBSolverLogo} alt="JB-Solver Logo" className="logo-img" />
+        
       </div>
 
       {errorMessage && (
-        <div style={{ backgroundColor: '#fee2e2', color: '#991b1b', padding: '10px', borderRadius: '4px', marginBottom: '15px', fontSize: '14px' }}>
+        <div className="error-message">
           ⚠️ {errorMessage}
         </div>
       )}
 
       {view === 'login' ? (
-        /* LOGIN UI SCREEN */
-        <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <h3>Sign In</h3>
-          <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} required style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }} />
-          <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }} />
-          <button type="submit" style={{ background: '#2563eb', color: 'white', border: 'none', padding: '12px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>Login</button>
-          <p style={{ fontSize: '14px', textAlign: 'center' }}>
-            Don't have an account? <span onClick={() => { setView('register'); setErrorMessage(''); }} style={{ color: '#2563eb', cursor: 'pointer', textDecoration: 'underline' }}>Register Here</span>
+        <form onSubmit={handleLogin} className="auth-form">
+          
+          <p>Welcome to JBSolver</p>
+          <h2> Sign In</h2>
+          <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} required />
+          <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
+          <button type="submit" className="btn-login">Login</button>
+          <p className="switch-view-text">
+            Don't have an account? <span onClick={() => { setView('register'); setErrorMessage(''); }} className="link-text">Register Here</span>
           </p>
         </form>
       ) : (
-        /* REGISTER UI SCREEN */
-        <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <form onSubmit={handleRegister} className="auth-form">
           <h3>Create Account</h3>
-          <input type="text" placeholder="Choose Username" value={username} onChange={e => setUsername(e.target.value)} required style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }} />
-          <input type="email" placeholder="Email Address" value={email} onChange={e => setEmail(e.target.value)} required style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }} />
-          <input type="password" placeholder="Create Password" value={password} onChange={e => setPassword(e.target.value)} required style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }} />
-          <button type="submit" style={{ background: '#16a34a', color: 'white', border: 'none', padding: '12px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>Register</button>
-          <p style={{ fontSize: '14px', textAlign: 'center' }}>
-            Already registered? <span onClick={() => { setView('login'); setErrorMessage(''); }} style={{ color: '#2563eb', cursor: 'pointer', textDecoration: 'underline' }}>Sign In Here</span>
+          <input type="text" placeholder="Choose Username" value={username} onChange={e => setUsername(e.target.value)} required />
+          <input type="email" placeholder="Email Address" value={email} onChange={e => setEmail(e.target.value)} required />
+          <input type="password" placeholder="Create Password" value={password} onChange={e => setPassword(e.target.value)} required />
+          <button type="submit" className="btn-register">Register</button>
+          <p className="switch-view-text">
+            Already registered? <span onClick={() => { setView('login'); setErrorMessage(''); }} className="link-text">Sign In Here</span>
           </p>
         </form>
       )}
     </div>
+    </div>
+    
   );
 }
 
 export default App;
+
+
 
 
 
