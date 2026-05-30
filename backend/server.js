@@ -1,7 +1,7 @@
 const express = require('express');
 const cors= require('cors');
-//const db = require('./config/db'); // Imports our Postgres link
-require('dotenv').config();
+const db = require('./config/db'); // Imports our Postgres link
+require('dotenv').config(); //Old version
 
 const app = express();
 
@@ -14,6 +14,20 @@ app.use('/api/accounts', accountRoutes);
 
 app.get('/', (req, res) => {
     res.send('🚀 Welcome to the JB-Solver-Orbital Backend API!');
+});
+
+const PORT = process.env.PORT || 5433;
+app.listen(PORT,async () => {
+  console.log(`🚀 Server running cleanly on port ${PORT}`);
+  // FORCE INITIAL CONNECTION TEST HERE
+  try {
+    console.log('Testing connection to Supabase...');
+    const res= await db.query('SELECT NOW()'); 
+    console.log('✅ PostgreSQL connected successfully!');
+    // This forces the pool to open a pipeline, which fires your pool.on('connect') listener!
+  } catch (err) {
+    console.error('❌ Failed to connect to Supabase Cloud on startup:', err.message);
+  }
 });
 
 // A test baseline API route to make sure database is responding
@@ -39,7 +53,3 @@ app.get('/', (req, res) => {
 //   }
 // });
 
-const PORT = process.env.PORT || 5433;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running cleanly on port ${PORT}`);
-});

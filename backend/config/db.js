@@ -3,11 +3,18 @@ require('dotenv').config();
 
 // Create a connection pool using settings stored in your environment file
 const pool= new Pool({
-    host: process.env.DB_HOST || 'localhost', 
-    user: process.env.DB_USER, 
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT || 5433, 
-    database: process.env.DB_NAME 
+    // host: process.env.DB_HOST || 'localhost', 
+    // user: process.env.DB_USER, 
+    // password: process.env.DB_PASSWORD,
+    // port: process.env.DB_PORT || 5433, 
+    // database: process.env.DB_NAME 
+
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
+
+
 }); 
 
 pool.on('connect', ()=> {
@@ -17,3 +24,11 @@ pool.on('connect', ()=> {
 module.exports= {
     query: (text, params)=> pool.query(text, params),
 }
+
+
+// import postgres from 'postgres'
+
+// const connectionString = process.env.DATABASE_URL
+// const sql = postgres(connectionString)
+
+// export default sql
