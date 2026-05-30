@@ -92,23 +92,23 @@ function App() {
       {view === 'login' ? (
         <form onSubmit={handleLogin} className="auth-form">
           
-          <p>Welcome to JBSolver</p>
-          <h2> Sign In</h2>
+          <p style={{fontSize: '18px'}}>Welcome to JBSolver</p>
+          <h2> <strong style={{fontSize: '28px'}}> Sign In</strong> </h2>
           <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} required />
           <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
           <button type="submit" className="btn-login">Login</button>
-          <p className="switch-view-text">
+          <p className="switch-view-text" style={{fontSize: '16px'}}>
             Don't have an account? <span onClick={() => { setView('register'); setErrorMessage(''); }} className="link-text">Register Here</span>
           </p>
         </form>
       ) : (
         <form onSubmit={handleRegister} className="auth-form">
-          <h3>Create Account</h3>
+          <h3><strong style={{fontSize:'24px'}}>Create Account</strong></h3>
           <input type="text" placeholder="Choose Username" value={username} onChange={e => setUsername(e.target.value)} required />
           <input type="email" placeholder="Email Address" value={email} onChange={e => setEmail(e.target.value)} required />
           <input type="password" placeholder="Create Password" value={password} onChange={e => setPassword(e.target.value)} required />
           <button type="submit" className="btn-register">Register</button>
-          <p className="switch-view-text">
+          <p className="switch-view-text" style={{fontSize: '16px'}}>
             Already registered? <span onClick={() => { setView('login'); setErrorMessage(''); }} className="link-text">Sign In Here</span>
           </p>
         </form>
