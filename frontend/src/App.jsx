@@ -55,8 +55,12 @@ function App() {
   if (view === 'homepage') {
     return (
       <div className="homepage-container">
-        
-        <h1>🏠 Welcome to the Protected Homepage!</h1>
+        <div className= "topSectionBar"> 
+          <img src={JBSolverLogo} alt="JB-Solver Logo" className="logo-img" />
+        </div>
+
+
+        {/* <h1>🏠 Welcome to the Protected Homepage!</h1> */}
         <p style={{ fontSize: '18px', color: '#4b5563' }}>
           Hello, <strong>{loggedInUser?.username}</strong>! You have successfully authenticated.
         </p>
@@ -103,7 +107,8 @@ function App() {
         </form>
       ) : (
         <form onSubmit={handleRegister} className="auth-form">
-          <h3>Create Account</h3>
+          <p>Welcome to JBSolver</p>
+          <h2>Create Account</h2>
           <input type="text" placeholder="Choose Username" value={username} onChange={e => setUsername(e.target.value)} required />
           <input type="email" placeholder="Email Address" value={email} onChange={e => setEmail(e.target.value)} required />
           <input type="password" placeholder="Create Password" value={password} onChange={e => setPassword(e.target.value)} required />
