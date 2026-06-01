@@ -62,27 +62,33 @@ function App() {
         <div className= "topSectionBar"> 
           <img src={JBSolverLogo} alt="JB-Solver Logo" className="logo-img" />
           <div className="right-buttons-3"> 
-            <button className="expenditureTracker"> 
-              <img src={expenseTracker} alt="JB-Solver Logo" className= "expense-img"/>
-  
-            </button>
-            <button className= "communityGroupButton"> 
-              <div > 
-              <img src={communityGroup} alt="JB-Solver Logo" className= "group-img"/>
-              </div>
-            </button>
-            <button className= "communityGroupButton"> 
-              <div > 
-              <img src={userProfile} alt="JB-Solver Logo" className= "userProfile-img"/>
-              </div>
-            </button>
+            <div className="button-wrapper">
+              <button className="expenditureTracker"> 
+                <img src={expenseTracker} alt="JB-Solver Logo" className= "expense-img"/>
+              </button>
+              <span className="hover-tooltip">Expenditure Tracker</span>
+            </div>
+            <div className="button-wrapper">
+              <button className= "communityGroupButton"> 
+                <img src={communityGroup} alt="JB-Solver Logo" className= "group-img"/>
+              </button>
+              <span className="hover-tooltip">Community Groups</span>
+            </div>
+            <div className="button-wrapper">
+              <button className= "userProfileButton"> 
+                <img src={userProfile} alt="JB-Solver Logo" className= "userProfile-img"/>
+              </button>
+              <span className="hover-tooltip">User Profile</span>
+            
           </div>
         </div>
+      </div>
 
         
 
 
         {/* <h1>🏠 Welcome to the Protected Homepage!</h1> */}
+        <br></br>
         <p style={{ fontSize: '18px', color: '#4b5563' }}>
           Hello, <strong>{loggedInUser?.username}</strong>! You have successfully authenticated.
         </p>
