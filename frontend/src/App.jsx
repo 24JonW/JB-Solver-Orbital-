@@ -62,24 +62,19 @@ function App() {
         <div className= "topSectionBar"> 
           <img src={JBSolverLogo} alt="JB-Solver Logo" className="logo-img" />
           <div className="right-buttons-3"> 
-            <button> 
-              <div className= "expenditureTracker"> 
+            <button className="expenditureTracker"> 
               <img src={expenseTracker} alt="JB-Solver Logo" className= "expense-img"/>
-                
-              </div>
-              <span> Expenditure tracker</span>
+  
             </button>
-            <button> 
-              <div className= "communityGroupButton"> 
+            <button className= "communityGroupButton"> 
+              <div > 
               <img src={communityGroup} alt="JB-Solver Logo" className= "group-img"/>
               </div>
-              <span> Community chat</span>
             </button>
-            <button> 
-              <div className= "userProfileButton"> 
+            <button className= "communityGroupButton"> 
+              <div > 
               <img src={userProfile} alt="JB-Solver Logo" className= "userProfile-img"/>
               </div>
-              <span> User profile</span>
             </button>
           </div>
         </div>

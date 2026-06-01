@@ -133,7 +133,7 @@
 }
 .topSectionBar {
   background-color: #76ABDF;
-  padding: 20px; 
+  padding: 30px; 
   display: flex; 
   flex-direction: row;
   justify-content: space-between;
@@ -150,15 +150,33 @@
 }
 
 .communityGroupButton, .expenditureTracker, .userProfileButton {
-  background-color: white;
-  border-radius: 50%;
-  border: 2px solid black;
+  border-radius: 20px;
+  background: #76ABDF;
+  border: none; 
 
 }
-.group-img, .expense-img , .userProfile-img {
-  width: 48px;
-  height: 48px; 
+
+.logo-img {
+  border-radius: 15px; 
+  border: 2px solid rgb(83, 83, 83); 
 }
+.expense-img , .userProfile-img {
+  width: 60px;
+  height: 60px; 
+  border-radius: 15px; 
+  padding: 5px; 
+}
+
+.group-img {
+  width: 90px; 
+  height: 90px; 
+}
+
+button:hover {
+  transform: translateY(-10px); 
+  background: #EDC001;
+}
+
 
 
 
