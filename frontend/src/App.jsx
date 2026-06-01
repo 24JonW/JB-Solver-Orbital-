@@ -92,16 +92,17 @@ function App() {
             <img src={picture} alt='Profile' className='profilePicture-img'/>
             <div className='profile-main-info'>
               <h2>{loggedInUser.username}</h2>
-              <p className='profile-role'>Community Member</p>
+              <p>Community Member</p>
             </div>
           </div>
           <div className='profile-details'>
             <p>
-              <strong>ID:</strong> {loggedInUser?.id}
-            </p>
-            <p>
               <strong>Email:</strong> {loggedInUser?.email}
             </p>
+            <p>
+              <strong>ID:</strong> {loggedInUser?.id}
+            </p>
+            <br/>
           </div>
           <button className="edit-profile-btn">
             Edit Profile
