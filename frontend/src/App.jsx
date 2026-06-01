@@ -5,6 +5,7 @@ import JBSolverLogo from './JBSolverLogo.png';
 import communityGroup from './communityGroup.png';
 import expenseTracker from './expenditureTracker96.png'; 
 import userProfile from './user96.png'; 
+import picture from './picture.png';
 import {BarChart3, Users, UserCircle} from 'lucide-react';
 
 function App() {
@@ -79,24 +80,37 @@ function App() {
                 <img src={userProfile} alt="JB-Solver Logo" className= "userProfile-img"/>
               </button>
               <span className="hover-tooltip">User Profile</span>
-            
+            </div>
           </div>
         </div>
-      </div>
-
-        
-
 
         {/* <h1>🏠 Welcome to the Protected Homepage!</h1> */}
         <br></br>
-        <p style={{ fontSize: '18px', color: '#4b5563' }}>
-          Hello, <strong>{loggedInUser?.username}</strong>! You have successfully authenticated.
-        </p>
+        
         <div className="profile-card">
-          <strong>Your Session Account Profile:</strong>
-          <p>ID: {loggedInUser?.user_id}</p>
-          <p>Email: {loggedInUser?.email}</p>
+          <div className="profile-header">
+            <img src={picture} alt='Profile' className='profilePicture-img'/>
+            <div className='profile-main-info'>
+              <h2>{loggedInUser.username}</h2>
+              <p className='profile-role'>Community Member</p>
+            </div>
+          </div>
+          <div className='profile-details'>
+            <p>
+              <strong>ID:</strong> {loggedInUser?.id}
+            </p>
+            <p>
+              <strong>Email:</strong> {loggedInUser?.email}
+            </p>
+          </div>
+          <button className="edit-profile-btn">
+            Edit Profile
+          </button>
         </div>
+
+        
+        
+
         <button onClick={handleLogout} className="btn-logout">
           Log Out
         </button>

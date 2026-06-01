@@ -215,21 +215,29 @@ button:hover {
 
 
 .profile-card {
-  background: rgb(218, 217, 217);
-  padding: 15px;
-  /* width: 100%; */
-  /* border-radius: 6px; */
-  /* margin: 20px; */
-  font-size: 14px;
-  text-align: left;
-  position: absolute; 
-  bottom: 0px;
-  left: 0px; 
-  margin: 0px;
-  width: 100%;
-  
+  width: 420px; 
+  background: white; 
+  border-radius: 18px; 
+  padding: 24px; 
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+  border: 1px solid #e5e7eb; 
+}
 
+.profile-header {
+  display: flex; 
+  align-items: center; 
+  gap: 20px; 
+  margin-bottom: 20px; 
+}
 
+.profilePicture-img {
+  width:100px; 
+  height:100px; 
+  object-fit:cover;
+}
+
+.profile-main-info h2 {
+  font-size:1.5rem; 
 }
 
 .btn-logout {
@@ -242,5 +250,6 @@ button:hover {
   position: absolute; 
   bottom: 20px; 
   right: 20px; 
+  font-size:16px;
   
 }
