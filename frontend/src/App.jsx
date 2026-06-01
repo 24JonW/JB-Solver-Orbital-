@@ -2,6 +2,10 @@ import { useState } from 'react';
 import axios from 'axios';
 import './App.css'; // Importing your separate stylesheet!
 import JBSolverLogo from './JBSolverLogo.png'; 
+import communityGroup from './communityGroup.png';
+import expenseTracker from './expenditureTracker96.png'; 
+import userProfile from './user96.png'; 
+import {BarChart3, Users, UserCircle} from 'lucide-react';
 
 function App() {
   const [view, setView] = useState('login'); 
@@ -11,7 +15,7 @@ function App() {
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const API_URL = 'http://localhost:5432/api/accounts';
+  const API_URL = 'http://localhost:5001/api/accounts';
 
   const handleRegister = (e) => {
     e.preventDefault();
@@ -57,7 +61,30 @@ function App() {
       <div className="homepage-container">
         <div className= "topSectionBar"> 
           <img src={JBSolverLogo} alt="JB-Solver Logo" className="logo-img" />
+          <div className="right-buttons-3"> 
+            <button> 
+              <div className= "expenditureTracker"> 
+              <img src={expenseTracker} alt="JB-Solver Logo" className= "expense-img"/>
+                
+              </div>
+              <span> Expenditure tracker</span>
+            </button>
+            <button> 
+              <div className= "communityGroupButton"> 
+              <img src={communityGroup} alt="JB-Solver Logo" className= "group-img"/>
+              </div>
+              <span> Community chat</span>
+            </button>
+            <button> 
+              <div className= "userProfileButton"> 
+              <img src={userProfile} alt="JB-Solver Logo" className= "userProfile-img"/>
+              </div>
+              <span> User profile</span>
+            </button>
+          </div>
         </div>
+
+        
 
 
         {/* <h1>🏠 Welcome to the Protected Homepage!</h1> */}
