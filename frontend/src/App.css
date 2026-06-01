@@ -132,7 +132,8 @@
   
 }
 .topSectionBar {
-  background-color: #76ABDF;
+  background-color: #517ee7;
+  /* #517ee7   #76ABDF*/
   padding: 30px; 
   display: flex; 
   flex-direction: row;
@@ -145,15 +146,16 @@
   display: flex; 
   flex-direction: row;
   justify-content: space-between;
-  gap: 15px;
+  gap: 25px;
   align-items: center;
+  
 }
 
 .communityGroupButton, .expenditureTracker, .userProfileButton {
   border-radius: 20px;
-  background: #76ABDF;
+  background: #517ee7;
   border: none; 
-
+  position: relative; 
 }
 
 .logo-img {
@@ -165,6 +167,7 @@
   height: 60px; 
   border-radius: 15px; 
   padding: 5px; 
+  
 }
 
 .group-img {
@@ -175,9 +178,38 @@
 button:hover {
   transform: translateY(-10px); 
   background: #EDC001;
+  
 }
 
+.button-wrapper {
+  position: relative; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+}
 
+.hover-tooltip {
+  position: absolute; 
+  bottom: 0px;
+  background: rgba(0,0,0,0.75);
+  color: white; 
+  padding: 6px 10px; 
+  border-radius: 12px; 
+
+  font-size: 12px;
+  white-space: nowrap; 
+  opacity: 0; 
+  transition: 1s;
+  transform: translateY(25px);
+}
+
+.button-wrapper:hover {
+  transform: translateY(-10px);
+}
+.button-wrapper:hover .hover-tooltip {
+  opacity: 1; 
+  
+}
 
 
 
