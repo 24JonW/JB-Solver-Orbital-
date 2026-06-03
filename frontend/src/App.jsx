@@ -1,3 +1,32 @@
+
+import { BrowserRouter, Routes, Route} from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import HomePage from './pages/HomePage'; 
+import ExpenditureTracker from './pages/ExpenditureTracker'; 
+import CommunityGroups from './pages/CommunityGroups'; 
+import UserProfile from './pages/UserProfile';
+
+function App() {
+  return(
+    <BrowserRouter> 
+      <Routes>
+        <Route path='/' element={<LoginPage/>}/>
+        <Route path='/register' element={<RegisterPage/>}/>
+        <Route path='/home' element={<HomePage/>}/>
+        <Route path='/tracker' element={<ExpenditureTracker/>}/>
+        <Route path='/groups' element={<CommunityGroups/>}/>
+        <Route path='/profile' element={<UserProfile/>}/>
+      </Routes>
+    </BrowserRouter>
+  )
+
+}
+
+export default App; 
+
+
+/* second-practice  (before using BrowserRouters)
 import { useState } from 'react';
 import axios from 'axios';
 import './App.css'; // Importing your separate stylesheet!
@@ -84,7 +113,7 @@ function App() {
           </div>
         </div>
 
-        {/* <h1>🏠 Welcome to the Protected Homepage!</h1> */}
+   
         <br></br>
         
         <div className="profile-card">
@@ -124,8 +153,7 @@ function App() {
     <div className="auth-container">
       
       <div className="auth-header">
-        {/* <h2>🚀 JB-Solver-Orbital Secure Access</h2>
-        <p>Please enter your database registration keys.</p> */}
+
         <img src={JBSolverLogo} alt="JB-Solver Logo" className="logo-img" />
         
       </div>
@@ -168,7 +196,7 @@ function App() {
 
 export default App;
 
-
+*/
 
 
 
