@@ -2,7 +2,7 @@ import { useState } from 'react';
 import axios from 'axios'; 
 import { useNavigate, Link } from 'react-router-dom'; 
 import '../App.css';
-import JBSolverLogo from '../JBSolverLogo.png'; 
+import JBSolverLogo from '../assets/JBSolverLogo.png'; 
 
 function RegisterPage() {
     const navigate = useNavigate();

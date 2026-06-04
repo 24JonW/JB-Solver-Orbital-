@@ -1,10 +1,10 @@
 
 import { useNavigate } from 'react-router-dom';
-import JBSolverLogo from '../JBSolverLogo.png';
-import communityGroup from '../communityGroup.png';
-import expenseTracker from '../expenditureTracker96.png'; 
-import userProfile from '../user96.png';
-import home from '../home.png';
+import JBSolverLogo from '../assets/JBSolverLogo.png';
+import communityGroup from '../assets/communityGroup.png';
+import expenseTracker from '../assets/expenditureTracker96.png'; 
+import userProfile from '../assets/user96.png';
+import home from '../assets/home.png';
 import '../App.css'; 
 
 
