@@ -63,7 +63,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  background-color: #517ee7;
+  background: linear-gradient(135deg, #517ee7, #76ABDF);
   /* background-color: #6495ED; */
   padding: 50px;
   color: black;
@@ -80,7 +80,7 @@
 }
 
 .btn-login {
-  background: #EDC001;
+  background: linear-gradient(135deg, #edaa01,#eec926);
   color: white;
   border: none;
   padding: 12px;
@@ -136,7 +136,8 @@
   
 }
 .topSectionBar {
-  background-color: #517ee7;
+  background: linear-gradient(135deg, #517ee7, #76ABDF);
+  
   /* #517ee7   #76ABDF*/
   padding: 30px; 
   display: flex; 
@@ -157,8 +158,8 @@
 
 .communityGroupButton, .expenditureTracker, .userProfileButton {
   border-radius: 20px;
-  background: #517ee7;
-  border: none; 
+  background: linear-gradient(135deg, #322dc5, #76ABDF);
+  border: 2px solid rgb(83, 83, 83);
   position: relative; 
 }
 
@@ -175,14 +176,14 @@
 }
 
 .group-img {
-  width: 90px; 
-  height: 90px; 
+  width: 72px; 
+  height: 72px; 
 }
 
 button:hover {
   transform: translateY(-10px); 
   transition: 0.5s ease; 
-  background: #EDC001;
+  background: linear-gradient(135deg, #edaa01,#eec926);
   
 }
 
@@ -250,7 +251,7 @@ button:hover {
   margin-top: 20px; 
   width: 100%;
   padding: 12px; 
-  background: #517ee7;
+  background: linear-gradient(135deg, #517ee7, #76ABDF);
   color: white;
   font-weight: 600; 
   cursor: pointer; 
