@@ -6,6 +6,7 @@ import communityGroup from '../communityGroup.png';
 import expenseTracker from '../expenditureTracker96.png';
 import userProfile from '../user96.png';
 import picture from '../picture.png'; 
+import home from '../home.png';
 
 function HomePage() {
     const navigate = useNavigate();
@@ -15,7 +16,16 @@ function HomePage() {
       <div className="topSectionBar">
         <img src={JBSolverLogo} className="logo-img" />
 
-        <div className="right-buttons-3">
+        <div className="right-buttons-4">
+          <div className="button-wrapper">
+            <button
+              className="homepageButton"
+              onClick={() => navigate("/home")}
+            >
+              <img src={home} className="expense-img" />
+            </button>
+            <span className="hover-tooltip">Home Page</span>
+          </div>
           <div className="button-wrapper">
             <button
               className="expenditureTracker"
@@ -48,26 +58,47 @@ function HomePage() {
         </div>
       </div>
 
-      <div className='profile-card'>
-        <div className='profile-header'>
-            <img src={picture} className='profilePicture-img' />
-            <div className='profile-main-info'>
-                <h2>Logged In User</h2>
-                <p>Community Member</p>
-            </div>
+      <div className='home-body'>
+        <div className='profile-card'>
+          <div className='profile-header'>
+              <img src={picture} className='profilePicture-img' />
+              <div className='profile-main-info'>
+                  <h2>Logged In User</h2>
+                  <p>Community Member</p>
+              </div>
+          </div>
+          <div className='profile-details'>
+              <p><strong>Email:</strong> user@email.com</p>
+              <p><strong>ID:</strong> 123</p>
+          </div>
+          <button className='edit-profile-btn'>
+              Edit Profile
+          </button>
+          
         </div>
-        <div className='profile-details'>
-            <p><strong>Email:</strong> user@email.com</p>
-            <p><strong>ID:</strong> 123</p>
+        <div className='profile-card' style={{ gridArea: 'box2'}}>
+          <h2>Tasks to do</h2>
+          
         </div>
-        <button className='edit-profile-btn'>
-            Edit Profile
-        </button>
+
+        <div className='profile-card' style={{ gridArea: 'box3'}}>
+          <h2>Achievements</h2>
+          
+        </div>
+
+        
+      </div>
+      <div className='footer'>
         <button className='btn-logout' onClick={() => navigate('/')}>
             Log Out
         </button>
       </div>
+
+
+
+
     </div>
+
     );
 }
 export default HomePage; 
