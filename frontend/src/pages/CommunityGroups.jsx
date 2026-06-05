@@ -10,6 +10,12 @@ import '../App.css';
 function CommunityGroups() {
     const navigate = useNavigate();
 
+    const currentUser= {user_id: 1, username: "24JonW"}; 
+    const [groups, setGroups] = useState([]); 
+    
+    
+
+
   return (
     <div className="homepage-container">
       <div className="topSectionBar">

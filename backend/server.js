@@ -12,6 +12,10 @@ app.use(express.json());
 const accountRoutes= require('./routes/userRoutes'); 
 app.use('/api/accounts', accountRoutes);
 
+//Added route configuration to groupRoutes
+const groupRoutes= require('./routes/groupRoutes'); 
+app.use('/api/groups', groupRoutes);
+
 app.get('/', (req, res) => {
     res.send('🚀 Welcome to the JB-Solver-Orbital Backend API!');
 });
