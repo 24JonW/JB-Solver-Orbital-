@@ -23,6 +23,12 @@ function CommunityGroups() {
   //Form input states
   const [newGroupName, setNewGroupName] = useState(""); 
   const [joinGroupId, setJoinGroupId]= useState(""); 
+
+  //View group members 
+  const [showMembersModal, setShowMembersModal] = useState(false);
+  const [groupMembers, setGroupMembers] = useState([]);
+
+   
     
 
   const API_BASE_URL= 'http://localhost:5001/api/groups'; 
@@ -128,7 +134,7 @@ function CommunityGroups() {
     if (!newMessage.trim() || !selectedGroup) return;
     try {
       const response= await axios.post(`${API_BASE_URL}/message`, {
-        groupId: selectedGroup.groupId,
+        groupId: selectedGroup.group_id,
         senderId: currentUser.user_id,
         messageText: newMessage
       }); 
@@ -141,6 +147,20 @@ function CommunityGroups() {
     }
 
   }; 
+
+  const fetchGroupMembers= async (groupId)=> {
+    // e.preventDefault(); 
+    try {
+      const response= await axios.get(`${API_BASE_URL}/${groupId}/members`); 
+      if (Array.isArray(response.data)) {
+        setGroupMembers(response.data);
+        setShowMembersModal(true);
+      }
+
+    } catch (err) {
+      console.error("Failed to show group memebers list", err);
+    }
+  }
 
   if (!currentUser) return null; 
 
@@ -193,6 +213,7 @@ function CommunityGroups() {
       </div>
 
       <div className="chat-app-layout">
+        {/* Right Side: Create/join group, list of groups joined by users */}
         <div className= "chat-sidebar"> 
           <div className= "management-forms"> 
             <form onSubmit = {handleCreateGroup} className= "side-form"> 
@@ -216,7 +237,7 @@ function CommunityGroups() {
             </form>
 
           </div>
-
+        
           <div className= "group-roster-list"> 
             <h3> My Chat Rooms</h3>
             {groups.map((group)=> (
@@ -234,44 +255,70 @@ function CommunityGroups() {
               </div> 
             ))}
           </div>
-
-          {/* Right Side: Conversation Content Space */}
-          <div className="chat-window-pane">
-            {selectedGroup ? (
-              <div className="active-chat-container">
-                <div className="chat-header-title">
-                  <h3>{selectedGroup.group_name} <span className="id-badge">(ID: {selectedGroup.group_id})</span></h3>
-                </div>
-                <div className="messages-stream">
-                  {messages.map((msg) => (
-                    <div 
-                      key={msg.message_id} 
-                      className={`chat-bubble ${msg.sender_id === currentUser.user_id ? 'outgoing' : 'incoming'}`}
-                    >
-                      <span className="bubble-sender">{msg.username}</span>
-                      <p className="bubble-text">{msg.message_text}</p>
-                    </div>
-                  ))}
-                </div>
-                <form onSubmit={handleSendMessage} className="chat-input-bar">
-                    <input 
-                        type="text" 
-                        placeholder="Type a message..." 
-                        value={newMessage} 
-                        onChange={(e) => setNewMessage(e.target.value)} 
-                    />
-                    <button type="submit" className="send-btn">Send</button>
-                </form>
-              </div>
-            ) : (
-              <div className="empty-chat-state">
-                  <div className="prompt-illustration">💬</div>
-                  <h3>Select a group chat room from the sidebar menu to start messaging!</h3>
-              </div>
-            )}
-          </div>
-
         </div>
+        {/* Left Side: Conversation Content Space */}
+        <div className="chat-window-pane">
+          {selectedGroup ? (
+            <div className="active-chat-container">
+              <div className="chat-header-title">
+                <h3>{selectedGroup.group_name} <span className="id-badge">(ID: {selectedGroup.group_id})</span></h3>
+                <button onClick= {()=> fetchGroupMembers(selectedGroup.group_id)} className= "view-members-btn"> View group members</button>
+                
+              </div>
+              <div className="messages-stream">
+                {messages.map((msg) => (
+                  <div 
+                    key={msg.message_id} 
+                    className={`chat-bubble ${msg.sender_id === currentUser.user_id ? 'outgoing' : 'incoming'}`}
+                  >
+                    <span className="bubble-sender">{msg.username}</span>
+                    <p className="bubble-text">{msg.message_text}</p>
+                  </div>
+                ))}
+              </div>
+              <form onSubmit={handleSendMessage} className="chat-input-bar">
+                  <input 
+                      type="text" 
+                      placeholder="Type a message..." 
+                      value={newMessage} 
+                      onChange={(e) => setNewMessage(e.target.value)} 
+                  />
+                  <button type="submit" className="send-btn">Send</button>
+              </form>
+            </div>
+          ) : (
+            <div className="empty-chat-state">
+                <div className="prompt-illustration">💬</div>
+                <h3>Select a group chat room from the sidebar menu to start messaging!</h3>
+            </div>
+          )}
+          {showMembersModal && (
+            <div className="modal-backdrop" onClick={() => setShowMembersModal(false)}>
+              <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <div className="modal-header">
+                  <h3>Members of {selectedGroup?.group_name}</h3>
+                  <button className="close-modal-btn" onClick={() => setShowMembersModal(false)}>×</button>
+                </div>
+                  <div className="modal-body">
+                    <p className="member-count">{groupMembers.length} members</p>
+                    <div className="members-list">
+                    {groupMembers.map((member) => (
+                      <div key={member.user_id} className="member-item">
+                        <div className="member-avatar">👤</div>
+                        <div className="member-info">
+                          <span className="member-name">
+                            {member.username} {member.user_id === currentUser.user_id && <span className="you-badge">(You)</span>}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          )}
+        </div>       
       </div>
 
       <div className='footer'>

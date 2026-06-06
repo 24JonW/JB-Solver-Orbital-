@@ -100,10 +100,30 @@ const postMessage= async (req, res) => {
     }
 }
 
+const getGroupMembers = async (req, res) => {
+    const {groupId} = req.params; 
+    try {
+        const result = await db.query(
+            `SELECT account.user_id, account.username, account.email 
+             FROM group_members 
+             JOIN account ON group_members.user_id = account.user_id 
+             WHERE group_members.group_id = $1 
+             ORDER BY account.username ASC`,
+            [groupId]
+        );
+        res.json(result.rows);
+
+    } catch (err) {
+        console.error(err); 
+        res.status(500).json({error: 'Server error showing list of group members'}); 
+    }
+}
+
 module.exports= {
     createNewGroup, 
     joinGroup, 
     getGroupList, 
     getMessage, 
-    postMessage
+    postMessage, 
+    getGroupMembers
 }

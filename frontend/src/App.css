@@ -318,6 +318,7 @@ button:hover {
 
 .chat-app-layout {
   display: flex;
+
   flex: 1;
   height: 80%; 
   width: 100%;
@@ -326,8 +327,8 @@ button:hover {
 
 /* Left Sidebar Area */
 .chat-sidebar {
-  width: 100%;
-  
+
+  width: 30%;
   border-right: 1px solid #e1e1e1;
   background: #ffffff;
   display: flex;
@@ -335,6 +336,7 @@ button:hover {
 }
 
 .management-forms {
+  
   padding: 15px;
   border-bottom: 1px solid #f0f2f5;
   display: flex;
@@ -419,6 +421,10 @@ button:hover {
 }
 
 .chat-header-title {
+  display: flex; 
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   background: #f0f2f5;
   padding: 10px 20px;
   text-align: left;
@@ -491,3 +497,117 @@ button:hover {
   font-weight: bold;
 }
 
+
+/* View community group section  */
+
+/* Backdrop layer dimming the background screen workspace */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Assures it stays on top of everything else */
+}
+
+/* Central floating white modal dialog surface context box */
+.modal-content {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-header {
+  background-color: #f0f2f5;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e1e1e1;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #111b21;
+}
+
+.close-modal-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #667781;
+}
+
+.close-modal-btn:hover {
+  color: #111b21;
+  transform: none; /* Disables global button hover animations */
+}
+
+.modal-body {
+  padding: 15px 20px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.member-count {
+  font-size: 13px;
+  color: #667781;
+  margin-bottom: 12px;
+  text-align: left;
+}
+
+.members-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.member-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.member-avatar {
+  font-size: 20px;
+  background-color: #e9edef;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.member-info {
+  font-size: 15px;
+  color: #111b21;
+  font-weight: 500;
+}
+
+.you-badge {
+  font-size: 12px;
+  color: #00a884;
+  font-weight: normal;
+  margin-left: 4px;
+}
+
+/* Subtle open animation scale wrapper sequence */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}

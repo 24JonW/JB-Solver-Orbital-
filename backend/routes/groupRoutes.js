@@ -8,6 +8,7 @@ const {
     getGroupList, 
     getMessage, 
     postMessage, 
+    getGroupMembers
     
 } = require('../controllers/communityGroupController');
 
@@ -17,5 +18,6 @@ router.post('/join', joinGroup);
 router.get('/user/:userId', getGroupList);
 router.get('/:groupId/messages', getMessage); 
 router.post('/message', postMessage);
+router.get('/:groupId/members', getGroupMembers); 
 module.exports= router; 
   
