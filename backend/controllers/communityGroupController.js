@@ -1,16 +1,16 @@
 const db= require('../config/db'); 
 
 const createNewGroup= async (req, res)=> {
-    const {groupId, userId}= req.body; 
+    const {groupName, userId}= req.body; 
     try {
         const groupResult= await db.query(
             'INSERT INTO community_groups (group_name, created_by) VALUES ($1, $2) RETURNING *', 
-            [groupId, userId]
+            [groupName, userId]
         )
         const newGroup= groupResult.rows[0]; 
         await db.query(
             'INSERT INTO group_members (user_id, group_id) VALUES ($1, $2)', 
-            [newGroup.group_id, userId]
+            [userId, newGroup.group_id]
         );
         res.status(201).json(newGroup);
 
@@ -30,7 +30,7 @@ const joinGroup= async (req, res) => {
             return res.status(444).json({error: 'Group ID not found'});
         }
 
-        const checkMember= await db.query('SELECT * FROM community_groups WHERE group_id = $1 AND user_id = $2', 
+        const checkMember= await db.query('SELECT * FROM group_members WHERE group_id = $1 AND user_id = $2', 
             [groupId, userId]
         );
         if (checkMember.rows.length >0) {
@@ -38,7 +38,7 @@ const joinGroup= async (req, res) => {
         }
 
         await db.query ('INSERT INTO group_members (user_id, group_id) VALUES ($1, $2)', 
-            [groupId, userId]
+            [userId, groupId]
         ); 
         res.status(201).json({message: 'Joined successfully!', group: checkGroup.rows[0]}); 
 
@@ -88,7 +88,7 @@ const postMessage= async (req, res) => {
     const {groupId, senderId, messageText}= req.body; 
     try {
         const result = await db.query(
-            'INSER INTO group_messages (group_id, sender_id, message_text) VALUES ($1, $2, $3) RETURNING *', 
+            'INSERT INTO group_messages (group_id, sender_id, message_text) VALUES ($1, $2, $3) RETURNING *', 
             [groupId, senderId, messageText]
         ); 
         res.status(201).json(result.rows[0]);
