@@ -111,10 +111,10 @@ function CommunityGroups() {
         groupId: parseInt(joinGroupId), 
         userId: currentUser.user_id
       })
-      if (response.status=== 200) {
+      if (response.status=== 201) {
         setJoinGroupId(""); 
-        fetchGroupList(); 
         alert(`Successfully joined: ${response.data.group.group_name}`); 
+        fetchGroupList(); 
       }
 
     } catch (err) {

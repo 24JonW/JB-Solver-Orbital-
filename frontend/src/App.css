@@ -367,7 +367,7 @@ button:hover {
 .action-btn.structural { background: #2563eb; }
 
 .group-roster-list {
-  flex: 1;
+  flex: 2;
   overflow-y: auto;
   text-align: left;
 }
