@@ -65,6 +65,13 @@ function CommunityGroups() {
   useEffect(()=> {
     if (!selectedGroup) return; 
     fetchGroupMessages(selectedGroup.group_id); 
+    // 2. Set up a background interval to fetch updates every 3000ms (3 seconds)
+    const pollInterval = setInterval(() => {
+      fetchGroupMessages(selectedGroup.group_id);
+    }, 3000);
+
+    // 3. CRITICAL CLEANUP: Clear interval when switching groups or leaving page
+    return () => clearInterval(pollInterval);
 
   }, [selectedGroup]);
 
@@ -141,6 +148,7 @@ function CommunityGroups() {
       if (response.status=== 201) {
         setNewMessage(""); 
         fetchGroupMessages(selectedGroup.group_id); 
+        // setMessages(prevMessages => [...prevMessages, response.data]);
       }
     } catch (err) {
       console.error("Message send failure:", err);
