@@ -476,6 +476,16 @@ button:hover {
   border-radius: 6px; 
 }
 
+.delete-group-btn {
+  background: rgb(251, 36, 36);
+  color: white;
+  font-weight: bold; 
+  padding: 10px; 
+  border: 0.1px solid rgb(100, 100, 100);
+  border-radius: 6px; 
+
+}
+
 
 .messages-stream {
   flex: 1;
