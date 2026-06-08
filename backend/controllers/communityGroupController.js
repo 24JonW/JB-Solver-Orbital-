@@ -66,7 +66,17 @@ const joinGroup= async (req, res) => {
         await db.query ('INSERT INTO group_members (user_id, group_id) VALUES ($1, $2)', 
             [userId, groupId]
         ); 
+        //To add to the group messsage thread to indicate which user joins the group
+        const userResult= await db.query('SELECT username FROM account WHERE user_id = $1', [userId]); 
+        const username= userResult.rows[0]?.username || "A user"; 
+
+        await db.query (`INSERT INTO group_messages (group_id, sender_id, message_text) VALUES ($1, NULL, $2)`, 
+            [groupId, `${username} joined the group`]
+        );
+
+
         res.status(201).json({message: 'Joined successfully!', group: checkGroup.rows[0]}); 
+
 
     } catch (err) {
         console.error(err); 
@@ -90,13 +100,20 @@ const leaveGroup = async (req, res) => {
             'DELETE FROM group_members WHERE user_id = $1 AND group_id = $2',
             [userId, groupId]
         );  
-        const remainingCheck= await db.query('SELECT COUNT(*) FROM group_members WHERE user_id = $1', [groupId])
+        const remainingCheck= await db.query('SELECT COUNT(*) FROM group_members WHERE group_id = $1', [groupId])
         const memberCount= parseInt(remainingCheck.rows[0].count);
         if (memberCount === 0) {
             await db.query('DELETE FROM group_messages WHERE group_id = $1', [groupId]);
             await db.query('DELETE FROM community_groups WHERE group_id = $1', [groupId]);
             return res.status(200).json({ message: 'Successfully left. Group was empty and has been deleted.' });
         }
+        
+        const userResult= await db.query('SELECT username FROM account WHERE user_id = $1', [userId]); 
+        const username= userResult.rows[0]?.username || "A user"; 
+
+        await db.query (`INSERT INTO group_messages (group_id, sender_id, message_text) VALUES ($1, NULL, $2)`, 
+            [groupId, `${username} left the group`]
+        );
 
         res.status(200).json({message: 'Successfully left the group'});
 
@@ -130,7 +147,7 @@ const getMessage= async (req, res) => {
     try {
         const result = await db.query(
             `SELECT group_messages.*, account.username FROM group_messages 
-             JOIN account ON group_messages.sender_id = account.user_id 
+             LEFT JOIN account ON group_messages.sender_id = account.user_id 
              WHERE group_messages.group_id = $1 ORDER BY group_messages.sent_at ASC`,
             [groupId]
         );

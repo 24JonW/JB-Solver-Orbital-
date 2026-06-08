@@ -417,7 +417,7 @@ button:hover {
   transition: background 0.2s;
   display:flex; 
   justify-content: flex-start; 
-}.  
+}
 .roster-item:hover { background-color: #f5f6f6; }
 .roster-item.active-room { background-color: #e8e8e8; }
 
@@ -688,4 +688,20 @@ button:hover {
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
+}
+
+.system-notification-pill {
+  align-self: center; /* Centers the system pill horizontally */
+  background-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  color: #54656f; /* Subdued gray styling text color */
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 8px;
+  margin: 8px 0;
+  text-align: center;
+  max-width: 80%;
+  word-wrap: break-word;
+
 }

@@ -65,9 +65,20 @@ function CommunityGroups() {
   useEffect(()=> {
     if (!selectedGroup) return; 
     fetchGroupMessages(selectedGroup.group_id); 
+    axios.get(`${API_BASE_URL}/${selectedGroup.group_id}/members`)
+      .then(res=> {
+        if (Array.isArray(res.data)) setGroupMembers(res.data);
+      })
+      .catch(err => console.error(err));
     // 2. Set up a background interval to fetch updates every 3000ms (3 seconds)
     const pollInterval = setInterval(() => {
       fetchGroupMessages(selectedGroup.group_id);
+      axios.get(`${API_BASE_URL}/${selectedGroup.group_id}/members`)
+      .then(res => {
+        if (Array.isArray(res.data)) setGroupMembers(res.data);
+      })
+      .catch(err => console.error(err));
+
     }, 3000);
 
     // 3. CRITICAL CLEANUP: Clear interval when switching groups or leaving page
@@ -311,7 +322,7 @@ function CommunityGroups() {
             <h3> My Chat Rooms</h3>
             {groups.map((group)=> (
               <div 
-                key = {group.groupId}
+                key = {group.group_id}
                 className= {`roster-item ${selectedGroup?.group_id === group.group_id ? 'active-room' : ''}`}
                 onClick= {()=> setSelectedGroup(group)}
               > 
@@ -339,15 +350,25 @@ function CommunityGroups() {
                 
               </div>
               <div className="messages-stream">
-                {messages.map((msg) => (
-                  <div 
-                    key={msg.message_id} 
-                    className={`chat-bubble ${msg.sender_id === currentUser.user_id ? 'outgoing' : 'incoming'}`}
-                  >
-                    <span className="bubble-sender">{msg.username}</span>
-                    <p className="bubble-text">{msg.message_text}</p>
-                  </div>
-                ))}
+                {messages.map((msg) => {
+                  if (msg.sender_id === null) {
+                    return (
+                      <div key={msg.message_id} className="system-notification-pill"> 
+                        <span> {msg.message_text}</span>
+                      </div> 
+                    )
+
+                  }               
+                  return (
+                    <div 
+                      key={msg.message_id} 
+                      className={`chat-bubble ${msg.sender_id === currentUser.user_id ? 'outgoing' : 'incoming'}`}
+                    >
+                      <span className="bubble-sender">{msg.username}</span>
+                      <p className="bubble-text">{msg.message_text}</p>
+                    </div>
+                  )
+                })}
               </div>
               <form onSubmit={handleSendMessage} className="chat-input-bar">
                   <input 
