@@ -16,7 +16,7 @@ const {
 
 // Define HTTP endpoints
 router.post('/create', createNewGroup);
-router.post('/delete', deleteGroup)
+router.post('/delete', deleteGroup);
 router.post('/join', joinGroup);
 router.post('/leave', leaveGroup);
 router.get('/user/:userId', getGroupList);

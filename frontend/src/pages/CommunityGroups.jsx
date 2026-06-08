@@ -317,8 +317,8 @@ function CommunityGroups() {
               > 
                 <div className="avatar-placeholder">👥</div>
                 <div className="roster-details">
-                  <h4>{group.group_name}</h4>
-                  <p>ID: {group.group_id}</p>
+                  <h4 style={{fontSize: '17px'}}>{group.group_name}</h4>
+                  <p style={{fontSize:'15px'}}>ID: {group.group_id}</p>
                 </div>
                 
               </div> 
