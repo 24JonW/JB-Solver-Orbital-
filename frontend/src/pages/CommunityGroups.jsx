@@ -165,6 +165,12 @@ function CommunityGroups() {
 
   const handleLeaveGroup= async ()=> {
     if (!selectedGroup) return; 
+    if (groupMembers.length ==1) {
+      alert("You are the last member of this group. Leaving will permanently delete the group.");
+      handleDeleteGroup(); 
+      return; 
+    }
+
     const confirmDelete= window.confirm(
       `Are you sure you want to leave "${selectedGroup.group_name} group"? This action cannot be undone.`
     )

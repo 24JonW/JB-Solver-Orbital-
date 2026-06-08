@@ -30,9 +30,9 @@ const deleteGroup = async (req, res) => {
             return res.status(444).json({error: 'Group not found'});
         }
         const group= checkGroup.rows[0]; 
-        if (group.created_by != userId) {
-            res.status(403).json({error: 'Unauthorized: Only the group creator can delete this room.'}); 
-        }
+        // if (group.created_by != userId) {
+        //     res.status(403).json({error: 'Unauthorized: Only the group creator can delete this room.'}); 
+        // }
         await db.query('DELETE FROM group_messages WHERE group_id = $1', [groupId]);
         await db.query('DELETE FROM group_members WHERE group_id = $1', [groupId]);
         await db.query('DELETE FROM community_groups WHERE group_id = $1', [groupId]);
@@ -78,6 +78,7 @@ const joinGroup= async (req, res) => {
 const leaveGroup = async (req, res) => {
     const {groupId, userId}= req.body; 
     try {
+
         const membershipCheck = await db.query(
             `SELECT * FROM group_members WHERE group_id =$1 AND user_id = $2`, 
         [groupId, userId])
@@ -89,6 +90,14 @@ const leaveGroup = async (req, res) => {
             'DELETE FROM group_members WHERE user_id = $1 AND group_id = $2',
             [userId, groupId]
         );  
+        const remainingCheck= await db.query('SELECT COUNT(*) FROM group_members WHERE user_id = $1', [groupId])
+        const memberCount= parseInt(remainingCheck.rows[0].count);
+        if (memberCount === 0) {
+            await db.query('DELETE FROM group_messages WHERE group_id = $1', [groupId]);
+            await db.query('DELETE FROM community_groups WHERE group_id = $1', [groupId]);
+            return res.status(200).json({ message: 'Successfully left. Group was empty and has been deleted.' });
+        }
+
         res.status(200).json({message: 'Successfully left the group'});
 
     } catch (err) {
