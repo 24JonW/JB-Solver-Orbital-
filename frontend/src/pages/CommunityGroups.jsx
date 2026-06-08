@@ -116,6 +116,8 @@ function CommunityGroups() {
     }
   };
 
+  
+
   const handlejoinGroup = async (e)=> {
     e.preventDefault(); 
     if (!joinGroupId.trim()) return; 
@@ -159,6 +161,32 @@ function CommunityGroups() {
       console.error("Failed to delete group", err);
       alert(err.response?.data?.error || "Failed to delete group.");
     }
+  }
+
+  const handleLeaveGroup= async ()=> {
+    if (!selectedGroup) return; 
+    const confirmDelete= window.confirm(
+      `Are you sure you want to leave "${selectedGroup.group_name} group"? This action cannot be undone.`
+    )
+    if (!confirmDelete) return; 
+    try {
+      const response= await axios.post(`${API_BASE_URL}/leave`, {
+        groupId: selectedGroup.group_id, 
+        userId: currentUser.user_id
+      }) 
+      if (response.status=== 200) {
+        alert(`You have successfully left "${selectedGroup.group_name}".`); 
+        setSelectedGroup(null); 
+        setMessages([]);
+        fetchGroupList();
+
+      }
+      
+    } catch (err) {
+      console.error("Failed to leave group", err); 
+      alert(err.response?.data?.error || "Failed to leave group."); 
+    }
+
   }
 
   const handleSendMessage= async (e) => {
@@ -298,7 +326,9 @@ function CommunityGroups() {
               <div className="chat-header-title">
                 <h3>{selectedGroup.group_name} <span className="id-badge">(ID: {selectedGroup.group_id})</span></h3>
                 <button onClick= {()=> handleDeleteGroup()} className= "delete-group-btn"> Delete Group</button>
+                <button onClick= {()=> handleLeaveGroup()} className = "leave-group-btn"> Leave Group</button>
                 <button onClick= {()=> fetchGroupMembers(selectedGroup.group_id)} className= "view-members-btn"> View group members</button>
+
 
                 
               </div>

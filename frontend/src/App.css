@@ -485,6 +485,15 @@ button:hover {
   border-radius: 6px; 
 
 }
+.leave-group-btn {
+  background: rgb(221, 109, 109);
+  color: white;
+  font-weight: bold; 
+  padding: 10px; 
+  border: 0.1px solid rgb(100, 100, 100);
+  border-radius: 6px; 
+
+}
 
 
 .messages-stream {

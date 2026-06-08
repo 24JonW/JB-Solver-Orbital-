@@ -74,6 +74,30 @@ const joinGroup= async (req, res) => {
     }
 
 }
+
+const leaveGroup = async (req, res) => {
+    const {groupId, userId}= req.body; 
+    try {
+        const membershipCheck = await db.query(
+            `SELECT * FROM group_members WHERE group_id =$1 AND user_id = $2`, 
+        [groupId, userId])
+
+        if (membershipCheck.rows.length ==0) {
+            return res.status(400).json({ error: 'You are not a member of this group.' });
+        }
+        await db.query(
+            'DELETE FROM group_members WHERE user_id = $1 AND group_id = $2',
+            [userId, groupId]
+        );  
+        res.status(200).json({message: 'Successfully left the group'});
+
+    } catch (err) {
+        console.error(err); 
+        res.status(500).json({error: 'Server error leaving group'});
+    }
+
+
+}
 //Get all group chats a specific user belongs to
 const getGroupList = async (req, res) => {
     const {userId}= req.params; 
@@ -149,6 +173,7 @@ module.exports= {
     createNewGroup, 
     deleteGroup, 
     joinGroup, 
+    leaveGroup, 
     getGroupList, 
     getMessage, 
     postMessage, 
