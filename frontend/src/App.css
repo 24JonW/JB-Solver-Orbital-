@@ -164,8 +164,8 @@
 
 .homepageButton, .communityGroupButton, .expenditureTracker, .userProfileButton {
   border-radius: 20px;
-  background: linear-gradient(135deg, #2dc5a9, #76ABDF);
-  border: 2px solid rgb(83, 83, 83);
+  background: linear-gradient(135deg, #30bba2, #76cadf);
+  border: 0.1px solid rgb(100, 100, 100);
   position: relative; 
    
 }
@@ -173,7 +173,7 @@
 .logo-img {
   padding: 10px; 
   border-radius: 15px; 
-  border: 2px solid rgb(83, 83, 83); 
+  
 }
 .expense-img , .userProfile-img {
   width: 60px;
@@ -279,6 +279,7 @@ button:hover {
   cursor: pointer; 
   transition: 0.5s ease;
   border-radius: 10px; 
+  border: 0.1px solid rgb(100, 100, 100);
 
 
 
@@ -287,7 +288,9 @@ button:hover {
 
 .footer {
   
-  background: linear-gradient(rgb(192, 191, 191), #dad9d7);
+  background: #e1e1e1;
+  /* linear-gradient(#f0f2f5, #dad9d7)*/
+  border: 0.1px solid#e1e1e1;
   /* rgb(249, 229, 217), #f6e9c2 */
   /* rgb(192, 191, 191), #dad9d7 */
   height: 10%;
@@ -323,6 +326,7 @@ button:hover {
   height: 80%; 
   width: 100%;
   background-color: #f0f2f5;
+  
 }
 
 /* Left Sidebar Area */
@@ -333,6 +337,10 @@ button:hover {
   background: #ffffff;
   display: flex;
   flex-direction: column;
+  padding: 10px; 
+  margin: 1em; 
+  border-radius: 10px; 
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
 }
 
 .management-forms {
@@ -342,7 +350,9 @@ button:hover {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  
 }
+
 
 .side-form {
   display: flex;
@@ -371,8 +381,23 @@ button:hover {
 .group-roster-list {
   flex: 2;
   overflow-y: auto;
+  overflow-x: hidden; 
+  max-height:500px; 
   text-align: left;
+  
 }
+
+.group-roster-list h3 {
+  position: sticky;
+  top: 0; 
+  background: white;
+  z-index: 10; 
+  background: linear-gradient(135deg, #fbc036,#f3cf2f);
+  border-radius: 10px;
+ 
+
+}
+
 .group-roster-list h3 {
   padding: 10px 15px;
   margin: 0;
@@ -391,7 +416,7 @@ button:hover {
   transition: background 0.2s;
 }
 .roster-item:hover { background-color: #f5f6f6; }
-.roster-item.active-room { background-color: #eae6df; }
+.roster-item.active-room { background-color: #e8e8e8; }
 
 .avatar-placeholder {
   font-size: 24px;
@@ -402,9 +427,14 @@ button:hover {
 /* Right Chat Window Panel Container */
 .chat-window-pane {
   flex: 1;
-  background: #efeae2; /* WhatsApp texture tone */
+  background: white; /* #efeae2 WhatsApp texture tone */
   display: flex;
   flex-direction: column;
+  margin: 1em 1em 1em 0; 
+  border-radius: 10px; 
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+
+ 
 }
 
 .empty-chat-state {
@@ -425,21 +455,42 @@ button:hover {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  background: #f0f2f5;
+  background: white;
+  /* #f0f2f5*/
   padding: 10px 20px;
   text-align: left;
   border-bottom: 1px solid #e1e1e1;
+  border-radius: 10px 10px 0 0; 
+  
 }
+
 .chat-header-title h3 { margin: 0; font-size: 16px; }
 .id-badge { font-size: 12px; color: #667781; font-weight: normal; }
+
+.view-members-btn {
+  background: #00a884;
+  color: white;
+  font-weight: bold; 
+  padding: 10px; 
+  border: 0.1px solid rgb(100, 100, 100);
+  border-radius: 6px; 
+}
+
 
 .messages-stream {
   flex: 1;
   padding: 20px;
+  margin: 1em; 
   overflow-y: auto;
+  overflow-x:hidden;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  background: #efeae2; 
+  z-index: 100; 
+  border-radius: 10px; 
+  border: 0.1px solid rgb(214, 213, 213);
+  
 }
 
 /* Chat Bubbles Layout formatting */
@@ -447,12 +498,13 @@ button:hover {
   max-width: 60%;
   padding: 8px 12px;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.4;
   position: relative;
   text-align: left;
   display: flex;
   flex-direction: column;
+  border: 0.1px solid rgb(190, 190, 190);
 }
 .chat-bubble.incoming {
   background: #ffffff;
@@ -462,6 +514,7 @@ button:hover {
 .chat-bubble.outgoing {
   background: #d9fdd3; /* WhatsApp User Incoming Tint */
   align-self: flex-end;
+  
   border-top-right-radius: 0;
 }
 
@@ -489,6 +542,7 @@ button:hover {
 }
 .send-btn {
   background: #00a884;
+
   color: white;
   border: none;
   padding: 0 20px;

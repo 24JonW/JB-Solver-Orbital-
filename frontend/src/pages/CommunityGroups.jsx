@@ -178,7 +178,6 @@ function CommunityGroups() {
     } catch (err) {
       console.error("Message send failure:", err);
     }
-
   }; 
 
   const fetchGroupMembers= async (groupId)=> {
@@ -246,7 +245,7 @@ function CommunityGroups() {
       </div>
 
       <div className="chat-app-layout">
-        {/* Right Side: Create/join group, list of groups joined by users */}
+        {/* Left Side: Create/join group, list of groups joined by users */}
         <div className= "chat-sidebar"> 
           <div className= "management-forms"> 
             <form onSubmit = {handleCreateGroup} className= "side-form"> 
@@ -272,6 +271,9 @@ function CommunityGroups() {
           </div>
         
           <div className= "group-roster-list"> 
+            <div className='groups-scroll'>
+              
+            </div>
             <h3> My Chat Rooms</h3>
             {groups.map((group)=> (
               <div 
@@ -289,7 +291,7 @@ function CommunityGroups() {
             ))}
           </div>
         </div>
-        {/* Left Side: Conversation Content Space */}
+        {/* Right Side: Conversation Content Space */}
         <div className="chat-window-pane">
           {selectedGroup ? (
             <div className="active-chat-container">
