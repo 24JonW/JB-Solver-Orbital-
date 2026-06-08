@@ -4,6 +4,7 @@ const router = express.Router();
 
 const { 
     createNewGroup, 
+    deleteGroup,
     joinGroup, 
     getGroupList, 
     getMessage, 
@@ -14,6 +15,7 @@ const {
 
 // Define HTTP endpoints
 router.post('/create', createNewGroup);
+router.post('/delete', deleteGroup)
 router.post('/join', joinGroup);
 router.get('/user/:userId', getGroupList);
 router.get('/:groupId/messages', getMessage); 

@@ -136,6 +136,31 @@ function CommunityGroups() {
     }
   }
 
+  const handleDeleteGroup = async () => {
+    if (!selectedGroup) return;
+    const confirmDelete= window.confirm(
+      `Are you sure you want to permanently delete "${selectedGroup.group_name}"? This action cannot be undone.`
+    )
+    if (!confirmDelete) return; 
+
+    try {
+      const response = await axios.post(`${API_BASE_URL}/delete`,{
+        groupId: selectedGroup.group_id, 
+        userId: currentUser.user_id
+      });
+      if (response.status===(200)) {
+        alert("Group successfully deleted"); 
+        setSelectedGroup(null); 
+        setMessages([]); 
+        fetchGroupList();
+      }
+
+    } catch (err) {
+      console.error("Failed to delete group", err);
+      alert(err.response?.data?.error || "Failed to delete group.");
+    }
+  }
+
   const handleSendMessage= async (e) => {
     e.preventDefault(); 
     if (!newMessage.trim() || !selectedGroup) return;
@@ -270,7 +295,9 @@ function CommunityGroups() {
             <div className="active-chat-container">
               <div className="chat-header-title">
                 <h3>{selectedGroup.group_name} <span className="id-badge">(ID: {selectedGroup.group_id})</span></h3>
+                <button onClick= {()=> handleDeleteGroup()} className= "delete-group-btn"> Delete Group</button>
                 <button onClick= {()=> fetchGroupMembers(selectedGroup.group_id)} className= "view-members-btn"> View group members</button>
+
                 
               </div>
               <div className="messages-stream">

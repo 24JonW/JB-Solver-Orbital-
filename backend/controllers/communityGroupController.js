@@ -21,6 +21,32 @@ const createNewGroup= async (req, res)=> {
     }
 }
 
+const deleteGroup = async (req, res) => {
+    const {groupId, userId}= req.body; 
+    try {
+        const checkGroup = await db.query(`SELECT * FROM community_groups WHERE group_id =$1`, [groupId]);
+        
+        if (checkGroup.rows.length ==0){
+            return res.status(444).json({error: 'Group not found'});
+        }
+        const group= checkGroup.rows[0]; 
+        if (group.created_by != userId) {
+            res.status(403).json({error: 'Unauthorized: Only the group creator can delete this room.'}); 
+        }
+        await db.query('DELETE FROM group_messages WHERE group_id = $1', [groupId]);
+        await db.query('DELETE FROM group_members WHERE group_id = $1', [groupId]);
+        await db.query('DELETE FROM community_groups WHERE group_id = $1', [groupId]);
+        res.status(200).json({ message: 'Group deleted successfully!' });
+
+
+    } catch (err) {
+        console.error(err); 
+        res.status(500).json({error: 'Server error deleting group chat.'});
+
+    }
+
+}
+
 const joinGroup= async (req, res) => {
     const {groupId, userId}= req.body; 
     try {
@@ -121,6 +147,7 @@ const getGroupMembers = async (req, res) => {
 
 module.exports= {
     createNewGroup, 
+    deleteGroup, 
     joinGroup, 
     getGroupList, 
     getMessage, 
