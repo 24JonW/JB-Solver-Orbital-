@@ -7,9 +7,36 @@ import expenseTracker from '../assets/expenditureTracker96.png';
 import userProfile from '../assets/user96.png';
 import picture from '../assets/picture.png'; 
 import home from '../assets/home.png';
+import {useState, useEffect} from 'react'; 
+import axios from 'axios'; 
 
 function HomePage() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [email, setEmail]= useState(''); 
+  const [userId, setUserId]= useState(null); 
+  const [username, setUsername] = useState(''); 
+
+  const API_BASE_URL= 'http://localhost:5001/api/accounts'; 
+
+  useEffect(()=> {
+    const storedUserId= localStorage.getItem('userId'); 
+    if (!storedUserId) {
+      navigate('/'); 
+      return; 
+    }
+    axios.get(`${API_BASE_URL}/${storedUserId}`)
+      .then((res)=> {
+        const data= res.data; 
+        setEmail(data.email);
+        setUserId(data.user_id);
+        setUsername(data.username);
+      })
+      .catch((err)=> {
+        console.error('Error fetching user profile with Axios:', err);
+      })
+
+  })
+
 
   return (
     <div className="homepage-container">
@@ -68,8 +95,9 @@ function HomePage() {
               </div>
           </div>
           <div className='profile-details'>
-              <p><strong>Email:</strong> user@email.com</p>
-              <p><strong>ID:</strong> 123</p>
+              <p><strong>Email:</strong> {email}</p>
+              <p><strong>ID:</strong> {userId}</p>
+              <p><strong>Username: </strong>{username} </p>
           </div>
           <button className='edit-profile-btn'>
               Edit Profile
@@ -89,7 +117,10 @@ function HomePage() {
         
       </div>
       <div className='footer'>
-        <button className='btn-logout' onClick={() => navigate('/')}>
+        <button className='btn-logout' onClick={() => {
+          localStorage.removeItem('userId')
+          navigate('/')
+        }}>
             Log Out
         </button>
       </div>

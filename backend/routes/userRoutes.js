@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { 
   getAccounts, 
+  getSpecificAccount,
   createAccount, 
   updateAccount, 
   deleteAccount, 
@@ -11,6 +12,7 @@ const {
 
 // Define HTTP endpoints
 router.get('/', getAccounts);         // READ
+router.get('/:id', getSpecificAccount); //READ selected account
 router.post('/', createAccount);       // CREATE
 router.put('/:id', updateAccount);     // UPDATE
 router.delete('/:id', deleteAccount);  // DELETE

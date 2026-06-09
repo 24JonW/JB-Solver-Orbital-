@@ -80,6 +80,22 @@ const getAccounts= async (req, res)=> {
     }
 }
 
+const getSpecificAccount= async (req, res) => {
+    const userId= req.params.id; 
+    try {
+        
+        const result= await db.query('SELECT user_id, username, email FROM account WHERE user_id= $1', [userId]); 
+        if (result.rows.length===0) {
+            return res.status(404).json({error: 'User not found'})
+        }
+        res.json(result.rows[0]);
+
+    } catch (err) {
+        console.log(err); 
+        res.status(500).json({error: 'Database read error'})
+    }
+}
+
 const createAccount = async (req, res) => {
     const {username, password, email}= req.body; 
     try {
@@ -127,6 +143,7 @@ const deleteAccount= async (req, res) => {
 
 module.exports= {
     getAccounts, 
+    getSpecificAccount,
     createAccount, 
     updateAccount, 
     deleteAccount, 
