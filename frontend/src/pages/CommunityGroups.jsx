@@ -9,6 +9,10 @@ import expenseTracker from '../assets/expenditureTracker96.png';
 import userProfile from '../assets/user96.png';
 import home from '../assets/home.png';
 import '../App.css'; 
+//images
+import { Cog } from 'lucide-react'; 
+import { X } from 'lucide-react'; 
+import { Calculator } from 'lucide-react'; 
 
 
 function CommunityGroups() {
@@ -27,6 +31,13 @@ function CommunityGroups() {
   //View group members 
   const [showMembersModal, setShowMembersModal] = useState(false);
   const [groupMembers, setGroupMembers] = useState([]);
+
+  // show settings modal 
+  const [ showSettingsMenu, setShowSettingsMenu ] = useState(false); 
+  //show debt tracking modal 
+  const [showDebtTrackingModal, setShowDebtTrackingModal] = useState(false); 
+  // show calcualtor modal 
+  const [ showCalculatorModal, setShowCalculatorModal ] = useState(false); 
 
    
     
@@ -342,9 +353,72 @@ function CommunityGroups() {
             <div className="active-chat-container">
               <div className="chat-header-title">
                 <h3>{selectedGroup.group_name} <span className="id-badge">(ID: {selectedGroup.group_id})</span></h3>
-                <button onClick= {()=> handleDeleteGroup()} className= "delete-group-btn"> Delete Group</button>
-                <button onClick= {()=> handleLeaveGroup()} className = "leave-group-btn"> Leave Group</button>
-                <button onClick= {()=> fetchGroupMembers(selectedGroup.group_id)} className= "view-members-btn"> View group members</button>
+                <div className='settings-container'>
+                  <Calculator className='calculator-btn' onClick={() => setShowCalculatorModal(!showCalculatorModal)} size={35}/>
+                  <Cog className='settings-btn' onClick={() => setShowSettingsMenu(!showSettingsMenu)}size={35}/>
+                  
+                  {showSettingsMenu && (
+                    <div className='settings-popup'>
+                      <button onClick= {()=> handleDeleteGroup()} className= "delete-group-btn"> Delete Group</button>
+                      <button onClick= {()=> fetchGroupMembers(selectedGroup.group_id)} className= "view-members-btn"> View group members</button>
+                      <button onClick= {()=> handleLeaveGroup()} className = "leave-group-btn"> Leave Group</button>
+                      <button onClick={() => setShowDebtTrackingModal(true)} className='debt-tracking-btn'>Debt Tracking</button>
+                      <X onClick={() => setShowSettingsMenu(false)} className='close-settings-btn'/>
+                    </div>
+                  )}
+
+                
+                  {showCalculatorModal && (
+                    <div className='calculator-popup'>
+                      <div className='modal-backdrop' onClick={() => setShowCalculatorModal(false)}>
+                        <div className='modal-content' onClick={(e) => e.stopPropagation()}>
+                          <div className='modal-header'>
+                            <h3>Calculator</h3>
+                            <button className='close-modal-btn' onClick={() => setShowCalculatorModal(false)}>
+                              <X size={20}/>
+                            </button>
+                          </div>
+                          <div className='modal-body-dt'>
+                            <form className='calculator-form'>
+                              <label>Total Paid</label>
+                              <input type="number" min='0' step='0.01' placeholder='Total Paid'/>
+                              <br/>
+                              <label>Bill Spitting Type</label>
+                              <select>
+                                <option>Equal Split</option>
+                                <option>Percentage Split</option>
+                                <option>Custom Split</option>
+                              </select>
+                              <br/>
+                              <label>Currency:</label>
+                              <br/>
+                              <select>
+                                <option>SGD</option>
+                                <option>MYR</option>
+                                <option>RMB</option>
+                                <option>THB</option>
+                                <option>IDR</option>
+                                <option>USD</option>
+                                <option>EUR</option>
+                                <option>GBP</option>
+                              </select>
+                              <br/>
+                              <p>GST (%):</p>
+                              <input type='number' min='0' max='100' step='0.1' placeholder='GST amount'/>
+                              <p>Additional Tax (%):</p>
+                              <input type='number' min='0' max='100' step='0.01' placeholder='Tax amount'/>
+                              <p>You need to pay: <strong> $0.00</strong></p>
+                              <p>Others need to pay you: <strong> $0.00</strong></p>
+                              <button>Send payment calculation to group </button>
+
+                            </form>                                             
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
 
 
                 
@@ -378,6 +452,8 @@ function CommunityGroups() {
                       onChange={(e) => setNewMessage(e.target.value)} 
                   />
                   <button type="submit" className="send-btn">Send</button>
+                  
+                  
               </form>
             </div>
           ) : (
@@ -412,6 +488,28 @@ function CommunityGroups() {
             </div>
 
           )}
+
+        
+
+          {showDebtTrackingModal && (
+            <div className='modal-backdrop' onClick={() => setShowDebtTrackingModal(false)}>
+              <div className='modal-content' onClick={(e) => e.stopPropagation()}>
+                <div className='modal-header'>
+                  <h3>Debt Tracking</h3>
+                  <button className='close-modal-btn' onClick={() => setShowDebtTrackingModal(false)}>
+                    <X size={20}/>
+                  </button>
+                </div>
+                <div className='modal-body-dt'>
+                    <p>Track debts and balances between group members</p>
+                    <div className='debt-section'>
+                      <p>No debt records yet</p>
+                    </div>
+                    
+                </div>
+              </div>
+            </div>
+          )}
         </div>       
       </div>
 
@@ -421,6 +519,8 @@ function CommunityGroups() {
         </button>
       </div>
     </div>
+
+
 
   );
 }

@@ -85,6 +85,7 @@ const joinGroup= async (req, res) => {
 
 }
 
+
 const leaveGroup = async (req, res) => {
     const {groupId, userId}= req.body; 
     try {

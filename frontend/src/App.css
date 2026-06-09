@@ -471,6 +471,45 @@ button:hover {
 .chat-header-title h3 { margin: 0; font-size: 16px; }
 .id-badge { font-size: 12px; color: #667781; font-weight: normal; }
 
+
+.settings-container {
+  position: relative; 
+  display: inline-block; 
+}
+
+.calculator-btn {
+  cursor: pointer; 
+  margin-right: 1em; 
+}
+
+.settings-btn {
+  cursor: pointer; 
+}
+
+.calculator-btn:hover {
+  transform: translateY(-5px); 
+}
+.settings-btn:hover{
+   transform: translateY(-5px)
+}
+  
+
+
+.settings-popup {
+  position: absolute;
+  top: 50px; 
+  right: 0; 
+  display: flex; 
+  flex-direction: row; 
+  gap: 10px; 
+  background: white; 
+  padding: 12px; 
+  border-radius: 10px; 
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  z-index: 200; 
+  white-space: nowrap; 
+}
+
 .view-members-btn {
   background: #00a884;
   color: white;
@@ -478,6 +517,7 @@ button:hover {
   padding: 10px; 
   border: 0.1px solid rgb(100, 100, 100);
   border-radius: 6px; 
+  margin-right: 1em; 
 }
 
 .delete-group-btn {
@@ -491,15 +531,33 @@ button:hover {
 
 }
 .leave-group-btn {
-  background: rgb(221, 109, 109);
+  background: rgb(246, 203, 72);
   color: white;
   font-weight: bold; 
   padding: 10px; 
   border: 0.1px solid rgb(100, 100, 100);
   border-radius: 6px; 
+  margin-right: 1em; 
 
 }
+.debt-tracking-btn {
+  background: rgb(72, 136, 246);
+  color: white;
+  font-weight: bold; 
+  padding: 10px; 
+  border: 0.1px solid rgb(100, 100, 100);
+  border-radius: 6px; 
+  margin-right: 1em; 
+}
 
+.close-settings-btn {
+  border-radius:50%;
+}
+
+.close-settings-btn:hover {
+  transform: translateY(-10px); 
+  transition: 0.5s ease; 
+}
 
 .messages-stream {
   flex: 1;
@@ -556,6 +614,9 @@ button:hover {
   padding: 10px 20px;
   display: flex;
   gap: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;  
+  
 }
 .chat-input-bar input {
   flex: 1;
@@ -639,6 +700,14 @@ button:hover {
   overflow-y: auto;
 }
 
+
+.modal-body-dt {
+  padding: 15px 20px; 
+  max-height: 75%; 
+  width: 50%;
+  overflow-y: auto;
+
+}
 .member-count {
   font-size: 13px;
   color: #667781;
