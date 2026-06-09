@@ -90,17 +90,20 @@ function HomePage() {
           <div className='profile-header'>
               <img src={picture} className='profilePicture-img' />
               <div className='profile-main-info'>
-                  <h2>Logged In User</h2>
-                  <p>Community Member</p>
+                  <h2>Username: {username}</h2>
+                  {/* <p>Community Member</p> */}
               </div>
           </div>
           <div className='profile-details'>
               <p><strong>Email:</strong> {email}</p>
               <p><strong>ID:</strong> {userId}</p>
-              <p><strong>Username: </strong>{username} </p>
           </div>
-          <button className='edit-profile-btn'>
+          <button className='edit-profile-btn' onClick= {()=> {
+            navigate("/profile");
+          }}>
               Edit Profile
+              
+              
           </button>
           
         </div>
@@ -110,7 +113,7 @@ function HomePage() {
         </div>
 
         <div className='profile-card' style={{ gridArea: 'box3'}}>
-          <h2>Achievements</h2>
+          <h2>Outstanding Payments</h2>
           
         </div>
 
