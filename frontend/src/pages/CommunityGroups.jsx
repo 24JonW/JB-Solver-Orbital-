@@ -12,12 +12,13 @@ import SmartSplitCalculator from './SmartSplitCalculator';
 //images
 import { Cog } from 'lucide-react'; 
 import { X } from 'lucide-react'; 
-import { Calculator } from 'lucide-react'; 
 
 import { GiHouse } from "react-icons/gi";
 import { FaUserCircle } from "react-icons/fa";
 import { FaUsersGear } from "react-icons/fa6";
 import { ImStatsDots } from "react-icons/im";
+import { BsCalculator } from "react-icons/bs";
+
 
 function CommunityGroups() {
   const navigate = useNavigate();
@@ -386,7 +387,7 @@ function CommunityGroups() {
               <div className="chat-header-title">
                 <h3>{selectedGroup.group_name} <span className="id-badge">(ID: {selectedGroup.group_id})</span></h3>
                 <div className='settings-container'>
-                  <Calculator className='calculator-btn' onClick={() => setShowCalculatorModal(!showCalculatorModal)} size={35}/>
+                  <BsCalculator className='calculator-btn' onClick={() => setShowCalculatorModal(!showCalculatorModal)} size={35}/>
                   <Cog className='settings-btn' onClick={() => setShowSettingsMenu(!showSettingsMenu)} size={35} />
                   
                   {showSettingsMenu && (
