@@ -5,6 +5,11 @@ import expenseTracker from '../assets/expenditureTracker96.png';
 import userProfile from '../assets/user96.png';
 import home from '../assets/home.png';
 import '../App.css'; 
+
+import { GiHouse } from "react-icons/gi";
+import { FaUserCircle } from "react-icons/fa";
+import { FaUsersGear } from "react-icons/fa6";
+import { ImStatsDots } from "react-icons/im";
 function UserProfile() {
     const navigate = useNavigate(); 
   return (
@@ -18,7 +23,7 @@ function UserProfile() {
               className="homepageButton"
               onClick={() => navigate("/home")}
             >
-              <img src={home} className="expense-img" />
+              <GiHouse size={55} color={'#edb601'}/>
             </button>
             <span className="hover-tooltip">Home Page</span>
           </div>
@@ -27,7 +32,7 @@ function UserProfile() {
               className="expenditureTracker"
               onClick={() => navigate("/tracker")}
             >
-              <img src={expenseTracker} className="expense-img" />
+              <ImStatsDots size={55} color={'#edb601'}/>
             </button>
             <span className="hover-tooltip">Expenditure Tracker</span>
           </div>
@@ -37,7 +42,7 @@ function UserProfile() {
               className="communityGroupButton"
               onClick={() => navigate("/groups")}
             >
-              <img src={communityGroup} className="group-img" />
+              <FaUsersGear size={55} color={'#edb601'}/>
             </button>
             <span className="hover-tooltip">Community Groups</span>
           </div>
@@ -47,7 +52,7 @@ function UserProfile() {
               className="userProfileButton"
               onClick={() => navigate("/profile")}
             >
-              <img src={userProfile} className="userProfile-img" />
+              <FaUserCircle size={55} color={'#edb601'}/>
             </button>
             <span className="hover-tooltip">User Profile</span>
           </div>

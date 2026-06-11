@@ -1,6 +1,12 @@
 
 
+/*
+<img src={home} className="expense-img" />
+<img src={expenseTracker} className="expense-img" />
+ <img src={communityGroup} className="group-img" />
+ <img src={userProfile} className="userProfile-img" />
 
+*/
 
 .entirePage {
   width: 100vw;
@@ -169,14 +175,17 @@
 }
 
 .homepageButton, .communityGroupButton, .expenditureTracker, .userProfileButton {
-  border-radius: 20px;
+  
+  /*
   background: linear-gradient(135deg, #3dc1a8, #76cadf);
   background: linear-gradient(135deg, #4cd0b8, #6cc4cb);
-  
-  
-  border: 0.1px solid rgb(100, 100, 100);
+  */
+  background: linear-gradient(135deg, #28549a 0%, #21498a 100%);
+  background: None; 
   position: relative; 
-   
+  border: None; 
+  border-radius: 10px; 
+
 }
 
 .logo-img {
@@ -202,6 +211,7 @@ button:hover {
   transform: translateY(-10px); 
   transition: 0.5s ease; 
   background: linear-gradient(135deg, #edb601,#eec926);
+  background: #f8e5a3;
   
 }
 
@@ -394,6 +404,7 @@ button:hover {
 
 .action-btn {
   background: linear-gradient(135deg, #4cd0b8, #6cc4cb);
+  background: linear-gradient(135deg, #fbc036,#f3cf2f); 
   
   color: white;
   border: none;
@@ -402,7 +413,11 @@ button:hover {
   cursor: pointer;
   font-size: 15.5px;
 }
-.action-btn.structural { background: linear-gradient(135deg, #28549a 0%, #21498a 100%);; }
+.action-btn.structural { 
+  background: linear-gradient(135deg, #28549a 0%, #21498a 100%);
+  background: linear-gradient(135deg, #4cd0b8, #6cc4cb);
+
+}
 
 .group-roster-list {
   flex: 2;
@@ -410,15 +425,22 @@ button:hover {
   overflow-x: hidden; 
   max-height:500px; 
   text-align: left;
+  display: flex; 
+  flex-direction: column; 
   
 }
 
 .group-roster-list h3 {
+  align-self: center;
   position: sticky;
   top: 0; 
   background: white;
+  width: 70%; 
   z-index: 10; 
   background: linear-gradient(135deg, #fbc036,#f3cf2f);
+  background: linear-gradient(135deg, #4cd0b8, #72d6c4);
+  background: linear-gradient(135deg, #28549a 0%, #21498a 100%);
+  
   border-radius: 10px;
  
 

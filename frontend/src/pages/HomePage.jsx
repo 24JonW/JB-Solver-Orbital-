@@ -2,13 +2,14 @@ import { useNavigate } from 'react-router-dom';
 import '../App.css';
 
 import JBSolverLogo from '../assets/JBSolverLogo.png'; 
-import communityGroup from '../assets/communityGroup.png';
-import expenseTracker from '../assets/expenditureTracker96.png';
-import userProfile from '../assets/user96.png';
 import picture from '../assets/picture.png'; 
-import home from '../assets/home.png';
 import {useState, useEffect} from 'react'; 
 import axios from 'axios'; 
+
+import { GiHouse } from "react-icons/gi";
+import { FaUserCircle } from "react-icons/fa";
+import { FaUsersGear } from "react-icons/fa6";
+import { ImStatsDots } from "react-icons/im";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -40,6 +41,7 @@ function HomePage() {
 
   return (
     <div className="homepage-container">
+      
       <div className="topSectionBar">
         <img src={JBSolverLogo} className="logo-img" />
 
@@ -49,7 +51,7 @@ function HomePage() {
               className="homepageButton"
               onClick={() => navigate("/home")}
             >
-              <img src={home} className="expense-img" />
+              <GiHouse size={55} color={'#edb601'}/>
             </button>
             <span className="hover-tooltip">Home Page</span>
           </div>
@@ -58,7 +60,7 @@ function HomePage() {
               className="expenditureTracker"
               onClick={() => navigate("/tracker")}
             >
-              <img src={expenseTracker} className="expense-img" />
+              <ImStatsDots size={55} color={'#edb601'}/>
             </button>
             <span className="hover-tooltip">Expenditure Tracker</span>
           </div>
@@ -68,7 +70,7 @@ function HomePage() {
               className="communityGroupButton"
               onClick={() => navigate("/groups")}
             >
-              <img src={communityGroup} className="group-img" />
+              <FaUsersGear size={55} color={'#edb601'}/>
             </button>
             <span className="hover-tooltip">Community Groups</span>
           </div>
@@ -78,12 +80,13 @@ function HomePage() {
               className="userProfileButton"
               onClick={() => navigate("/profile")}
             >
-              <img src={userProfile} className="userProfile-img" />
+              <FaUserCircle size={55} color={'#edb601'}/>
             </button>
             <span className="hover-tooltip">User Profile</span>
           </div>
         </div>
       </div>
+      
 
       <div className='home-body'>
         <div className='profile-card'>
