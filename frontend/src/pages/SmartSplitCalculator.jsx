@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { X } from 'lucide-react';
+import '../SmartBill.css'; 
+// import '../App.css'; 
 
 function SmartSplitCalculator({
   show,
@@ -14,7 +16,7 @@ function SmartSplitCalculator({
     category: 'Food',
     currency: 'SGD',
     splitMethod: 'equal',
-    gst: 0,
+    gst: 9,
     tax: 0,
     sharedCost: 0
   });
@@ -54,18 +56,20 @@ function SmartSplitCalculator({
     }));
   };
 
-  const updatePayerAmount = (userId, amount) => {
+  const updatePayerAmount = (userId, value) => {
+    const parsedValue= value === "" ? "": parseFloat(value); 
     setPayers(prev =>
       prev.map(p =>
-        p.userId === userId ? { ...p, paid: Number(amount) } : p
+        p.userId === userId ? { ...p, paid: parsedValue } : p
       )
     );
   };
 
   const updateItemAmount = (userId, amount) => {
+    const parsedValue= amount === "" ? "" : parseFloat(amount); 
     setIndividualItems(prev =>
       prev.map(item =>
-        item.userId === userId ? { ...item, itemCost: Number(amount) } : item
+        item.userId === userId ? { ...item, itemCost: parsedValue} : item
       )
     );
   };
@@ -158,158 +162,186 @@ function SmartSplitCalculator({
 
         <div className="modal-body">
           <form className="calculator-form" onSubmit={(e) => e.preventDefault()}>
-            
-            <label>Description</label>
-            <input
-              type="text"
-              name="description"
-              value={billData.description}
-              onChange={handleChange}
-              placeholder="Dinner at Marina Bay Sands"
-            />
-            <br />
+            <div className= "descriptionText"> 
+              <label className= "descriptionLabel">Description: </label>
+              <input
+                  type="text"
+                  name="description"
+                  value={billData.description}
+                  onChange={handleChange}
+                  placeholder="Your group expenditure..."
+                  className='descriptionInput'
+                />
+            </div>
+            <div className= "categoryDivision"> 
+              <label className= "categoryLabel">Category: </label>
+              <select name="category" value={billData.category} onChange={handleChange} className= "categoryType">
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Accommodation">Accommodation</option>
+                <option value="Travel">Travel</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Healthcare">Healthcare</option>
+              </select>
+            </div>
+            <div className= "splitMethodDivision"> 
+              <label className= "splitMethodLabel">Split Method: </label>
+              <select name="splitMethod" value={billData.splitMethod} onChange={handleChange} className= "splitMethodOption">
+                <option value="equal">Equal Split</option>
+                <option value="proportional">Proportional Split</option>
+                <option value="custom">Custom Split</option>
+              </select>
+            </div>
 
-            <label>Category</label>
-            <select name="category" value={billData.category} onChange={handleChange}>
-              <option value="Food">Food</option>
-              <option value="Transport">Transport</option>
-              <option value="Accommodation">Accommodation</option>
-              <option value="Travel">Travel</option>
-              <option value="Shopping">Shopping</option>
-              <option value="Entertainment">Entertainment</option>
-              <option value="Healthcare">Healthcare</option>
-            </select>
-            <br />
+            <div className= "currencyDivision"> 
+              <label className= "currencyLabel">Currency: </label>
+              <select name="currency" value={billData.currency} onChange={handleChange} className= "currencyOptions">
+                <option value="SGD">SGD</option>
+                <option value="MYR">MYR</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+                <option value="RMB">RMB</option>
+                <option value="THB">THB</option>
+                <option value="IDR">IDR</option>
+              </select>
+            </div>
 
-            <label>Split Method</label>
-            <select name="splitMethod" value={billData.splitMethod} onChange={handleChange}>
-              <option value="equal">Equal Split</option>
-              <option value="proportional">Proportional Split</option>
-              <option value="custom">Custom Split</option>
-            </select>
-            <br />
+            <div className= "GSTDivision" >
+              <label className= "GSTLabel">GST (%): </label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                step="0.1"
+                name="gst"
+                value={billData.gst}
+                onChange={handleChange}
+                className= "GSTInput"
+              /> 
+            </div>
 
-            <label>Currency</label>
-            <select name="currency" value={billData.currency} onChange={handleChange}>
-              <option value="SGD">SGD</option>
-              <option value="MYR">MYR</option>
-              <option value="USD">USD</option>
-              <option value="EUR">EUR</option>
-              <option value="GBP">GBP</option>
-              <option value="RMB">RMB</option>
-              <option value="THB">THB</option>
-              <option value="IDR">IDR</option>
-            </select>
-            <br />
+            <div className= "additionTaxDivision"> 
+              <label className= "additionTaxLabel">Additional Tax (%): </label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                step="0.1"
+                name="tax"
 
-            <label>GST (%)</label>
-            <input
-              type="number"
-              min="0"
-              max="100"
-              step="0.1"
-              name="gst"
-              value={billData.gst}
-              onChange={handleChange}
-            />
-            <br />
+                value={billData.tax}
+                onChange={handleChange}
+                className= "additionTaxInput"
+              />
 
-            <label>Additional Tax (%)</label>
-            <input
-              type="number"
-              min="0"
-              max="100"
-              step="0.1"
-              name="tax"
-              value={billData.tax}
-              onChange={handleChange}
-            />
-            <hr />
+            </div>
 
-            <h4>Who Paid?</h4>
-            {payers.length === 0 ? (
-              <p>Loading members profile details...</p>
-            ) : (
-              payers.map((payer) => (
-                <div key={payer.userId} className="payer-row">
-                  <span>
-                    {payer.username}
-                    {currentUser && payer.userId === currentUser.user_id ? ' (You)' : ''}
-                  </span>
+            <div className= "whoPaidDivision"> 
+              <strong style={{ fontSize: "large", padding: '10px' }}>Who Paid?</strong>
+        
+              {payers.length === 0 ? (
+                <p>Loading members profile details...</p>
+              ) : (
+                payers.map((payer) => (
+                  <div key={payer.userId} className="payer-row">
+                    <span className= "payerRowLabel">
+                      {payer.username}
+                      {currentUser && payer.userId === currentUser.user_id ? ' (You)' : ''}
+                    </span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={payer.paid}
+                      placeholder="0.00"
+                      onChange={(e) => updatePayerAmount(payer.userId, e.target.value)}
+                      className= "payerRowInput"
+                    />
+                  </div>
+                ))
+              )}
+            </div>
+            <hr/>
+
+            <div className= "proportionalDivision"> 
+              {billData.splitMethod === 'equal' && (
+                <> 
+                  <strong style={{ fontSize: "large", padding: '10px' }}>Bill is split equally</strong>
+                </>
+              ) }
+              {billData.splitMethod === 'proportional' && (
+                <>
+                  <strong style={{ fontSize: "large", padding: '10px' }}>Individual Orders</strong>
+                  <p style={{ padding: '10px' }}>Enter what each member personally consumed.</p>
+                  {individualItems.map(item => (
+                    <div key={item.userId} className="payer-row">
+                      <span className= "proportionalLabel">{item.username}</span>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={item.itemCost}
+                        placeholder="0.00"
+                        onChange={(e) => updateItemAmount(item.userId, e.target.value)}
+                        className= "proportionalInput"
+                      />
+                    </div>
+                  ))}
+                </>
+              )}
+
+              {billData.splitMethod === 'custom' && (
+                <>
+                  <strong style={{ fontSize: "large", padding: '10px' }}>Individual Orders</strong>
+                  <p style={{ padding: '10px' }}>Enter what each member personally consumed.</p>
+                  {individualItems.map(item => (
+                    <div key={item.userId} className="payer-row">
+                      <span className= "proportionalLabel">{item.username}</span>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={item.itemCost}
+                        placeholder="0.00"
+                        onChange={(e) => updateItemAmount(item.userId, e.target.value)}
+                        className= "proportionalInput"
+                      />
+                    </div>
+                  ))}
+                  <hr />
+                  <strong style={{ fontSize: "large", padding: '10px' }}>Shared items</strong>
+                  <p style={{ padding: '10px' }}>Example: appetizers, shared fries, group platter, shared drinks</p>
                   <input
                     type="number"
                     min="0"
                     step="0.01"
-                    value={payer.paid}
-                    placeholder="0.00"
-                    onChange={(e) => updatePayerAmount(payer.userId, e.target.value)}
+                    name="sharedCost"
+                    value={billData.sharedCost}
+                    onChange={handleChange}
+                    className= "proportionalInput"
                   />
-                </div>
-              ))
-            )}
+                </>
+              )}
+            </div> 
+
             <hr />
 
-            {billData.splitMethod === 'proportional' && (
-              <>
-                <h4>Individual Orders</h4>
-                <p>Enter what each member personally consumed.</p>
-                {individualItems.map(item => (
-                  <div key={item.userId} className="payer-row">
-                    <span>{item.username}</span>
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={item.itemCost}
-                      placeholder="0.00"
-                      onChange={(e) => updateItemAmount(item.userId, e.target.value)}
-                    />
-                  </div>
-                ))}
-              </>
-            )}
+            <div className= "billSummaryDivision"> 
+              <strong style={{ fontSize: "large", padding: '10px' }}>Bill Summary</strong>
+              <p style={{ padding: '10px' }}>Subtotal Paid: {billData.currency} {subtotalPaid.toFixed(2)}</p>
+              
+              <p style={{ padding: '10px' }}><strong>Final Bill:</strong> {billData.currency} {finalAmount.toFixed(2)}</p>
 
-            {billData.splitMethod === 'custom' && (
-              <>
-                <h4>Individual Orders</h4>
-                <p>Enter what each member personally consumed.</p>
-                {individualItems.map(item => (
-                  <div key={item.userId} className="payer-row">
-                    <span>{item.username}</span>
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={item.itemCost}
-                      placeholder="0.00"
-                      onChange={(e) => updateItemAmount(item.userId, e.target.value)}
-                    />
-                  </div>
-                ))}
-                <hr />
-                <h4>Shared Items</h4>
-                <p>Example: appetizers, shared fries, group platter, shared drinks</p>
-                <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  name="sharedCost"
-                  value={billData.sharedCost}
-                  onChange={handleChange}
-                />
-              </>
-            )}
-            <hr />
+              <button className= "smartSplitButton" type="button" onClick={submitBill} disabled={loading}>
+                {loading ? 'Calculating...' : 'Create Smart Split'}
+              </button>
+              <button className= "billSummaryButton" type='button' onClick={sendBillSummaryToGroup}>Send bill summary to group</button>
 
-            <h4>Bill Summary</h4>
-            <p>Subtotal Paid: {billData.currency} {subtotalPaid.toFixed(2)}</p>
+            </div>
+
             
-            <p><strong>Final Bill:</strong> {billData.currency} {finalAmount.toFixed(2)}</p>
-
-            <button type="button" onClick={submitBill} disabled={loading}>
-              {loading ? 'Calculating...' : 'Create Smart Split'}
-            </button>
-            <button type='button' onClick={sendBillSummaryToGroup}>Send bill summary to group</button>
           </form>
         </div>
 
