@@ -20,6 +20,9 @@ app.get('/', (req, res) => {
     res.send('🚀 Welcome to the JB-Solver-Orbital Backend API!');
 });
 
+const billRoutes = require('./routes/billRoutes');
+app.use('/api/bills', billRoutes);
+
 const PORT = process.env.PORT || 5433;
 app.listen(PORT,async () => {
   console.log(`🚀 Server running cleanly on port ${PORT}`);

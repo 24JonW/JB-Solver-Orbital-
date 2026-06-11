@@ -14,7 +14,6 @@ const createNewGroup= async (req, res)=> {
         );
         res.status(201).json(newGroup);
 
-
     } catch (err) {
         console.error(err); 
         res.status(500).json({error: 'Server error creating group'});

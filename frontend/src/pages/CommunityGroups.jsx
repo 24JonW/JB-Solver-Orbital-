@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; 
 import { jwtDecode } from 'jwt-decode'; 
@@ -9,11 +9,11 @@ import expenseTracker from '../assets/expenditureTracker96.png';
 import userProfile from '../assets/user96.png';
 import home from '../assets/home.png';
 import '../App.css'; 
+import SmartSplitCalculator from './SmartSplitCalculator';
 //images
 import { Cog } from 'lucide-react'; 
 import { X } from 'lucide-react'; 
 import { Calculator } from 'lucide-react'; 
-
 
 function CommunityGroups() {
   const navigate = useNavigate();
@@ -39,10 +39,11 @@ function CommunityGroups() {
   // show calcualtor modal 
   const [ showCalculatorModal, setShowCalculatorModal ] = useState(false); 
 
-   
-    
+  // Ledger state for Debt Tracking
+  const [ledger, setLedger] = useState([]);
 
   const API_BASE_URL= 'http://localhost:5001/api/groups'; 
+  const API_BILLS_URL= 'http://localhost:5001/api/bills';
 
   //Get user identity from localStorage token on mount
   useEffect(()=> {
@@ -53,7 +54,6 @@ function CommunityGroups() {
     }
     try {
       const decoded= jwtDecode(token);
-      //backend signs user with: { id: user.user_id, username: user.username } 
       setCurrentUser({
         user_id: decoded.id, 
         username: decoded.username
@@ -68,37 +68,40 @@ function CommunityGroups() {
   useEffect(()=> {
     if (currentUser) {
       fetchGroupList(); 
-
     }
   }, [currentUser]);
 
-    //Keep updating live chat window messages periodically if a group is open
+  // Combined real-time message stream polling rule
   useEffect(()=> {
     if (!selectedGroup) return; 
+
+    // Fetch instantly on room select
     fetchGroupMessages(selectedGroup.group_id); 
+    
     axios.get(`${API_BASE_URL}/${selectedGroup.group_id}/members`)
-      .then(res=> {
-        if (Array.isArray(res.data)) setGroupMembers(res.data);
+      .then(res => {
+        if (Array.isArray(res.data)) {
+          setGroupMembers(res.data);
+        }
       })
       .catch(err => console.error(err));
-    // 2. Set up a background interval to fetch updates every 3000ms (3 seconds)
+    
+    // Set up background poll safely
     const pollInterval = setInterval(() => {
       fetchGroupMessages(selectedGroup.group_id);
-      axios.get(`${API_BASE_URL}/${selectedGroup.group_id}/members`)
-      .then(res => {
-        if (Array.isArray(res.data)) setGroupMembers(res.data);
-      })
-      .catch(err => console.error(err));
-
     }, 3000);
 
-    // 3. CRITICAL CLEANUP: Clear interval when switching groups or leaving page
     return () => clearInterval(pollInterval);
-
   }, [selectedGroup]);
 
+  // Fetch group ledger when debt tracking modal opens
+  useEffect(() => {
+    if (showDebtTrackingModal && selectedGroup) {
+      fetchLedger();
+    }
+  }, [showDebtTrackingModal, selectedGroup]);
 
-    //API interactions
+  //API interactions
   const fetchGroupList= async ()=> {
     try {
       const response= await axios.get(`${API_BASE_URL}/user/${currentUser.user_id}`);
@@ -117,7 +120,31 @@ function CommunityGroups() {
         setMessages(response.data);
       }
     } catch (err) {
-      console.error("Error downloading messages stream: ". err);
+      console.error("Error downloading messages stream:", err);
+    }
+  };
+
+  const fetchLedger = async () => {
+    try {
+      const response = await axios.get(`${API_BILLS_URL}/ledger/${selectedGroup.group_id}`);
+      if (Array.isArray(response.data)) {
+        setLedger(response.data);
+      }
+    } catch (err) {
+      console.error("Error fetching group ledger:", err);
+    }
+  };
+
+  const handleSettleShare = async (shareId) => {
+    try {
+      const response = await axios.post(`${API_BILLS_URL}/settle-share`, { shareId });
+      if (response.status === 200) {
+        alert("Payment settled successfully!");
+        fetchLedger(); 
+      }
+    } catch (err) {
+      console.error("Failed to settle share context target:", err);
+      alert("Failed to clear ledger record.");
     }
   };
 
@@ -138,8 +165,6 @@ function CommunityGroups() {
     }
   };
 
-  
-
   const handlejoinGroup = async (e)=> {
     e.preventDefault(); 
     if (!joinGroupId.trim()) return; 
@@ -153,10 +178,9 @@ function CommunityGroups() {
         alert(`Successfully joined: ${response.data.group.group_name}`); 
         fetchGroupList(); 
       }
-
     } catch (err) {
       alert(err.response?.data?.error || "Failed to locate or join group.");
-          console.error(err);
+      console.error(err);
     }
   }
 
@@ -178,7 +202,6 @@ function CommunityGroups() {
         setMessages([]); 
         fetchGroupList();
       }
-
     } catch (err) {
       console.error("Failed to delete group", err);
       alert(err.response?.data?.error || "Failed to delete group.");
@@ -187,7 +210,7 @@ function CommunityGroups() {
 
   const handleLeaveGroup= async ()=> {
     if (!selectedGroup) return; 
-    if (groupMembers.length ==1) {
+    if (groupMembers.length == 1) {
       alert("You are the last member of this group. Leaving will permanently delete the group.");
       handleDeleteGroup(); 
       return; 
@@ -207,14 +230,11 @@ function CommunityGroups() {
         setSelectedGroup(null); 
         setMessages([]);
         fetchGroupList();
-
       }
-      
     } catch (err) {
       console.error("Failed to leave group", err); 
       alert(err.response?.data?.error || "Failed to leave group."); 
     }
-
   }
 
   const handleSendMessage= async (e) => {
@@ -229,29 +249,25 @@ function CommunityGroups() {
       if (response.status=== 201) {
         setNewMessage(""); 
         fetchGroupMessages(selectedGroup.group_id); 
-        // setMessages(prevMessages => [...prevMessages, response.data]);
       }
     } catch (err) {
       console.error("Message send failure:", err);
     }
   }; 
 
-  const fetchGroupMembers= async (groupId)=> {
-    // e.preventDefault(); 
+  const fetchGroupMembersList= async (groupId)=> {
     try {
       const response= await axios.get(`${API_BASE_URL}/${groupId}/members`); 
       if (Array.isArray(response.data)) {
         setGroupMembers(response.data);
         setShowMembersModal(true);
       }
-
     } catch (err) {
-      console.error("Failed to show group memebers list", err);
+      console.error("Failed to show group members list", err);
     }
   }
 
   if (!currentUser) return null; 
-
 
   return (
     <div className="homepage-container">
@@ -260,39 +276,27 @@ function CommunityGroups() {
 
         <div className="right-buttons-4">
           <div className="button-wrapper">
-            <button
-              className="homepageButton"
-              onClick={() => navigate("/home")}
-            >
+            <button className="homepageButton" onClick={() => navigate("/home")}>
               <img src={home} className="expense-img" />
             </button>
             <span className="hover-tooltip">Home Page</span>
           </div>
           <div className="button-wrapper">
-            <button
-              className="expenditureTracker"
-              onClick={() => navigate("/tracker")}
-            >
+            <button className="expenditureTracker" onClick={() => navigate("/tracker")}>
               <img src={expenseTracker} className="expense-img" />
             </button>
             <span className="hover-tooltip">Expenditure Tracker</span>
           </div>
 
           <div className="button-wrapper">
-            <button
-              className="communityGroupButton"
-              onClick={() => navigate("/groups")}
-            >
+            <button className="communityGroupButton" onClick={() => navigate("/groups")}>
               <img src={communityGroup} className="group-img" />
             </button>
             <span className="hover-tooltip">Community Groups</span>
           </div>
 
           <div className="button-wrapper">
-            <button
-              className="userProfileButton"
-              onClick={() => navigate("/profile")}
-            >
+            <button className="userProfileButton" onClick={() => navigate("/profile")}>
               <img src={userProfile} className="userProfile-img" />
             </button>
             <span className="hover-tooltip">User Profile</span>
@@ -301,53 +305,48 @@ function CommunityGroups() {
       </div>
 
       <div className="chat-app-layout">
-        {/* Left Side: Create/join group, list of groups joined by users */}
-        <div className= "chat-sidebar"> 
-          <div className= "management-forms"> 
-            <form onSubmit = {handleCreateGroup} className= "side-form"> 
+        {/* Left Sidebar */}
+        <div className="chat-sidebar"> 
+          <div className="management-forms"> 
+            <form onSubmit={handleCreateGroup} className="side-form"> 
               <input 
-                type ="text"
+                type="text"
                 placeholder='New Group Name'
-                value = {newGroupName}
-                onChange= {(e)=> setNewGroupName(e.target.value)}
+                value={newGroupName}
+                onChange={(e)=> setNewGroupName(e.target.value)}
               />
-              <button type= "submit" className= "action-btn"> Create</button>
+              <button type="submit" className="action-btn"> Create</button>
             </form>
-            <form onSubmit = {handlejoinGroup} className= "side-form">
+            <form onSubmit={handlejoinGroup} className="side-form">
               <input 
-                type= "number"
-                placeholder= "Enter Group ID"
-                value= {joinGroupId}
-                onChange = {(e)=> setJoinGroupId(e.target.value)}
-              
+                type="number"
+                placeholder="Enter Group ID"
+                value={joinGroupId}
+                onChange={(e)=> setJoinGroupId(e.target.value)}
               /> 
               <button type="submit" className="action-btn structural">Join</button>
             </form>
-
           </div>
         
-          <div className= "group-roster-list"> 
-            <div className='groups-scroll'>
-              
-            </div>
+          <div className="group-roster-list"> 
             <h3> My Chat Rooms</h3>
             {groups.map((group)=> (
               <div 
-                key = {group.group_id}
-                className= {`roster-item ${selectedGroup?.group_id === group.group_id ? 'active-room' : ''}`}
-                onClick= {()=> setSelectedGroup(group)}
+                key={group.group_id}
+                className={`roster-item ${selectedGroup?.group_id === group.group_id ? 'active-room' : ''}`}
+                onClick={()=> setSelectedGroup(group)}
               > 
                 <div className="avatar-placeholder">👥</div>
                 <div className="roster-details">
                   <h4 style={{fontSize: '17px'}}>{group.group_name}</h4>
                   <p style={{fontSize:'15px'}}>ID: {group.group_id}</p>
                 </div>
-                
               </div> 
             ))}
           </div>
         </div>
-        {/* Right Side: Conversation Content Space */}
+
+        {/* Right Conversation Window */}
         <div className="chat-window-pane">
           {selectedGroup ? (
             <div className="active-chat-container">
@@ -355,74 +354,31 @@ function CommunityGroups() {
                 <h3>{selectedGroup.group_name} <span className="id-badge">(ID: {selectedGroup.group_id})</span></h3>
                 <div className='settings-container'>
                   <Calculator className='calculator-btn' onClick={() => setShowCalculatorModal(!showCalculatorModal)} size={35}/>
-                  <Cog className='settings-btn' onClick={() => setShowSettingsMenu(!showSettingsMenu)}size={35}/>
+                  <Cog className='settings-btn' onClick={() => setShowSettingsMenu(!showSettingsMenu)} size={35}/>
                   
                   {showSettingsMenu && (
                     <div className='settings-popup'>
-                      <button onClick= {()=> handleDeleteGroup()} className= "delete-group-btn"> Delete Group</button>
-                      <button onClick= {()=> fetchGroupMembers(selectedGroup.group_id)} className= "view-members-btn"> View group members</button>
-                      <button onClick= {()=> handleLeaveGroup()} className = "leave-group-btn"> Leave Group</button>
+                      <button onClick={() => handleDeleteGroup()} className="delete-group-btn"> Delete Group</button>
+                      <button onClick={() => fetchGroupMembersList(selectedGroup.group_id)} className="view-members-btn"> View group members</button>
+                      <button onClick={() => handleLeaveGroup()} className="leave-group-btn"> Leave Group</button>
                       <button onClick={() => setShowDebtTrackingModal(true)} className='debt-tracking-btn'>Debt Tracking</button>
                       <X onClick={() => setShowSettingsMenu(false)} className='close-settings-btn'/>
                     </div>
                   )}
 
-                
-                  {showCalculatorModal && (
-                    <div className='calculator-popup'>
-                      <div className='modal-backdrop' onClick={() => setShowCalculatorModal(false)}>
-                        <div className='modal-content' onClick={(e) => e.stopPropagation()}>
-                          <div className='modal-header'>
-                            <h3>Calculator</h3>
-                            <button className='close-modal-btn' onClick={() => setShowCalculatorModal(false)}>
-                              <X size={20}/>
-                            </button>
-                          </div>
-                          <div className='modal-body-dt'>
-                            <form className='calculator-form'>
-                              <label>Total Paid</label>
-                              <input type="number" min='0' step='0.01' placeholder='Total Paid'/>
-                              <br/>
-                              <label>Bill Spitting Type</label>
-                              <select>
-                                <option>Equal Split</option>
-                                <option>Percentage Split</option>
-                                <option>Custom Split</option>
-                              </select>
-                              <br/>
-                              <label>Currency:</label>
-                              <br/>
-                              <select>
-                                <option>SGD</option>
-                                <option>MYR</option>
-                                <option>RMB</option>
-                                <option>THB</option>
-                                <option>IDR</option>
-                                <option>USD</option>
-                                <option>EUR</option>
-                                <option>GBP</option>
-                              </select>
-                              <br/>
-                              <p>GST (%):</p>
-                              <input type='number' min='0' max='100' step='0.1' placeholder='GST amount'/>
-                              <p>Additional Tax (%):</p>
-                              <input type='number' min='0' max='100' step='0.01' placeholder='Tax amount'/>
-                              <p>You need to pay: <strong> $0.00</strong></p>
-                              <p>Others need to pay you: <strong> $0.00</strong></p>
-                              <button>Send payment calculation to group </button>
-
-                            </form>                                             
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                  <SmartSplitCalculator
+                    show={showCalculatorModal}
+                    onClose={() => {
+                      setShowCalculatorModal(false);
+                      if (showDebtTrackingModal) fetchLedger(); 
+                    }}
+                    selectedGroup={selectedGroup}
+                    currentUser={currentUser}
+                    groupMembers={groupMembers}
+                  />
                 </div>
-                
-
-
-                
               </div>
+
               <div className="messages-stream">
                 {messages.map((msg) => {
                   if (msg.sender_id === null) {
@@ -431,7 +387,6 @@ function CommunityGroups() {
                         <span> {msg.message_text}</span>
                       </div> 
                     )
-
                   }               
                   return (
                     <div 
@@ -444,6 +399,7 @@ function CommunityGroups() {
                   )
                 })}
               </div>
+
               <form onSubmit={handleSendMessage} className="chat-input-bar">
                   <input 
                       type="text" 
@@ -452,8 +408,6 @@ function CommunityGroups() {
                       onChange={(e) => setNewMessage(e.target.value)} 
                   />
                   <button type="submit" className="send-btn">Send</button>
-                  
-                  
               </form>
             </div>
           ) : (
@@ -462,6 +416,8 @@ function CommunityGroups() {
                 <h3>Select a group chat room from the sidebar menu to start messaging!</h3>
             </div>
           )}
+
+          {/* Members Modal */}
           {showMembersModal && (
             <div className="modal-backdrop" onClick={() => setShowMembersModal(false)}>
               <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -469,9 +425,9 @@ function CommunityGroups() {
                   <h3>Members of {selectedGroup?.group_name}</h3>
                   <button className="close-modal-btn" onClick={() => setShowMembersModal(false)}>×</button>
                 </div>
-                  <div className="modal-body">
-                    <p className="member-count">{groupMembers.length} members</p>
-                    <div className="members-list">
+                <div className="modal-body">
+                  <p className="member-count">{groupMembers.length} members</p>
+                  <div className="members-list">
                     {groupMembers.map((member) => (
                       <div key={member.user_id} className="member-item">
                         <div className="member-avatar">👤</div>
@@ -486,11 +442,9 @@ function CommunityGroups() {
                 </div>
               </div>
             </div>
-
           )}
 
-        
-
+          {/* Debt Tracking Modal */}
           {showDebtTrackingModal && (
             <div className='modal-backdrop' onClick={() => setShowDebtTrackingModal(false)}>
               <div className='modal-content' onClick={(e) => e.stopPropagation()}>
@@ -502,10 +456,41 @@ function CommunityGroups() {
                 </div>
                 <div className='modal-body-dt'>
                     <p>Track debts and balances between group members</p>
-                    <div className='debt-section'>
-                      <p>No debt records yet</p>
-                    </div>
                     
+                    <div className='debt-section'>
+                      {ledger.length === 0 ? (
+                        <p>No debt records yet. Balance is clear!</p>
+                      ) : (
+                        ledger.map((item) => {
+                          const isUnpaid = item.payment_status === 'unpaid';
+                          return (
+                            <div key={item.share_id} className="ledger-item-row">
+                              <hr/>
+                              <div>
+                                <h4>{item.description}</h4>
+                                <p>
+                                  <strong>{item.debtor_name}</strong> owes <strong>{item.creditor_name}</strong>
+                                </p>
+                                <span>
+                                  {item.currency} {parseFloat(item.amount_owed).toFixed(2)}
+                                </span>
+                              </div>
+                              <div>
+                                <span>
+                                  {isUnpaid ? 'Unpaid' : 'Paid'}
+                                </span>
+                                {isUnpaid && (
+                                  <button onClick={() => handleSettleShare(item.share_id)}>
+                                    Settle
+                                  </button>
+                                )}
+                              </div>
+                              <hr/>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
                 </div>
               </div>
             </div>
@@ -519,9 +504,6 @@ function CommunityGroups() {
         </button>
       </div>
     </div>
-
-
-
   );
 }
 

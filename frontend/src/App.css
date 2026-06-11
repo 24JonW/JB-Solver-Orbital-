@@ -555,6 +555,15 @@ button:hover {
   margin-right: 1em; 
 }
 
+.debt-section {
+  max-height: 500px; 
+  overflow-y: auto; 
+  padding: 2px;
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center;
+}
+
 .close-settings-btn {
   border-radius:50%;
 }
@@ -611,7 +620,7 @@ button:hover {
   color: #517ee7;
   margin-bottom: 2px;
 }
-.bubble-text { margin: 0; color: #111b21; }
+.bubble-text { margin: 0; color: #111b21; white-space: pre-line }
 
 /* Interactive Input Footer Layout */
 .chat-input-bar {
@@ -711,7 +720,6 @@ button:hover {
   max-height: 75%; 
   width: 50%;
   overflow-y: auto;
-
 }
 .member-count {
   font-size: 13px;
