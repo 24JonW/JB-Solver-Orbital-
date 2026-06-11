@@ -267,6 +267,33 @@ function CommunityGroups() {
     }
   }
 
+  const handleClearHistory = async () => {
+    if (!selectedGroup) return; 
+    const confirmed = window.confirm('Delete all paid debt records?'); 
+    if (!confirmed) return; 
+    try {
+      await axios.post(`${API_BILLS_URL}/clear-history`, {
+        groupId: selectedGroup.group_id
+      });
+      fetchLedger(); 
+      alert('Paid history cleared successfully'); 
+    } catch (err) {
+      console.error(err); 
+      alert('Failed to clear history');
+    }
+    
+  }
+
+  const handleFilterForYou = async () => {
+    
+    const filtered = ledger.filter(i => i.debtor_user_id === currentUser.user_id || i.creditor_user_id === currentUser.user_id);
+    setLedger(filtered); 
+  }
+
+  const handleCancelFilter = async () => {
+    fetchLedger();
+  }
+
   if (!currentUser) return null; 
 
   return (
@@ -456,6 +483,17 @@ function CommunityGroups() {
                 </div>
                 <div className='modal-body-dt'>
                     <p>Track debts and balances between group members</p>
+                    <button onClick={handleFilterForYou}>
+                      Filter for 'You'
+                    </button>
+                    <button onClick={handleCancelFilter}>
+                      Remove Filter
+                    </button>
+                    
+                    <button onClick={handleClearHistory}>
+                      clear history
+                    </button>
+                    
                     
                     <div className='debt-section'>
                       {ledger.length === 0 ? (
@@ -469,7 +507,7 @@ function CommunityGroups() {
                               <div>
                                 <h4>{item.description}</h4>
                                 <p>
-                                  <strong>{item.debtor_name}</strong> owes <strong>{item.creditor_name}</strong>
+                                  <strong>{item.debtor_name === currentUser.username ? 'You' : item.debtor_name}</strong> {item.debtor_name === currentUser.username ? 'owe' : 'owes'} <strong>{item.creditor_name === currentUser.username ? 'You' : item.creditor_name}</strong>
                                 </p>
                                 <span>
                                   {item.currency} {parseFloat(item.amount_owed).toFixed(2)}
@@ -486,10 +524,13 @@ function CommunityGroups() {
                                 )}
                               </div>
                               <hr/>
+                              
                             </div>
                           );
                         })
+                      
                       )}
+                      
                     </div>
                 </div>
               </div>

@@ -72,6 +72,12 @@ const createSmartBill = async (req, res) => {
             sharedCost: splitMethod === 'custom' ? adjustedSharedCost : (splitMethod === 'equal' ? grandTotalAmount : 0),
             totalGroupMembers
         });
+        /* paymentTransactions = 
+        {
+            debtorId: debtor.userId,
+            creditorId: creditor.userId,
+            amount: parseFloat(settlementAmount.toFixed(2))
+        } */ 
 
         // 6. Bulk insert transaction maps into Bill_Shares table
         for (let tx of paymentTransactions) {
@@ -130,7 +136,24 @@ const clearSharePayment = async (req, res) => {
     }
 };
 
-module.exports = { createSmartBill, getGroupLedger, clearSharePayment };
+
+const clearPaidHistory = async (req, res) => {
+    const { groupId } = req.body; 
+    try {
+        await db.query(
+                `DELETE FROM Bill_Shares WHERE payment_status = 'paid' AND bill_id IN (SELECT bill_id FROM Bills WHERE group_id = $1)`, [groupId]); 
+        res.json({
+            message: 'Paid history cleared successfully'
+        }); 
+    } catch (err) {
+        console.error(err); 
+        res.status(500).json({
+            error: 'Failed to clear paid history'
+        }); 
+    }
+}
+
+module.exports = { createSmartBill, getGroupLedger, clearSharePayment, clearPaidHistory };
 
 /*
 const db = require('../config/db');

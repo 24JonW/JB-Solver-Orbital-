@@ -342,6 +342,12 @@ function SmartSplitCalculator({
             </div>
 
             
+            <p><strong>Final Bill:</strong> {billData.currency} {finalAmount.toFixed(2)}</p>
+
+            <button type="button" onClick={submitBill} disabled={loading}>
+              {loading ? 'Calculating...' : 'Calculate Smart Split'}
+            </button>
+            <button type='button' onClick={sendBillSummaryToGroup}>Send bill summary to group</button>
           </form>
         </div>
 
