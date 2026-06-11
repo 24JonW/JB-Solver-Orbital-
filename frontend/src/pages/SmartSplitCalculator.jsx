@@ -162,7 +162,7 @@ function SmartSplitCalculator({
 
         <div className="modal-body">
           <form className="calculator-form" onSubmit={(e) => e.preventDefault()}>
-            <div className= "descriptionText"> 
+            <div className= "descriptionDivision"> 
               <label className= "descriptionLabel">Description: </label>
               <input
                   type="text"
@@ -263,7 +263,7 @@ function SmartSplitCalculator({
                 ))
               )}
             </div>
-            <hr/>
+            
 
             <div className= "proportionalDivision"> 
               {billData.splitMethod === 'equal' && (
@@ -326,7 +326,7 @@ function SmartSplitCalculator({
               )}
             </div> 
 
-            <hr />
+        
 
             <div className= "billSummaryDivision"> 
               <strong style={{ fontSize: "large", padding: '10px' }}>Bill Summary</strong>
@@ -341,13 +341,6 @@ function SmartSplitCalculator({
 
             </div>
 
-            
-            {/* <p><strong>Final Bill:</strong> {billData.currency} {finalAmount.toFixed(2)}</p>
-
-            <button type="button" onClick={submitBill} disabled={loading}>
-              {loading ? 'Calculating...' : 'Calculate Smart Split'}
-            </button>
-            <button type='button' onClick={sendBillSummaryToGroup}>Send bill summary to group</button> */}
           </form>
         </div>
 
