@@ -170,8 +170,11 @@
 
 .homepageButton, .communityGroupButton, .expenditureTracker, .userProfileButton {
   border-radius: 20px;
+  
   background: linear-gradient(135deg, #3dc1a8, #76cadf);
   background: linear-gradient(135deg, #4cd0b8, #6cc4cb);
+  
+  
   
   
   border: 0.1px solid rgb(100, 100, 100);

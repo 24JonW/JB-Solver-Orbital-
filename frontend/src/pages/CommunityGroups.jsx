@@ -386,7 +386,7 @@ function CommunityGroups() {
                 <h3>{selectedGroup.group_name} <span className="id-badge">(ID: {selectedGroup.group_id})</span></h3>
                 <div className='settings-container'>
                   <Calculator className='calculator-btn' onClick={() => setShowCalculatorModal(!showCalculatorModal)} size={35}/>
-                  <Cog className='settings-btn' onClick={() => setShowSettingsMenu(!showSettingsMenu)} size={35}/>
+                  <Cog className='settings-btn' onClick={() => setShowSettingsMenu(!showSettingsMenu)} size={35} />
                   
                   {showSettingsMenu && (
                     <div className='settings-popup'>
