@@ -282,7 +282,8 @@ button:hover {
   margin-top: 20px; 
   width: 50%;
   padding: 12px; 
-  background: linear-gradient(135deg, #517ee7, #76ABDF);
+  /* background: linear-gradient(135deg, #517ee7, #76ABDF); */
+  background: linear-gradient(135deg, #28549a 0%, #21498a 100%);
   color: white;
   font-weight: 600; 
   cursor: pointer; 
@@ -652,6 +653,7 @@ button:hover {
   gap: 8px;
   background: #efeae2; /* whatsapp */ 
   background:#0F1115; 
+  
   background: #15171b; 
   z-index: 100; 
   border-radius: 10px; 

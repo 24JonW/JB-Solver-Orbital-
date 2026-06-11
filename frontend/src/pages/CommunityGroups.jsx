@@ -8,6 +8,7 @@ import communityGroup from '../assets/communityGroup.png';
 import expenseTracker from '../assets/expenditureTracker96.png'; 
 import userProfile from '../assets/user96.png';
 import home from '../assets/home.png';
+import starWars from '../assets/starWars.png';
 import messageBubble from '../assets/chatMessage.png';
 import groupChatIcon from '../assets/groupChatIcon.png';
 import '../App.css'; 
@@ -410,7 +411,7 @@ function CommunityGroups() {
                 </div>
               </div>
 
-              <div className="messages-stream">
+              <div className="messages-stream" style={{ backgroundImage: `url(${starWars})` }}>
                 {messages.map((msg) => {
                   if (msg.sender_id === null) {
                     return (
