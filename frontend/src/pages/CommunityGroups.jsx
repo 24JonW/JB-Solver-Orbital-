@@ -482,18 +482,21 @@ function CommunityGroups() {
                   </button>
                 </div>
                 <div className='modal-body-dt'>
-                    <p>Track debts and balances between group members</p>
-                    <button onClick={handleFilterForYou}>
-                      Filter for 'You'
-                    </button>
-                    <button onClick={handleCancelFilter}>
-                      Remove Filter
-                    </button>
-                    
-                    <button onClick={handleClearHistory}>
-                      clear history
-                    </button>
-                    
+                    <div className= 'debtTrackerDescription'>
+                      <p >Track debts and balances between group members</p>
+                    </div>        
+                    <div className= "multiplefilterButtons"> 
+                      <button className= "filterButton" onClick={handleFilterForYou}>
+                        Filter for 'You'
+                      </button>
+                      <button className= "cancelfilterButton" onClick={handleCancelFilter}>
+                        Remove Filter
+                      </button>
+                      
+                      <button className= "clearHistoryButton" onClick={handleClearHistory}>
+                        Clear history
+                      </button>
+                    </div>
                     
                     <div className='debt-section'>
                       {ledger.length === 0 ? (
@@ -503,7 +506,7 @@ function CommunityGroups() {
                           const isUnpaid = item.payment_status === 'unpaid';
                           return (
                             <div key={item.share_id} className="ledger-item-row">
-                              <hr/>
+                              {/* <hr/> */}
                               <div>
                                 <h4>{item.description}</h4>
                                 <p>
@@ -515,10 +518,10 @@ function CommunityGroups() {
                               </div>
                               <div>
                                 <span>
-                                  {isUnpaid ? 'Unpaid' : 'Paid'}
+                                  {isUnpaid ? 'Unpaid: ' : 'Paid: '}
                                 </span>
                                 {isUnpaid && (
-                                  <button onClick={() => handleSettleShare(item.share_id)}>
+                                  <button className= "settleButton" onClick={() => handleSettleShare(item.share_id)}>
                                     Settle
                                   </button>
                                 )}
