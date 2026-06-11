@@ -8,6 +8,8 @@ import communityGroup from '../assets/communityGroup.png';
 import expenseTracker from '../assets/expenditureTracker96.png'; 
 import userProfile from '../assets/user96.png';
 import home from '../assets/home.png';
+import messageBubble from '../assets/chatMessage.png';
+import groupChatIcon from '../assets/groupChatIcon.png';
 import '../App.css'; 
 import SmartSplitCalculator from './SmartSplitCalculator';
 //images
@@ -363,7 +365,9 @@ function CommunityGroups() {
                 className={`roster-item ${selectedGroup?.group_id === group.group_id ? 'active-room' : ''}`}
                 onClick={()=> setSelectedGroup(group)}
               > 
-                <div className="avatar-placeholder">👥</div>
+                <div className="avatar-placeholder">
+                  <img src={groupChatIcon} className="groupChatIcon" />
+                </div>
                 <div className="roster-details">
                   <h4 style={{fontSize: '17px'}}>{group.group_name}</h4>
                   <p style={{fontSize:'15px'}}>ID: {group.group_id}</p>
@@ -439,8 +443,12 @@ function CommunityGroups() {
             </div>
           ) : (
             <div className="empty-chat-state">
-                <div className="prompt-illustration">💬</div>
-                <h3>Select a group chat room from the sidebar menu to start messaging!</h3>
+                <div className="prompt-illustration">
+                <img src={messageBubble} className="messageBubble-img"/>
+                </div>
+                <h3>
+                  Select a group chat room from the sidebar menu to start messaging!
+                </h3>
             </div>
           )}
 
