@@ -4,6 +4,7 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode'; 
 
 import JBSolverLogo from '../assets/JBSolverLogo.png';
+
 import starWars from '../assets/starWars.png';
 import messageBubble from '../assets/chatMessage.png';
 import groupChatIcon from '../assets/groupChatIcon.png';
@@ -308,27 +309,27 @@ function CommunityGroups() {
         <div className="right-buttons-4">
           <div className="button-wrapper">
             <button className="homepageButton" onClick={() => navigate("/home")}>
-              <GiHouse size={55} color={'#edb601'}/>
+              <GiHouse size={45} color={'#edb601'}/>
             </button>
             <span className="hover-tooltip">Home Page</span>
           </div>
           <div className="button-wrapper">
             <button className="expenditureTracker" onClick={() => navigate("/tracker")}>
-              <ImStatsDots size={55} color={'#edb601'}/>
+              <ImStatsDots size={45} color={'#edb601'}/>
             </button>
             <span className="hover-tooltip">Expenditure Tracker</span>
           </div>
 
           <div className="button-wrapper">
             <button className="communityGroupButton" onClick={() => navigate("/groups")}>
-              <FaUsersGear size={55} color={'#edb601'}/>
+              <FaUsersGear size={45} color={'#edb601'}/>
             </button>
             <span className="hover-tooltip">Community Groups</span>
           </div>
 
           <div className="button-wrapper">
             <button className="userProfileButton" onClick={() => navigate("/profile")}>
-              <FaUserCircle size={55} color={'#edb601'}/>
+              <FaUserCircle size={45} color={'#edb601'}/>
             </button>
             <span className="hover-tooltip">User Profile</span>
           </div>
@@ -492,9 +493,11 @@ function CommunityGroups() {
                   </button>
                 </div>
                 <div className='modal-body-dt'>
+                    
                     <div className= 'debtTrackerDescription'>
                       <p >Track debts and balances between group members</p>
-                    </div>        
+                    </div>  
+
                     <div className= "multiplefilterButtons"> 
                       <button className= "filterButton" onClick={handleFilterForYou}>
                         Filter for 'You'
@@ -512,11 +515,14 @@ function CommunityGroups() {
                       {ledger.length === 0 ? (
                         <p>No debt records yet. Balance is clear!</p>
                       ) : (
+                        
                         ledger.map((item) => {
                           const isUnpaid = item.payment_status === 'unpaid';
                           return (
+                            
                             <div key={item.share_id} className="ledger-item-row">
                               {/* <hr/> */}
+                            
                               <div>
                                 <h4>{item.description}</h4>
                                 <p>
@@ -528,7 +534,7 @@ function CommunityGroups() {
                               </div>
                               <div>
                                 <span>
-                                  {isUnpaid ? 'Unpaid: ' : 'Paid: '}
+                                  {isUnpaid ? <span className='unpaid'> Unpaid: </span> : <span className='paid'> Paid </span>}
                                 </span>
                                 {isUnpaid && (
                                   <button className= "settleButton" onClick={() => handleSettleShare(item.share_id)}>

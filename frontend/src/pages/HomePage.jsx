@@ -51,7 +51,7 @@ function HomePage() {
               className="homepageButton"
               onClick={() => navigate("/home")}
             >
-              <GiHouse size={55} color={'#edb601'}/>
+              <GiHouse size={45} color={'#edb601'}/>
             </button>
             <span className="hover-tooltip">Home Page</span>
           </div>
@@ -60,7 +60,7 @@ function HomePage() {
               className="expenditureTracker"
               onClick={() => navigate("/tracker")}
             >
-              <ImStatsDots size={55} color={'#edb601'}/>
+              <ImStatsDots size={45} color={'#edb601'}/>
             </button>
             <span className="hover-tooltip">Expenditure Tracker</span>
           </div>
@@ -70,7 +70,7 @@ function HomePage() {
               className="communityGroupButton"
               onClick={() => navigate("/groups")}
             >
-              <FaUsersGear size={55} color={'#edb601'}/>
+              <FaUsersGear size={45} color={'#edb601'}/>
             </button>
             <span className="hover-tooltip">Community Groups</span>
           </div>
@@ -80,7 +80,7 @@ function HomePage() {
               className="userProfileButton"
               onClick={() => navigate("/profile")}
             >
-              <FaUserCircle size={55} color={'#edb601'}/>
+              <FaUserCircle size={45} color={'#edb601'}/>
             </button>
             <span className="hover-tooltip">User Profile</span>
           </div>
