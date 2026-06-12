@@ -502,7 +502,7 @@ function CommunityGroups() {
                 <div className='modal-body-dt'>
                     
                     <div className= 'debtTrackerDescription'>
-                      <p >Track debts and balances between group members</p>
+                      
                     </div>  
 
                     <div className= "multiplefilterButtons"> 

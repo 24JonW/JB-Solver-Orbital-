@@ -142,6 +142,7 @@
     padding: 10px;
     margin: 5px;
     background-color:seashell;
+    background: rgb(208, 208, 248);
     border: 1px solid  rgb(201, 201, 201); 
     font-size: medium;
     border-radius: 5px;
@@ -152,6 +153,7 @@
     margin: 5px;
     font-size: medium;
     background-color: peachpuff;
+    background: rgb(220, 251, 220); 
     /* rgb(244, 191, 191)*/
     border: 1px solid  rgb(201, 201, 201); 
     border-radius: 5px;
