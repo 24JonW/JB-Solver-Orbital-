@@ -11,6 +11,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { FaUsersGear } from "react-icons/fa6";
 import { ImStatsDots } from "react-icons/im";
 import { FaMoneyBillTransfer } from "react-icons/fa6";
+import { GiPartyPopper } from "react-icons/gi";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -145,7 +146,7 @@ function HomePage() {
           <div className="home-debt-scroll-container" style={{ flex: 1, overflowY: 'auto', marginTop: '10px', textAlign: 'left' }}>
             {outstandingLedger.length === 0 ? (
               <p style={{ textAlign: 'center', color: '#667781', marginTop: '20px' }}>
-                🎉 No pending payments. Your balance is completely clear!
+                <GiPartyPopper size={45} color={'#edb601'}/> No pending payments. Your balance is completely clear!
               </p>
             ) : (
               outstandingLedger.map((item) => (

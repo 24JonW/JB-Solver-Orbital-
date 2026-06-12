@@ -669,6 +669,12 @@ button:hover {
   margin-top: 10px; 
 }
 
+.homePageSettleButton {
+  border:None; 
+  background-color: white;
+  border-radius: None; 
+}
+
 .multiplefilterButtons {
   
   display: flex; 
