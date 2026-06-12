@@ -11,14 +11,21 @@ import groupChatIcon from '../assets/groupChatIcon.png';
 import '../App.css'; 
 import SmartSplitCalculator from './SmartSplitCalculator';
 //images
-import { Cog } from 'lucide-react'; 
 import { X } from 'lucide-react'; 
-import { Calculator } from 'lucide-react'; 
 
 import { GiHouse } from "react-icons/gi";
 import { FaUserCircle } from "react-icons/fa";
 import { FaUsersGear } from "react-icons/fa6";
 import { ImStatsDots } from "react-icons/im";
+import { FcCalculator } from "react-icons/fc";
+import { FcSettings } from "react-icons/fc";
+import { FcClearFilters } from "react-icons/fc";
+import { FcFilledFilter } from "react-icons/fc";
+import { FaEraser } from "react-icons/fa";
+import { FcCancel } from "react-icons/fc";
+import { FcCheckmark } from "react-icons/fc";
+import { FcMoneyTransfer } from "react-icons/fc";
+
 
 function CommunityGroups() {
   const navigate = useNavigate();
@@ -387,8 +394,8 @@ function CommunityGroups() {
               <div className="chat-header-title">
                 <h3>{selectedGroup.group_name} <span className="id-badge">(ID: {selectedGroup.group_id})</span></h3>
                 <div className='settings-container'>
-                  <Calculator className='calculator-btn' onClick={() => setShowCalculatorModal(!showCalculatorModal)} size={35}/>
-                  <Cog className='settings-btn' onClick={() => setShowSettingsMenu(!showSettingsMenu)} size={35} />
+                  <FcCalculator className='calculator-btn' onClick={() => setShowCalculatorModal(!showCalculatorModal)} size={35}/>
+                  <FcSettings className='settings-btn' onClick={() => setShowSettingsMenu(!showSettingsMenu)} size={35} />
                   
                   {showSettingsMenu && (
                     <div className='settings-popup'>
@@ -499,16 +506,28 @@ function CommunityGroups() {
                     </div>  
 
                     <div className= "multiplefilterButtons"> 
-                      <button className= "filterButton" onClick={handleFilterForYou}>
-                        Filter for 'You'
-                      </button>
-                      <button className= "cancelfilterButton" onClick={handleCancelFilter}>
-                        Remove Filter
-                      </button>
+                      <div className='button-wrapper'>
+                        <button className= "filterButton" onClick={handleFilterForYou}>
+                          <FcFilledFilter size={30}/>
+                        </button>
+                        <span className="hover-tooltip">Filter for 'You'</span>
+                      </div>
                       
-                      <button className= "clearHistoryButton" onClick={handleClearHistory}>
-                        Clear history
-                      </button>
+                      <div className='button-wrapper'>
+                        <button className= "cancelfilterButton" onClick={handleCancelFilter}>
+                          <FcClearFilters size={30}/>
+                        </button>
+                        <span className='hover-tooltip'>Cancel Filter</span>
+                      </div>
+                      
+                      <div className='button-wrapper'>
+                        <button className= "clearHistoryButton" onClick={handleClearHistory}>
+                          <FaEraser size={30}/>
+                        </button>
+                        <span className='hover-tooltip'>Clear History</span>
+                      </div>
+                      
+                      
                     </div>
                     
                     <div className='debt-section'>
@@ -532,14 +551,19 @@ function CommunityGroups() {
                                   {item.currency} {parseFloat(item.amount_owed).toFixed(2)}
                                 </span>
                               </div>
-                              <div>
+                              <div className='paid-status'>
                                 <span>
-                                  {isUnpaid ? <span className='unpaid'> Unpaid: </span> : <span className='paid'> Paid </span>}
+                                  {isUnpaid ? <div><span className='unpaid'> Unpaid: </span><FcCancel size={20}/></div> 
+                                            : <div><span className='paid'> Paid </span><FcCheckmark size={20}/></div>}
                                 </span>
                                 {isUnpaid && (
-                                  <button className= "settleButton" onClick={() => handleSettleShare(item.share_id)}>
-                                    Settle
-                                  </button>
+                                  <div className='button-wrapper'>
+                                    <button className= "settleButton" onClick={() => handleSettleShare(item.share_id)}>
+                                      <FcMoneyTransfer size={40}/>
+                                      <span className='hover-tooltip'>Settle</span>
+                                    </button>
+                                  </div>
+                                  
                                 )}
                               </div>
                               <hr/>
