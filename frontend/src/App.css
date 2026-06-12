@@ -227,12 +227,7 @@ button:hover {
   transform: translateY(-10px); 
   transition: 0.5s ease; 
   background: linear-gradient(135deg, #edb601,#eec926);
-<<<<<<< HEAD
   background: white;
-=======
-  
-  
->>>>>>> ae94bed7b127ecbc9eaf251591393140cd31df0e
   
 }
 
@@ -269,13 +264,16 @@ button:hover {
 
 .home-body {
   display: grid; 
-  height: 70%;
+  /* height: 70%; */
+  flex: 1;              /* Automatically fills available vertical space without spilling */
+  min-height: 0;
   gap: 0.8em; 
   grid-template-columns: 1fr 1fr; 
   grid-template-rows: 1fr 1fr; 
   grid-template-areas: 'box1 box2'
                        'box3 box2'; 
   margin: 1em; 
+  overflow: hidden;
     
 }
 
@@ -290,6 +288,9 @@ button:hover {
   padding: 24px; 
   box-shadow: 0 8px 25px rgba(0,0,0,0.12);
   border: 1px solid #e5e7eb; 
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   
 }
 
@@ -968,5 +969,40 @@ button:hover {
   text-align: center;
   max-width: 80%;
   word-wrap: break-word;
+
+}
+
+
+/* Outstanding payment rendering */
+
+.home-debt-scroll-container {
+  flex: 1;            /* Spans to occupy the remaining base depth of the card container */
+  overflow-y: auto;
+  /* max-height: 250px; Limits the view height card expansion threshold boundary */
+  padding-right: 5px;
+}
+
+.home-debt-scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.home-debt-scroll-container::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 3px;
+}
+
+.homePageSettleButton {
+  padding: 4px; 
+  margin: 4px; 
+  /* background-color:#E8F1F5;
+  background-color:#E8F1F5; */
+  
+  border-radius: 5px;
+  font-size: medium;
+  border: none;
+  box-shadow: none;
+  background-color: white;
+  /* border: 0.1px solid rgb(192, 192, 192); */
+  /* box-shadow: 0 4px 10px rgba(0,0,0,0.12); */
 
 }
