@@ -435,6 +435,8 @@ button:hover {
   border-radius: 6px;
   cursor: pointer;
   font-size: 15.5px;
+  
+  border: 1px solid #e5e7eb; 
 }
 .action-btn.structural { 
   background: linear-gradient(135deg, #28549a 0%, #21498a 100%);
@@ -640,6 +642,7 @@ button:hover {
   overflow-y: auto;  /* Standard native scroll behavior when listing multiple items */
   padding: 2px 0;   
   display: block;
+  margin-top: -10px; 
    
   
 }
@@ -648,7 +651,8 @@ button:hover {
 
 .debtTrackerDescription {
   /* background-color: rgb(149, 200, 73); */
-  padding: 5px;  
+  padding: 5px; 
+
   /* border-radius: 10px; */
   font-size: 75%;
   /* border: 1px solid black;  */
@@ -656,39 +660,51 @@ button:hover {
 
 }
 
+
+
 .settleButton {
-  padding: 7px; 
-  margin: 5px; 
-  background-color:#E8F1F5;
-  background-color:#E8F1F5;
-  
-  border-radius: 5px;
-  font-size: medium;
-  border: 0.1px solid rgb(192, 192, 192);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+  border: None; 
+  background: None; 
+  border-radius: 5px; 
+  margin-top: 10px; 
 }
 
 .multiplefilterButtons {
   
   display: flex; 
   flex-direction: row;
-  align-items:center;
+  justify-content: center; 
+  margin-top: -5px; 
 }
 
 .filterButton, .cancelfilterButton , .clearHistoryButton {
   /* padding: 5px; */
   margin: 5px;
+  margin-right: 4px;
+  margin-left: 4px; 
   font-size: small;
   border-radius: 5px;
   border: 0.1px solid rgb(192, 192, 192);
   box-shadow: 0 4px 10px rgba(0,0,0,0.12);
   margin-bottom: 15px; 
   padding: 6px; 
+  padding-left: 20px; 
+  padding-right: 20px; 
   font-size: medium;
-  background: seashell;  
+  background: seashell; 
+  background: None;  
+  border: None; 
+  box-shadow: None; 
   
 
+
 }
+
+
+
+
+
+
 
 .ledger-item-row {
   
@@ -819,6 +835,7 @@ button:hover {
   border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
+  border: 1px solid #e5e7eb; 
 }
 
 
@@ -972,37 +989,8 @@ button:hover {
 
 }
 
-
-/* Outstanding payment rendering */
-
-.home-debt-scroll-container {
-  flex: 1;            /* Spans to occupy the remaining base depth of the card container */
-  overflow-y: auto;
-  /* max-height: 250px; Limits the view height card expansion threshold boundary */
-  padding-right: 5px;
+.buttons {
+  display: flex; 
+  justify-content: center; 
 }
 
-.home-debt-scroll-container::-webkit-scrollbar {
-  width: 6px;
-}
-
-.home-debt-scroll-container::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
-  border-radius: 3px;
-}
-
-.homePageSettleButton {
-  padding: 4px; 
-  margin: 4px; 
-  /* background-color:#E8F1F5;
-  background-color:#E8F1F5; */
-  
-  border-radius: 5px;
-  font-size: medium;
-  border: none;
-  box-shadow: none;
-  background-color: white;
-  /* border: 0.1px solid rgb(192, 192, 192); */
-  /* box-shadow: 0 4px 10px rgba(0,0,0,0.12); */
-
-}

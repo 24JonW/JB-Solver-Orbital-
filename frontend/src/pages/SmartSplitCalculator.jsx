@@ -3,6 +3,9 @@ import axios from 'axios';
 import { X } from 'lucide-react';
 import '../SmartBill.css'; 
 // import '../App.css'; 
+import { FcCurrencyExchange } from "react-icons/fc";
+import { MdCalculate } from "react-icons/md";
+import { GrSend } from "react-icons/gr";
 
 function SmartSplitCalculator({
   show,
@@ -164,6 +167,7 @@ function SmartSplitCalculator({
           <form className="calculator-form" onSubmit={(e) => e.preventDefault()}>
             <div className= "descriptionDivision"> 
               <label className= "descriptionLabel">Description: </label>
+              
               <input
                   type="text"
                   name="description"
@@ -195,7 +199,8 @@ function SmartSplitCalculator({
             </div>
 
             <div className= "currencyDivision"> 
-              <label className= "currencyLabel">Currency: </label>
+              <label className= "currencyLabel">Currency <FcCurrencyExchange size={20} />: </label>
+              
               <select name="currency" value={billData.currency} onChange={handleChange} className= "currencyOptions">
                 <option value="SGD">SGD</option>
                 <option value="MYR">MYR</option>
@@ -206,6 +211,7 @@ function SmartSplitCalculator({
                 <option value="THB">THB</option>
                 <option value="IDR">IDR</option>
               </select>
+              
             </div>
 
             <div className= "GSTDivision" >
@@ -333,11 +339,24 @@ function SmartSplitCalculator({
               <p style={{ padding: '10px' }}>Subtotal Paid: {billData.currency} {subtotalPaid.toFixed(2)}</p>
               
               <p style={{ padding: '10px' }}><strong>Final Bill:</strong> {billData.currency} {finalAmount.toFixed(2)}</p>
-
-              <button className= "smartSplitButton" type="button" onClick={submitBill} disabled={loading}>
-                {loading ? 'Calculating...' : 'Create Smart Split'}
-              </button>
-              <button className= "billSummaryButton" type='button' onClick={sendBillSummaryToGroup}>Send bill summary to group</button>
+              <div className='buttons'>
+                <div className='button-wrapper'>
+                <button className= "smartSplitButton" type="button" onClick={submitBill} disabled={loading}>
+                    <MdCalculate size={30}/>
+                </button>
+                <span className='hover-tooltip'> {loading ? 'Calculating...  ' : 'Calculate '}</span>
+              </div>
+              
+              
+              <div className='button-wrapper'>
+                <button className= "billSummaryButton" type='button' onClick={sendBillSummaryToGroup}>
+                    <GrSend size={30}/>
+                </button>
+                <span className='hover-tooltip'> Send bill summary to group</span>
+              </div>
+              </div>
+              
+              
 
             </div>
 
