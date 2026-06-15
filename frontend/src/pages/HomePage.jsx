@@ -54,6 +54,8 @@ function HomePage() {
   }, [navigate]); 
 
   const handleSettleHomeShare = (shareId) => {
+    const confirmed = window.confirm('Are you sure you want to settle bill'); 
+    if (!confirmed) return; 
     axios.post(`${API_BILLS_URL}/settle-share`, { shareId })
       .then(() => {
         // Optimistically remove the item from local display array
@@ -118,21 +120,23 @@ function HomePage() {
           <div className='profile-header'>
               <img src={picture} className='profilePicture-img' />
               <div className='profile-main-info'>
-                  <h2>Username: {username}</h2>
-                  {/* <p>Community Member</p> */}
+                  <h2>Username: {username}</h2> {/* <p>Community Member</p> */}
+                  
               </div>
           </div>
           <div className='profile-details'>
               <p><strong>Email:</strong> {email}</p>
               <p><strong>ID:</strong> {userId}</p>
           </div>
-          <button className='edit-profile-btn' onClick= {()=> {
-            navigate("/profile");
-          }}>
-              Edit Profile
-              
-              
-          </button>
+          <div>
+            <button className='edit-profile-btn' onClick= {()=> {
+              navigate("/profile");
+              }}>
+                Edit Profile      
+            </button>
+
+          </div>
+          
           
         </div>
         <div className='profile-card' style={{ gridArea: 'box2'}}>
@@ -166,7 +170,7 @@ function HomePage() {
                     style={{ margin: 0, padding: '6px 12px', fontSize: '14px' }}
                     onClick={() => handleSettleHomeShare(item.share_id)}
                   >
-                    <FaMoneyBillTransfer size={45} color={'green'}/>
+                    <FaMoneyBillTransfer size={45} color={'#6bc16f'}/>
                   </button>
                   <span className="hover-tooltip">Settle</span>
                   </div>

@@ -148,6 +148,10 @@ function CommunityGroups() {
   };
 
   const handleSettleShare = async (shareId) => {
+    console.log('settle confirm')
+    const confirmed = window.confirm('Are you sure you want to settle bill'); 
+    if (!confirmed) return; 
+    console.log('settled confirm')
     try {
       const response = await axios.post(`${API_BILLS_URL}/settle-share`, { shareId });
       if (response.status === 200) {
@@ -556,9 +560,9 @@ function CommunityGroups() {
                                   {isUnpaid ? <div><span className='unpaid'> Unpaid: </span><FcCancel size={20}/></div> 
                                             : <div><span className='paid'> Paid </span><FcCheckmark size={20}/></div>}
                                 </span>
-                                {isUnpaid && (
+                                {isUnpaid && currentUser.user_id == item.debtor_user_id && (
                                   <div className='button-wrapper'>
-                                    <button className= "settleButton" onClick={() => handleSettleShare(item.share_id)}>
+                                    <button type='button' className= "settleButton" onClick={() => handleSettleShare(item.share_id)}>
                                       <FcMoneyTransfer size={40}/>
                                       <span className='hover-tooltip'>Settle</span>
                                     </button>

@@ -312,7 +312,7 @@ button:hover {
 }
 
 .edit-profile-btn {
-  margin-top: 20px; 
+  margin-top: 10px; 
   width: 50%;
   padding: 12px; 
   /* background: linear-gradient(135deg, #517ee7, #76ABDF); */
@@ -427,7 +427,7 @@ button:hover {
 .action-btn {
   background: linear-gradient(135deg, #4cd0b8, #6cc4cb);
   background: linear-gradient(135deg, #fbc036,#f3cf2f); 
-  background-color: #eeb526;; 
+  background-color:  #eeb526; 
   
   color: white;
   border: none;
@@ -443,6 +443,9 @@ button:hover {
   background: linear-gradient(135deg, #4cd0b8, #6cc4cb);
   background: #4cd0b8;
 
+}
+.action-btn.structural:hover {
+  background:  #eeb526;
 }
 
 .group-roster-list {
@@ -754,6 +757,10 @@ button:hover {
   transition: 0.5s ease; 
 }
 
+
+button:hover {
+  background: #eeb526; 
+}
 .messages-stream {
   flex: 1;
   padding: 20px;
