@@ -29,6 +29,12 @@ function SmartSplitCalculator({
   const [loading, setLoading] = useState(false);
   const [billTransactions, setBillTransactions] = useState([]);
 
+  //Initialize core currencies 
+  const [currencies, setCurrencies]= useState(['SGD', 'MYR', 'USD', 'EUR', 'GBP', 'RMB', 'THB', 'IDR']); 
+  const [targetCurrency, setTargetCurrency]= useState('SGD'); 
+  const [exchangeRates, setExchangeRates]= useState({}); 
+
+
   useEffect(() => {
     if (!groupMembers || groupMembers.length === 0) return;
     
@@ -48,6 +54,25 @@ function SmartSplitCalculator({
       }))
     );
   }, [groupMembers]);
+
+  useEffect(()=>{
+    const fetchGlobalCurrencies= async ()=> {
+      try {
+        const response= await axios.get('https://open.er-api.com/v6/latest/USD'); 
+        if (response.data && response.data.rates) {
+          const currencyCodes= Object.keys(response.data.rates);
+          setCurrencies(currencyCodes.sort());
+          setExchangeRates(response.data.rates); //store all rates relative to USD 
+        }
+      } catch (err) {
+        console.error("Failed to fetch global currency list API, using local fallbacks:", err);
+      }
+    }; 
+    if (show) {
+      fetchGlobalCurrencies(); 
+    }
+
+  }, [show])
 
   if (!show) return null;
 
@@ -81,7 +106,17 @@ function SmartSplitCalculator({
   const subtotalPaid = payers.reduce((sum, p) => sum + Number(p.paid || 0), 0);
   const gstAmount = subtotalPaid * (Number(billData.gst || 0) / 100);
   const taxAmount = subtotalPaid * (Number(billData.tax || 0) / 100);
-  const finalAmount = subtotalPaid + gstAmount + taxAmount;
+  const baseFinalAmount = subtotalPaid + gstAmount + taxAmount;
+  //Account for currency 
+  let currencyRate = 1;
+  if (exchangeRates[billData.currency] && exchangeRates[targetCurrency]) {
+    const baseToUsd = exchangeRates[billData.currency];   // Rate of currency paid in
+    const targetToUsd = exchangeRates[targetCurrency];   // Rate of currency converting to
+    
+    // Cross-multiplication formula
+    currencyRate = targetToUsd / baseToUsd; // rate of target currency/ rate of base currency
+  }
+  const finalAmount= baseFinalAmount*currencyRate;
 
   const submitBill = async () => {
     try {
@@ -106,6 +141,8 @@ function SmartSplitCalculator({
           description: billData.description,
           category: billData.category,
           currency: billData.currency,
+          targetCurrency: targetCurrency,  //newly added
+          currencyRate: currencyRate, //newly added
           splitMethod: billData.splitMethod,
           payers: activePayers,
           individualItems: individualItems.filter(item => item.itemCost > 0),
@@ -133,7 +170,7 @@ function SmartSplitCalculator({
         billTransactions.forEach(tx => {
             const debtor = groupMembers.find(m => m.user_id == tx.debtorId); 
             const creditor = groupMembers.find(m => m.user_id == tx.creditorId); 
-            summary += `${debtor?.username} owes ${creditor?.username} ${billData.currency} ${Number(tx.amount).toFixed(2)}\n`; 
+            summary += `${debtor?.username} owes ${creditor?.username} ${targetCurrency} ${Number(tx.amount).toFixed(2)}\n`; 
         });
 
         await axios.post(
@@ -202,14 +239,24 @@ function SmartSplitCalculator({
               <label className= "currencyLabel">Currency <FcCurrencyExchange size={20} />: </label>
               
               <select name="currency" value={billData.currency} onChange={handleChange} className= "currencyOptions">
-                <option value="SGD">SGD</option>
-                <option value="MYR">MYR</option>
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-                <option value="GBP">GBP</option>
-                <option value="RMB">RMB</option>
-                <option value="THB">THB</option>
-                <option value="IDR">IDR</option>
+               {currencies.map((code)=> (
+                <option key= {code} value= {code}> 
+                  {code}
+                </option>
+               ))
+               }
+              </select>
+              
+            </div>
+            <div className= "currencyDivision"> 
+              <label className= "currencyLabel">Convert To: </label>
+              
+              <select name="targetCurrency" value={targetCurrency} onChange={(e)=> setTargetCurrency(e.target.value)} className= "currencyOptions">
+               {currencies.map((code)=> (
+                <option key= {`target-${code}`} value= {code}> 
+                  {code}
+                </option>
+               ))}
               </select>
               
             </div>
@@ -338,7 +385,14 @@ function SmartSplitCalculator({
               <strong style={{ fontSize: "large", padding: '10px' }}>Bill Summary</strong>
               <p style={{ padding: '10px' }}>Subtotal Paid: {billData.currency} {subtotalPaid.toFixed(2)}</p>
               
-              <p style={{ padding: '10px' }}><strong>Final Bill:</strong> {billData.currency} {finalAmount.toFixed(2)}</p>
+              {billData.currency !== targetCurrency && (
+                  <p style={{ margin: 0, padding: '2px', color: '#2b6cb0', fontSize: '0.95em' }}>
+                     Rate: 1 {billData.currency} = {currencyRate.toFixed(4)} {targetCurrency}
+                  </p>
+              )}
+              <p style={{ padding: '10px' }}><strong>Final Bill ({targetCurrency}):</strong> {targetCurrency} {finalAmount.toFixed(2)}</p>
+
+
               <div className='buttons'>
                 <div className='button-wrapper'>
                 <button className= "smartSplitButton" type="button" onClick={submitBill} disabled={loading}>

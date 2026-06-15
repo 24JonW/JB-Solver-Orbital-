@@ -161,7 +161,7 @@ function HomePage() {
                       You owe <strong>{item.creditor_name}</strong>
                     </p>
                     <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#dc2626' }}>
-                      {item.currency} {parseFloat(item.amount_owed).toFixed(2)}
+                      {item.target_currency} {parseFloat(item.amount_owed).toFixed(2)}
                     </span>
                   </div>
                   <div className= "button-wrapper"> 

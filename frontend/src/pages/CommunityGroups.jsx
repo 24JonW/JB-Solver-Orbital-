@@ -552,7 +552,7 @@ function CommunityGroups() {
                                   <strong>{item.debtor_name === currentUser.username ? 'You' : item.debtor_name}</strong> {item.debtor_name === currentUser.username ? 'owe' : 'owes'} <strong>{item.creditor_name === currentUser.username ? 'You' : item.creditor_name}</strong>
                                 </p>
                                 <span>
-                                  {item.currency} {parseFloat(item.amount_owed).toFixed(2)}
+                                  {item.target_currency} {parseFloat(item.amount_owed).toFixed(2)}
                                 </span>
                               </div>
                               <div className='paid-status'>

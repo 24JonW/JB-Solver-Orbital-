@@ -7,6 +7,8 @@ const createSmartBill = async (req, res) => {
         description, 
         category, 
         currency, 
+        targetCurrency, 
+        currencyRate,
         splitMethod,     
         payers,          
         individualItems, 
@@ -24,26 +26,29 @@ const createSmartBill = async (req, res) => {
         const subtotalAmount = payers.reduce((sum, p) => sum + parseFloat(p.paid || 0), 0);
         const gstTotal = subtotalAmount * (parseFloat(gst) / 100);
         const taxTotal = subtotalAmount * (parseFloat(tax) / 100);
-        const grandTotalAmount = subtotalAmount + gstTotal + taxTotal; // to insert bills table in database 
+        const TotalAmount = subtotalAmount + gstTotal + taxTotal; // to insert bills table in database 
+        const rateFactor= parseFloat(currencyRate || 1.0)
+        const grandTotalAmount= TotalAmount*rateFactor; 
 
         
         const billResult = await db.query(
-            `INSERT INTO Bills (group_id, payer_user_id, description, category, total_amount, currency) 
-             VALUES ($1, $2, $3, $4, $5, $6) RETURNING bill_id`,
-            [groupId, primaryPayerId, description, category, grandTotalAmount, currency]
+            `INSERT INTO Bills (group_id, payer_user_id, description, category, total_amount, currency, target_currency, exchange_rate) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING bill_id`,
+            [groupId, primaryPayerId, description, category, grandTotalAmount, currency, targetCurrency || currency, parseFloat(currencyRate || 1.0)]
         ); // return bill_id after inserting table
         const billId = billResult.rows[0].bill_id; 
 
         // 3. Adjust user data arrays to pass to the processing engine with tax weight distribution
         const adjustedPayers = payers.map(p => ({
             userId: p.userId,
-            paid: p.paid // raw cash inputs used to determine credit
+            paid: p.paid * rateFactor // raw cash inputs used to determine credit
         })); // to insert into calculateSmartBills function 
 
         let adjustedIndividualItems = []; // to insert into calculateSmartBills function 
         let adjustedSharedCost = 0; // to insert into calculateSmartBills function 
 
-        const compositeRatioFactor = subtotalAmount > 0 ? (grandTotalAmount / subtotalAmount) : 1;
+        const convertedSubtotal = subtotalAmount * rateFactor;
+        const compositeRatioFactor = convertedSubtotal > 0 ? (grandTotalAmount / convertedSubtotal) : 1;
 
         if (splitMethod === 'equal') {
             // Equal weights will be handled by internal engine conditions using grandTotalAmount
@@ -51,14 +56,14 @@ const createSmartBill = async (req, res) => {
         } else if (splitMethod === 'proportional') {
             adjustedIndividualItems = individualItems.map(i => ({
                 userId: i.userId,
-                itemCost: i.itemCost * compositeRatioFactor
+                itemCost: i.itemCost * compositeRatioFactor * rateFactor
             }));
         } else if (splitMethod === 'custom') {
             adjustedIndividualItems = individualItems.map(i => ({
                 userId: i.userId,
-                itemCost: i.itemCost * compositeRatioFactor
+                itemCost: i.itemCost * compositeRatioFactor * rateFactor
             }));
-            adjustedSharedCost = sharedCost * compositeRatioFactor;
+            adjustedSharedCost = sharedCost * compositeRatioFactor * rateFactor;
         }
         // 4. Get all members of the group to pass to the engine
         const membersRes = await db.query('SELECT user_id FROM group_members WHERE group_id = $1', [groupId]);
@@ -105,7 +110,7 @@ const getGroupLedger = async (req, res) => {
     const { groupId } = req.params;
     try {
         const result = await db.query(
-            `SELECT bs.*, b.description, b.currency,
+            `SELECT bs.*, b.description, b.currency, b.target_currency, b.exchange_rate,
                     d.username AS debtor_name, c.username AS creditor_name
              FROM Bill_Shares bs
              JOIN Bills b ON bs.bill_id = b.bill_id
@@ -153,7 +158,28 @@ const clearPaidHistory = async (req, res) => {
     }
 }
 
-module.exports = { createSmartBill, getGroupLedger, clearSharePayment, clearPaidHistory };
+const getOutstandingPayments = async (req, res) => {
+    const {userId}= req.params; 
+    try {
+        const result= await db.query(
+            `SELECT bs.*, b.description, b.currency, b.target_currency, b.exchange_rate, d.username AS debtor_name, c.username AS creditor_name
+            FROM bill_shares bs 
+            JOIN bills b ON bs.bill_id = b.bill_id
+            JOIN account d ON bs.debtor_user_id = d.user_id
+            JOIN account c ON bs.creditor_user_id= c.user_id
+            WHERE bs.debtor_user_id = $1 AND bs.payment_status= 'unpaid'
+            ORDER BY b.bill_date DESC`, 
+            [userId]
+        )
+        res.json(result.rows);
+
+    } catch (err) {
+        console.error(err); 
+        res.status(500).json({error: 'Server error retrieving outstanding payments'});
+    }
+}
+
+module.exports = { createSmartBill, getGroupLedger, clearSharePayment, clearPaidHistory, getOutstandingPayments};
 
 /*
 const db = require('../config/db');
