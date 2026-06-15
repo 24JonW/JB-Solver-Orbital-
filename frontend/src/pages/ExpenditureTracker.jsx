@@ -45,6 +45,7 @@ function ExpenditureTracker() {
     if (!currentUser) return; 
     axios.get(`${API_EXP_URL}/transaction/${currentUser.user_id}`)
     .then(res => {
+      console.log(res.data);
       if (Array.isArray(res.data)) {
         setLedger(res.data)
       } 

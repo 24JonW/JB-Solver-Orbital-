@@ -106,7 +106,7 @@ const createSmartBill = async (req, res) => {
     }
 };
 
-
+/*
 const getOutstandingPayments = async (req, res) => {
     const {userId}= req.params; 
     try {
@@ -128,7 +128,7 @@ const getOutstandingPayments = async (req, res) => {
     }
 }
 
-
+*/
 
 
 const getGroupLedger = async (req, res) => {

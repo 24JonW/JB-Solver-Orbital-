@@ -146,6 +146,7 @@ function CommunityGroups() {
       console.error("Error fetching group ledger:", err);
     }
   };
+  
 
   const handleSettleShare = async (shareId) => {
     console.log('settle confirm')
