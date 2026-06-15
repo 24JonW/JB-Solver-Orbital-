@@ -23,3 +23,19 @@
 }
 
 
+.transaction-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 10px;
+}
+
+.transaction-row {
+    padding: 10px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.transaction-row:last-child {
+    border-bottom: none;
+}
+
+

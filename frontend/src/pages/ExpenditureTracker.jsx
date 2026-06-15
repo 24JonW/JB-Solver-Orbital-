@@ -1,6 +1,9 @@
 
 import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react'; 
+import axios from 'axios'; 
 import JBSolverLogo from '../assets/JBSolverLogo.png';
+import { jwtDecode } from 'jwt-decode'; 
 
 import '../App.css'; 
 import '../ExTracker.css'; 
@@ -11,7 +14,45 @@ import { ImStatsDots } from "react-icons/im";
 
 
 function ExpenditureTracker() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [ ledger, setLedger ] = useState([]); 
+  const [currentUser, setCurrentUser] = useState(null);
+
+
+  const API_EXP_URL = 'http://localhost:5001/api/exp';
+  useEffect(()=> {
+      const token= localStorage.getItem('token');
+      if (!token) {
+        navigate('/'); 
+        return;
+      }
+      try {
+        const decoded= jwtDecode(token);
+        setCurrentUser({
+          user_id: decoded.id, 
+          username: decoded.username
+        });
+      } catch (err) {
+        console.error("Invalid authentication token:", err); 
+        localStorage.removeItem('token'); 
+        navigate('/');
+      }
+    }, [navigate]); 
+  
+
+
+  useEffect(() => {
+    if (!currentUser) return; 
+    axios.get(`${API_EXP_URL}/transaction/${currentUser.user_id}`)
+    .then(res => {
+      if (Array.isArray(res.data)) {
+        setLedger(res.data)
+      } 
+
+    })
+    .catch(err => console.error(err)); 
+  }, [currentUser]
+  );
 
   return (
     <div className="homepage-container">
@@ -60,8 +101,6 @@ function ExpenditureTracker() {
         </div>
       </div>
 
-
-
     
       <div className='home-body-ex'>
         <div className='card' style={{gridArea: 'box-1'}}>
@@ -76,17 +115,33 @@ function ExpenditureTracker() {
             Comparison with prev month
         </div>
         <div className='card' style={{gridArea: 'box-4'}}> 
-
+            Remaining Budget
         </div>
         
         <div className='card' style={{gridArea: 'box-5'}}>
-            Line graph this month
+            Spending Trend Line Graph 
         </div>
         <div className='card' style={{gridArea: 'box-6'}}>
-            Pie Chart this month across different categories
+            Category Breakdown Pie Chart 
         </div>
         <div className='card' style={{gridArea: 'box-7'}}>
-            Transaction History track transactions over the years and months
+            <h3>Transaction History</h3>
+            {ledger.length === 0 ? (
+              <p>No transactions found.</p>
+            ) : (
+              <div className='transaction-list'>
+                {ledger.map((item, index) => (
+                  <div key={index} className='transaction-row'>
+                    <p>Category: {item.category}</p>
+                    <p>Description: {item.description} </p>
+                    <p>Currency: {item.currency}</p>
+                    <p>{item.currency} {item.net_amount}</p>
+                    <p>{new Date(item.bill_date).toLocaleDateString()}</p>
+                    <hr/>
+                  </div>
+                ))}
+              </div>
+            )}
         </div>
 
       </div>

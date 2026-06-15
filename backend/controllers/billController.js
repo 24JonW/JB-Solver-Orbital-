@@ -106,6 +106,31 @@ const createSmartBill = async (req, res) => {
     }
 };
 
+
+const getOutstandingPayments = async (req, res) => {
+    const {userId}= req.params; 
+    try {
+        const result= await db.query(
+            `SELECT bs.*, b.description, b.currency, d.username AS debtor_name, c.username AS creditor_name
+            FROM bill_shares bs 
+            JOIN bills b ON bs.bill_id = b.bill_id
+            JOIN account d ON bs.debtor_user_id = d.user_id
+            JOIN account c ON bs.creditor_user_id= c.user_id
+            WHERE bs.debtor_user_id = $1 AND bs.payment_status= 'unpaid'
+            ORDER BY b.bill_date DESC`, 
+            [userId]
+        )
+        res.json(result.rows);
+
+    } catch (err) {
+        console.error(err); 
+        res.status(500).json({error: 'Server error retrieving outstanding payments'});
+    }
+}
+
+
+
+
 const getGroupLedger = async (req, res) => {
     const { groupId } = req.params;
     try {

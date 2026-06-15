@@ -15,7 +15,6 @@ router.post('/settle-share', clearSharePayment);
 router.post('/clear-history', clearPaidHistory); 
 router.get('/outstanding/:userId', getOutstandingPayments); 
 
-
 module.exports = router; 
 
 
