@@ -10,7 +10,7 @@ sequenceDiagram
     activate FE
     FE->>BE: POST /api/groups/create (body: group_name, user_id)
     activate BE
-    BE->>DB: INSERT INTO community_groups (group_name, created_by)
+    BE->>DB: INSERT INTO community_groups (body: group_name, created_by)
     DB->>BE: insert successful Returns *
     BE->>DB: INSERT INTO group_members (body: user_id, group_id)
     DB->>BE: insert successful
@@ -23,7 +23,7 @@ sequenceDiagram
     %% Joining group in group community
     User->>FE: Join Group
     activate FE
-    FE->>BE: POST /api/groups/join (group_Id, user_id)
+    FE->>BE: POST /api/groups/join (body: group_Id, user_id)
     activate BE
     Note over BE: Check group Id exists and that user is not in group
     BE->>DB: INSERT INTO group_members (body: user_id, group_id)
