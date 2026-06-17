@@ -1,11 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import '../App.css';
 
+// Asset Imports: Logos and default images
 import JBSolverLogo from '../assets/JBSolverLogo.png'; 
 import picture from '../assets/picture.png'; 
 import {useState, useEffect} from 'react'; 
 import axios from 'axios'; 
 
+// Imports React Icons 
 import { GiHouse } from "react-icons/gi";
 import { FaUserCircle } from "react-icons/fa";
 import { FaUsersGear } from "react-icons/fa6";
@@ -14,24 +16,26 @@ import { FaMoneyBillTransfer } from "react-icons/fa6";
 import { GiPartyPopper } from "react-icons/gi";
 
 function HomePage() {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Hook to handle client-side programmatic routing
   const [email, setEmail]= useState(''); 
   const [userId, setUserId]= useState(null); 
   const [username, setUsername] = useState(''); 
-  const [outstandingLedger, setOutstandingLedger]= useState([]);
+  const [outstandingLedger, setOutstandingLedger]= useState([]); // Stores the array of unpaid debts
 
-
+  // 2 API Endpoints 
   const API_BASE_URL= 'http://localhost:5001/api/accounts'; 
   const API_BILLS_URL= 'http://localhost:5001/api/bills'; 
 
   
 
   useEffect(()=> {
+    // User Authentication: Check if a user session token/ID exists in the browser storage
     const storedUserId= localStorage.getItem('userId'); 
     if (!storedUserId) {
-      navigate('/'); 
+      navigate('/'); // Boot back to login page if no authenticated user ID is found
       return; 
     }
+    // Data Fetching: Retrieve profile credentials for the current user
     axios.get(`${API_BASE_URL}/${storedUserId}`)
       .then((res)=> {
         const data= res.data; 
@@ -42,23 +46,25 @@ function HomePage() {
       .catch((err)=> {
         console.error('Error fetching user profile with Axios:', err);
       })
+    // Data Fetching: Gather all unpaid split bill transactions matching this specific user ID
     axios.get(`${API_BILLS_URL}/outstanding/${storedUserId}`)
       .then((res)=> {
         if (Array.isArray(res.data)) {
-          setOutstandingLedger(res.data)
+          setOutstandingLedger(res.data) // Update state array with outstanding bills data
         }
       }).catch((err)=> {
         console.error('Error fetching outstanding payments:', err);
       })
 
-  }, [navigate]); 
+  }, [navigate]); // 'Navigate' as the only dependency array
 
+  // Updates transaction status to 'paid' when the user clicks settle
   const handleSettleHomeShare = (shareId) => {
     const confirmed = window.confirm('Are you sure you want to settle bill'); 
-    if (!confirmed) return; 
+    if (!confirmed) return; // Exit execution context if user cancels out of popup confirmation
     axios.post(`${API_BILLS_URL}/settle-share`, { shareId })
       .then(() => {
-        // Optimistically remove the item from local display array
+        // Filter out the settled row instantly without reloading the page
         setOutstandingLedger(prev => prev.filter(item => item.share_id !== shareId));
         alert("Payment settled successfully!");
       })
@@ -68,11 +74,12 @@ function HomePage() {
 
   return (
     <div className="homepage-container">
-      
+      {/* Global Navigation bar */}
       <div className="topSectionBar">
         <img src={JBSolverLogo} className="logo-img" />
 
         <div className="right-buttons-4">
+          {/* Navigation Button: Home */}
           <div className="button-wrapper">
             <button
               className="homepageButton"
@@ -82,6 +89,7 @@ function HomePage() {
             </button>
             <span className="hover-tooltip">Home Page</span>
           </div>
+          {/* Navigation Button: Expenditure Tracker */}
           <div className="button-wrapper">
             <button
               className="expenditureTracker"
@@ -91,7 +99,7 @@ function HomePage() {
             </button>
             <span className="hover-tooltip">Expenditure Tracker</span>
           </div>
-
+          {/* Navigation Button: Community Groups */}
           <div className="button-wrapper">
             <button
               className="communityGroupButton"
@@ -101,7 +109,7 @@ function HomePage() {
             </button>
             <span className="hover-tooltip">Community Groups</span>
           </div>
-
+          {/* Navigation Button: User Profile Settings */}
           <div className="button-wrapper">
             <button
               className="userProfileButton"
@@ -114,8 +122,9 @@ function HomePage() {
         </div>
       </div>
       
-
+      {/* Main dashboard body layout */}
       <div className='home-body'>
+        {/* CARD 1: User Profile Context Box */}
         <div className='profile-card'>
           <div className='profile-header'>
               <img src={picture} className='profilePicture-img' />
@@ -139,12 +148,13 @@ function HomePage() {
           
           
         </div>
+        {/* CARD 2: Placeholder Box for Task Management features */}
         <div className='profile-card' style={{ gridArea: 'box2'}}>
           <h2>Tasks to do</h2>
           
         </div>
 
-        {/* 4. Updated Outstanding Payments UI block */}
+        {/* CARD 3. Updated Outstanding Payments UI block */}
         <div className='profile-card' style={{ gridArea: 'box3', display: 'flex', flexDirection: 'column' }}>
           <h2>Outstanding Payments </h2>
           <div className="home-debt-scroll-container" style={{ flex: 1, overflowY: 'auto', marginTop: '10px', textAlign: 'left' }}>

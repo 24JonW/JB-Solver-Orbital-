@@ -6,19 +6,24 @@ import '../App.css';
 import JBSolverLogo from '../assets/JBSolverLogo.png';
 
 function LoginPage() {
-    const navigate = useNavigate(); 
+    const navigate = useNavigate(); // Hook to redirect users programmatically after successful login
     const [ username, setUsername ] = useState(''); 
     const [ password, setPassword ] = useState(''); 
     const [ errorMessage, setErrorMessage ] = useState(''); 
 
+    // Base endpoint for account-related authentication requests
     const API_URL = 'http://localhost:5001/api/accounts'; 
     const handlelogin = (e) => {
-        e.preventDefault(); 
+        e.preventDefault(); // Prevents the browser from reloading the page on form submission
         setErrorMessage(''); 
+
+        // Send login payload to backend API
         axios.post(`${API_URL}/login`, { username, password })
              .then((res) => {
+                // Store authentication parameters securely in the browser's local storage session context
                 localStorage.setItem('token', res.data.token); 
                 localStorage.setItem('userId', res.data.user.user_id);
+                // Route the authenticated user directly onto the dashboard home page view
                 navigate('/home'); 
              })
              .catch((err) => {

@@ -34,10 +34,10 @@ function SmartSplitCalculator({
   const [targetCurrency, setTargetCurrency]= useState('SGD'); 
   const [exchangeRates, setExchangeRates]= useState({}); 
 
-
+  //Side effect: Dynamically render the group members and what he/she pays
   useEffect(() => {
     if (!groupMembers || groupMembers.length === 0) return;
-    
+    // Map initial state trackers for the 'Who Paid' ledger module grid
     setPayers(
       groupMembers.map(member => ({
         userId: member.user_id,
@@ -45,7 +45,7 @@ function SmartSplitCalculator({
         paid: 0
       }))
     );
-
+    // Map initial parameter lines tracking item costs for specialized proportional allocations
     setIndividualItems(
       groupMembers.map(member => ({
         userId: member.user_id,
@@ -55,13 +55,14 @@ function SmartSplitCalculator({
     );
   }, [groupMembers]);
 
+  //Queries external currency exchange rate (with USD as base reference) on modal load
   useEffect(()=>{
     const fetchGlobalCurrencies= async ()=> {
       try {
         const response= await axios.get('https://open.er-api.com/v6/latest/USD'); 
         if (response.data && response.data.rates) {
           const currencyCodes= Object.keys(response.data.rates);
-          setCurrencies(currencyCodes.sort());
+          setCurrencies(currencyCodes.sort()); // Sort codes alphabetically for cleaner dropdown selection
           setExchangeRates(response.data.rates); //store all rates relative to USD 
         }
       } catch (err) {
@@ -72,10 +73,11 @@ function SmartSplitCalculator({
       fetchGlobalCurrencies(); 
     }
 
-  }, [show])
+  }, [show]) // Locked dependencies prevent hitting the server when tracking local form input variations
 
   if (!show) return null;
 
+  // Handler: Generic inputs controller mapper tracking basic text strings and select values changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setBillData(prev => ({
@@ -83,7 +85,7 @@ function SmartSplitCalculator({
       [name]: value
     }));
   };
-
+  // Handler: Form updates dispatcher targeting numerical value inside 'who paid section'
   const updatePayerAmount = (userId, value) => {
     const parsedValue= value === "" ? "": parseFloat(value); 
     setPayers(prev =>
@@ -92,7 +94,7 @@ function SmartSplitCalculator({
       )
     );
   };
-
+  // Handler: Form updates dispatcher targeting specialized individual orders tracking lines
   const updateItemAmount = (userId, amount) => {
     const parsedValue= amount === "" ? "" : parseFloat(amount); 
     setIndividualItems(prev =>
@@ -118,6 +120,7 @@ function SmartSplitCalculator({
   }
   const finalAmount= baseFinalAmount*currencyRate;
 
+  // Action Handler: Dispatches bill metrics calculations blocks to backend database routes
   const submitBill = async () => {
     try {
       const activePayers = payers.filter(p => p.paid > 0);
@@ -131,9 +134,9 @@ function SmartSplitCalculator({
         alert('Please enter a description.');
         return;
       }
-
       setLoading(true);
 
+      // Issue payload bundle mapping parameters configuration to the server controller endpoint
       const response = await axios.post(
         'http://localhost:5001/api/bills/split_smart',
         {
@@ -160,6 +163,7 @@ function SmartSplitCalculator({
     }
   }; 
 
+  // Action Handler: Generates a human-readable chat announcement summary and transmits it to the chat timeline
   const sendBillSummaryToGroup = async () => {
     if (billTransactions.length === 0) {
         alert('Create the bill first');
@@ -167,12 +171,14 @@ function SmartSplitCalculator({
     }
     try {
         let summary = `💰 Bill Summary\n` + `${billData.description}\n\n`;
+        // Loop through transactions to extract username text blocks
         billTransactions.forEach(tx => {
             const debtor = groupMembers.find(m => m.user_id == tx.debtorId); 
             const creditor = groupMembers.find(m => m.user_id == tx.creditorId); 
             summary += `${debtor?.username} owes ${creditor?.username} ${targetCurrency} ${Number(tx.amount).toFixed(2)}\n`; 
         });
 
+        // Publish raw text body payload out to the shared group conversation endpoint
         await axios.post(
             'http://localhost:5001/api/groups/message', 
             {
@@ -423,14 +429,5 @@ function SmartSplitCalculator({
 }
 
 export default SmartSplitCalculator;
-/*
-<SmartSplitCalculator
-  show={showCalculatorModal}
-  onClose={() => setShowCalculatorModal(false)}
-  selectedGroup={selectedGroup}
-  currentUser={currentUser}
-  groupMembers={groupMembers}
-/>
 
-*/
 

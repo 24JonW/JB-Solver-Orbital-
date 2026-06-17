@@ -13,8 +13,6 @@ const pool= new Pool({
     ssl: {
         rejectUnauthorized: false
     }
-
-
 }); 
 
 pool.on('connect', ()=> {
@@ -25,10 +23,3 @@ module.exports= {
     query: (text, params)=> pool.query(text, params),
 }
 
-
-// import postgres from 'postgres'
-
-// const connectionString = process.env.DATABASE_URL
-// const sql = postgres(connectionString)
-
-// export default sql

@@ -5,14 +5,16 @@ import { jwtDecode } from 'jwt-decode';
 
 import JBSolverLogo from '../assets/JBSolverLogo.png';
 
+//Import images
 import starWars from '../assets/starWars.png';
 import messageBubble from '../assets/chatMessage.png';
 import groupChatIcon from '../assets/groupChatIcon.png';
-import '../App.css'; 
+import '../App.css';
+import '../CommunityGroup.css';
 import SmartSplitCalculator from './SmartSplitCalculator';
-//images
-import { X } from 'lucide-react'; 
 
+//Import icons from react-icons
+import { X } from 'lucide-react'; 
 import { GiHouse } from "react-icons/gi";
 import { FaUserCircle } from "react-icons/fa";
 import { FaUsersGear } from "react-icons/fa6";
@@ -313,8 +315,11 @@ function CommunityGroups() {
 
   if (!currentUser) return null; 
 
+
+  //Render the UI of the Community Groups page
   return (
     <div className="homepage-container">
+      {/* top section/navigation bar of the page */}
       <div className="topSectionBar">
         <img src={JBSolverLogo} className="logo-img" />
 
@@ -347,7 +352,7 @@ function CommunityGroups() {
           </div>
         </div>
       </div>
-
+      
       <div className="chat-app-layout">
         {/* Left Sidebar */}
         <div className="chat-sidebar"> 

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react'; 
 import axios from 'axios'; 
 import JBSolverLogo from '../assets/JBSolverLogo.png';
-import { jwtDecode } from 'jwt-decode'; 
+import { jwtDecode } from 'jwt-decode'; // Library used to safely extract user properties from encrypted JWT tokens
 
 import '../App.css'; 
 import '../ExTracker.css'; 
@@ -14,19 +14,21 @@ import { ImStatsDots } from "react-icons/im";
 
 
 function ExpenditureTracker() {
-  const navigate = useNavigate();
-  const [ ledger, setLedger ] = useState([]); 
-  const [currentUser, setCurrentUser] = useState(null);
+  const navigate = useNavigate(); // Hook to trigger route changes programmatically
+  const [ ledger, setLedger ] = useState([]); // Stores personal expenses history payload
+  const [currentUser, setCurrentUser] = useState(null); // Stores tracking metadata (id, username) decoded from token
 
 
   const API_EXP_URL = 'http://localhost:5001/api/exp';
   useEffect(()=> {
       const token= localStorage.getItem('token');
+      //immediately redirect to login page
       if (!token) {
         navigate('/'); 
         return;
       }
       try {
+        //Extract claims payload from the saved JWT string
         const decoded= jwtDecode(token);
         setCurrentUser({
           user_id: decoded.id, 
@@ -40,7 +42,7 @@ function ExpenditureTracker() {
     }, [navigate]); 
   
 
-
+  //Pulls ledger entries dynamically *only* after a valid user identity is confirmed
   useEffect(() => {
     if (!currentUser) return; 
     axios.get(`${API_EXP_URL}/transaction/${currentUser.user_id}`)
@@ -52,11 +54,12 @@ function ExpenditureTracker() {
 
     })
     .catch(err => console.error(err)); 
-  }, [currentUser]
+  }, [currentUser] // Trigger array listens exclusively for current user context variations
   );
 
   return (
     <div className="homepage-container">
+      {/* Global Navigation bar */}
       <div className="topSectionBar">
         <img src={JBSolverLogo} className="logo-img" />
 
@@ -101,7 +104,7 @@ function ExpenditureTracker() {
           </div>
         </div>
       </div>
-
+      {/* Core financial CSS grid blocks */}
     
       <div className='home-body-ex'>
         <div className='card' style={{gridArea: 'box-1'}}>
@@ -127,6 +130,7 @@ function ExpenditureTracker() {
         </div>
         <div className='card' style={{gridArea: 'box-7'}}>
             <h3>Transaction History</h3>
+            {/* Conditional logic evaluator verifying if there are transaction records */}
             {ledger.length === 0 ? (
               <p>No transactions found.</p>
             ) : (

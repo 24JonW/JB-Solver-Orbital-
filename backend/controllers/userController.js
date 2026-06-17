@@ -3,6 +3,8 @@ const db= require('../config/db');
 const bcrypt= require('bcrypt'); 
 const jwt= require('jsonwebtoken'); 
 
+// Register new user, check for uniqueness, hash password, and save to DB
+// Route: POST /api/accounts/register
 const registerUser= async (req, res)=> {
     const {username, password, email}= req.body; 
     if (!username || !password || !email) {
@@ -18,6 +20,7 @@ const registerUser= async (req, res)=> {
         const saltRounds= 10; 
         const hashPassword= await bcrypt.hash(password, saltRounds);
 
+        // Save the user account records safely returning sanitized credentials
         const queryText= `
             INSERT INTO account (username, password, email, created_on)
             VALUES ($1, $2, $3, NOW()) RETURNING user_id, username, email`;
@@ -30,8 +33,11 @@ const registerUser= async (req, res)=> {
     }
 }
 
+// Authenticate user credentials, verify hash match, issue secure JWT, and update login history
+// Route: POST /api/accounts/login
 const loginUser= async (req, res)=> {
     const {username, password} = req.body;
+    // Validate incoming data payloads
     if (!username || !password) {
         res.status(400).json({error: 'Please enter all fields'}); 
 
@@ -43,7 +49,7 @@ const loginUser= async (req, res)=> {
             res.status(400).json({error: 'Invalid username or password'});
         }
         const user= result.rows[0]; 
-
+        // Compare input text password against encrypted database hash string
         const isMatch= await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({error: 'Invalid username or password'}); 
@@ -56,6 +62,7 @@ const loginUser= async (req, res)=> {
             {expiresIn: '1h'}
 
         )
+        // Update the user login record metrics log history timestamp
         await db.query('UPDATE account SET last_login= NOW() WHERE user_id = $1', [user.user_id]);
 
         res.json({
@@ -69,7 +76,8 @@ const loginUser= async (req, res)=> {
     }
 };
 
-
+// Fetch a list of all user records stored inside the system account table
+// Route: GET /api/accounts
 const getAccounts= async (req, res)=> {
     try {
         const result= await db.query('SELECT * FROM account ORDER BY user_id ASC');
@@ -80,6 +88,8 @@ const getAccounts= async (req, res)=> {
     }
 }
 
+// Retrieve account credentials (excluding password hashes) matching a specific parameter ID
+// GET /api/accounts/:id
 const getSpecificAccount= async (req, res) => {
     const userId= req.params.id; 
     try {
@@ -95,7 +105,8 @@ const getSpecificAccount= async (req, res) => {
         res.status(500).json({error: 'Database read error'})
     }
 }
-
+// Create account and add to database
+// POST /api/accounts
 const createAccount = async (req, res) => {
     const {username, password, email}= req.body; 
     try {
@@ -111,6 +122,8 @@ const createAccount = async (req, res) => {
     }
 }
 
+// Modify the email of existing user account
+// PUT /api/accounts/:id
 const updateAccount= async (req, res) => {
     const {id}= req.params; 
     const {email}= req.body; 
@@ -127,6 +140,8 @@ const updateAccount= async (req, res) => {
     }
 }
 
+// Remove an account record matching the targeted parameter entry ID entirely from the system table context
+// DELETE /api/accounts/:id
 const deleteAccount= async (req, res) => {
     const {id } = req.params; 
     try {
