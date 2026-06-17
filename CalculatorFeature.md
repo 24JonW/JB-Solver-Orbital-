@@ -20,6 +20,19 @@ sequenceDiagram
   BE->>FE: JSON RESPONSE (status:201) 
   deactivate BE
   FE->>User: Smart split processed cleanly 
+  deactivate FE
+
+  User->>FE: Send bill to group chat
+  activate FE
+  FE->>BE: POST api/groups/message (body: group_id, user_id, message_text)
+  activate BE
+  BE->>DB: INSERT INTO group_messages (group_id, sender_id, message_text)
+  DB->>BE: insert successful return *
+  BE->>FE: JSON RESPONSE (status:201)
+  deactivate BE
+  FE->>User: Display bill split message to group chat
   deactivate FE 
+
+
 
 
