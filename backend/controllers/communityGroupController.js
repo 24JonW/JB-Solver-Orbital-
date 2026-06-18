@@ -6,8 +6,11 @@ const createNewGroup= async (req, res)=> {
     const {groupName, userId}= req.body; 
     try {
         // Insert the new row into community_groups table
+        //PostgreSQL automatically runs generate_random_verification_id()
+        //returns the new id, name, and verification_id.
         const groupResult= await db.query(
-            'INSERT INTO community_groups (group_name, created_by) VALUES ($1, $2) RETURNING *', 
+            `INSERT INTO community_groups (group_name, created_by) VALUES ($1, $2) 
+            RETURNING group_id, group_name, verification_id`, 
             [groupName, userId]
         )
         const newGroup= groupResult.rows[0];
@@ -60,13 +63,14 @@ const deleteGroup = async (req, res) => {
 //Join an existing group using its ID and post a system message inside the room
 //Route: POST /api/groups/join
 const joinGroup= async (req, res) => {
-    const {groupId, userId}= req.body; 
+    const {verificationId, userId}= req.body; 
     try {
         //check if group exists
-        const checkGroup= await db.query('SELECT * FROM community_groups WHERE group_id = $1', [groupId]); 
+        const checkGroup= await db.query('SELECT * FROM community_groups WHERE verification_id = $1', [verificationId]); 
         if (checkGroup.rows.length == 0) {
             return res.status(444).json({error: 'Group ID not found'});
         }
+        const groupId= checkGroup.rows[0].group_id;
         //Prevent duplicate entries into the group membership roster
         const checkMember= await db.query('SELECT * FROM group_members WHERE group_id = $1 AND user_id = $2', 
             [groupId, userId]

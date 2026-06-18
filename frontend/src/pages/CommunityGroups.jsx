@@ -40,7 +40,7 @@ function CommunityGroups() {
 
   //Form input states
   const [newGroupName, setNewGroupName] = useState(""); 
-  const [joinGroupId, setJoinGroupId]= useState(""); 
+  const [joinVerificationId, setJoinVerificationId]= useState(""); 
 
   //View group members 
   const [showMembersModal, setShowMembersModal] = useState(false);
@@ -177,6 +177,8 @@ function CommunityGroups() {
       })
       if (response.status === 201) {
         setNewGroupName(""); 
+        const { group_name, verification_id } = response.data;
+        alert(`Group "${group_name}" created!\nShare this Invite Code with friends to let them join: ${verification_id}`);
         fetchGroupList(); 
       }
     } catch (err) {
@@ -186,14 +188,14 @@ function CommunityGroups() {
 
   const handlejoinGroup = async (e)=> {
     e.preventDefault(); 
-    if (!joinGroupId.trim()) return; 
+    if (!joinVerificationId.trim()) return; 
     try {
       const response = await axios.post(`${API_BASE_URL}/join`, {
-        groupId: parseInt(joinGroupId), 
+        verificationId: joinVerificationId, 
         userId: currentUser.user_id
       })
       if (response.status=== 201) {
-        setJoinGroupId(""); 
+        setJoinVerificationId(""); 
         alert(`Successfully joined: ${response.data.group.group_name}`); 
         fetchGroupList(); 
       }
@@ -368,10 +370,10 @@ function CommunityGroups() {
             </form>
             <form onSubmit={handlejoinGroup} className="side-form">
               <input 
-                type="number"
-                placeholder="Enter Group ID"
-                value={joinGroupId}
-                onChange={(e)=> setJoinGroupId(e.target.value)}
+                type="text"
+                placeholder="Enter verification ID"
+                value={joinVerificationId}
+                onChange={(e)=> setJoinVerificationId(e.target.value)}
               /> 
               <button type="submit" className="action-btn structural">Join</button>
             </form>
@@ -390,7 +392,7 @@ function CommunityGroups() {
                 </div>
                 <div className="roster-details">
                   <h4 style={{fontSize: '17px'}}>{group.group_name}</h4>
-                  <p style={{fontSize:'15px'}}>ID: {group.group_id}</p>
+                  <p style={{fontSize:'15px'}}>Verification ID: {group.verification_id}</p>
                 </div>
               </div> 
             ))}
@@ -402,7 +404,7 @@ function CommunityGroups() {
           {selectedGroup ? (
             <div className="active-chat-container">
               <div className="chat-header-title">
-                <h3>{selectedGroup.group_name} <span className="id-badge">(ID: {selectedGroup.group_id})</span></h3>
+                <h3>{selectedGroup.group_name} <span className="id-badge">(Group ID: {selectedGroup.group_id})</span></h3>
                 <div className='settings-container'>
                   <FcCalculator className='calculator-btn' onClick={() => setShowCalculatorModal(!showCalculatorModal)} size={35}/>
                   <FcSettings className='settings-btn' onClick={() => setShowSettingsMenu(!showSettingsMenu)} size={35} />
