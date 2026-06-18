@@ -126,16 +126,49 @@ const createAccount = async (req, res) => {
 // PUT /api/accounts/:id
 const updateAccount= async (req, res) => {
     const {id}= req.params; 
-    const {email}= req.body; 
+    const {username, email, currentPassword, newPassword}= req.body; 
     try {
-        const queryText= 'UPDATE account SET email= $1 WHERE user_id= $2 RETURNING *';
-        const result= await db.query(queryText, [email, id]); 
+        const userQuery= await db.query(`SELECT password, username, email FROM account WHERE user_id = $1`, [id]);
+        if (userQuery.rows.length ==0) {
+            return res.status(404).json({error: 'Account not found'});
+        }
+        const user= userQuery.rows[0]; 
+        let updatedPasswordHash= user.password
+        if (newPassword) {
+            if (!currentPassword) {
+                return res.status(400).json({error: 'Please enter your current password to set a new one.'});
+            }
+            // Verify current password matches the database hash
+            const isMatch = await bcrypt.compare(currentPassword, user.password)
+            if (!isMatch) {
+                return res.status(400).json({error: 'Incorrect current password'}); 
+            }
+            // Hash the new password safely before updating
+            const saltRounds= 10; 
+            updatedPasswordHash= await bcrypt.hash(newPassword, saltRounds);
+
+        }
+
+        // NULLIF checks if the new value matches the current value. This is to prevent to prevent 'unique clashing'
+        // If it matches, it won't attempt to re-validate a "new" unique constraint against itself.
+        const queryText= `
+            UPDATE account 
+            SET 
+                username= CASE WHEN username = $1 THEN username ELSE $1 END, 
+                email= CASE WHEN email= $2 THEN email ELSE $2 END 
+                WHERE user_id = $3
+                RETURNING username, email, user_id
+        `;
+        const result= await db.query(queryText, [username, email, id]); 
         if (result.rows.length === 0) {
             return res.status(404).json({error: 'Account not found'});
         }
-        res.json(result.rows[0]);
+        res.json({ message: 'Profile updated successfully!', user: result.rows[0] });
     } catch (err) {
         console.error(err); 
+        if (err.code === '23505') {
+            return res.status(400).json({ error: 'Username or email is already taken by another user.' });
+        }
         res.status(500).json({error: 'Database update error'});
     }
 }
@@ -145,7 +178,7 @@ const updateAccount= async (req, res) => {
 const deleteAccount= async (req, res) => {
     const {id } = req.params; 
     try {
-        const result= await db.query('DELETE FROM account WHERE user_id= $1', [id]);
+        const result= await db.query('DELETE FROM account WHERE user_id= $1 RETURNING *', [id]);
         if (result.rows.length=== 0) {
             return res.status(404).json({error: 'Account not found'}); 
         } 
