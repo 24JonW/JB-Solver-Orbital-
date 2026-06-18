@@ -42,6 +42,7 @@ app.listen(PORT,async () => {
   }
 });
 
+module.exports = app; 
 // A test baseline API route to make sure database is responding
 
 
