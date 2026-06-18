@@ -42,7 +42,7 @@ describe('Community Groups Feature Testing', () => {
         const res = await request(app)
             .post('/api/groups/join')
             .send({
-                groupId: -1000, 
+                verificationId: -1000, 
                 userId: testUserId
             })
         expect(res.status).toEqual(444); 
@@ -51,12 +51,14 @@ describe('Community Groups Feature Testing', () => {
     });
 
     it('should block duplicate enrollment in the same group', async () => {
+        const result = await db.query('SELECT verification_id FROM community_groups WHERE group_id = $1 AND created_by = $2', [testGroupId, testUserId]); 
+        const testVeriId = result.rows[0]?.verification_id; 
         const res = await request(app)
             .post('/api/groups/join')
             .send({
-                groupId: testGroupId, 
+                verificationId: testVeriId,
                 userId: testUserId
-            })
+            });
 
         expect(res.status).toEqual(400); 
         expect(res.body.error).toBe('You are already a member of this group'); 
