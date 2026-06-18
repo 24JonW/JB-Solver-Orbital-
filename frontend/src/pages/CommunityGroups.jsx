@@ -169,7 +169,10 @@ function CommunityGroups() {
 
   const handleCreateGroup = async (e)=> {
     e.preventDefault(); 
-    if (!newGroupName.trim()) return; 
+    if (!newGroupName.trim()) {
+      alert('Empty group name!')
+      return;
+    } 
     try {
       const response= await axios.post(`${API_BASE_URL}/create`, {
         groupName: newGroupName, 
@@ -188,7 +191,10 @@ function CommunityGroups() {
 
   const handlejoinGroup = async (e)=> {
     e.preventDefault(); 
-    if (!joinVerificationId.trim()) return; 
+    if (!joinVerificationId.trim()) {
+      alert('Empty group id!')
+      return;
+    } 
     try {
       const response = await axios.post(`${API_BASE_URL}/join`, {
         verificationId: joinVerificationId, 
@@ -260,7 +266,11 @@ function CommunityGroups() {
 
   const handleSendMessage= async (e) => {
     e.preventDefault(); 
-    if (!newMessage.trim() || !selectedGroup) return;
+    if (!newMessage.trim() || !selectedGroup) {
+      alert('Failed to send empty message');
+      return;
+    }
+      
     try {
       const response= await axios.post(`${API_BASE_URL}/message`, {
         groupId: selectedGroup.group_id,

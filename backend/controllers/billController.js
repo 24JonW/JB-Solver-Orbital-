@@ -21,7 +21,10 @@ const createSmartBill = async (req, res) => {
     } = req.body;
 
     try {
-        
+        const hasNegatives = payers.some(p => parseFloat(p.paid || 0) < 0); 
+        if (hasNegatives) {
+            return res.status(400).json({error: 'negative money paid is not allowed'}); 
+        }
         // Establish the primary payer identity
         const primaryPayerId = payers[0].userId; 
 
@@ -33,6 +36,7 @@ const createSmartBill = async (req, res) => {
         // Handle conversion multipliers gracefully (fallback to baseline 1.0 factor)
         const rateFactor= parseFloat(currencyRate || 1.0) 
         const grandTotalAmount= TotalAmount*rateFactor; // Final bill amount converted entirely into the target settlement currency
+
 
         // Insert primary bill details to the database
         const billResult = await db.query(
