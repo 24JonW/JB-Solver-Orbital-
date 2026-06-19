@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; 
 import { jwtDecode } from 'jwt-decode'; 
@@ -12,6 +12,7 @@ import groupChatIcon from '../assets/groupChatIcon.png';
 import '../App.css';
 import '../CommunityGroup.css';
 import SmartSplitCalculator from './SmartSplitCalculator';
+import EmojiPicker from 'emoji-picker-react'; 
 
 //Import icons from react-icons
 import { X } from 'lucide-react'; 
@@ -27,6 +28,7 @@ import { FaEraser } from "react-icons/fa";
 import { FcCancel } from "react-icons/fc";
 import { FcCheckmark } from "react-icons/fc";
 import { FcMoneyTransfer } from "react-icons/fc";
+import { IoIosAddCircle } from "react-icons/io";
 
 
 function CommunityGroups() {
@@ -55,6 +57,11 @@ function CommunityGroups() {
 
   // Ledger state for Debt Tracking
   const [ledger, setLedger] = useState([]);
+
+  // Emoji 
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false); 
+  const pickerRef = useRef(null); 
+
 
   const API_BASE_URL= 'http://localhost:5001/api/groups'; 
   const API_BILLS_URL= 'http://localhost:5001/api/bills';
@@ -114,6 +121,21 @@ function CommunityGroups() {
       fetchLedger();
     }
   }, [showDebtTrackingModal, selectedGroup]);
+
+  // Close the emoji picker if clicked outside of it
+  useEffect(()=> {
+    function handleClickOutside(event) {
+      if (pickerRef.current && ! pickerRef.current.contains(event.target)) {
+        setShowEmojiPicker(false); 
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside); 
+    return ()=> document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleEmojiClick = (emojiData) => {
+    setNewMessage((prevMessage)=> prevMessage + emojiData.emoji);
+  }
 
   //API interactions
   const fetchGroupList= async ()=> {
@@ -464,6 +486,27 @@ function CommunityGroups() {
               </div>
 
               <form onSubmit={handleSendMessage} className="chat-input-bar">
+                  <div ref= {pickerRef} className= "emoji-picker-container"> 
+                    <button 
+                      type= 'button'
+                      className= "emoji-toggle-btn"
+                      onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                    > 
+                      <IoIosAddCircle size= {22} />
+                    </button>
+                    {showEmojiPicker && (
+                      <div className= "emoji-picker-popup"> 
+                        <EmojiPicker
+                          onEmojiClick= {handleEmojiClick}
+                          searchDisabled= {false}
+                          skinTonesDisabled
+                          height= {350}
+                          width= {300}
+                        />
+                      </div>
+
+                    )}
+                  </div>
                   <input 
                       type="text" 
                       placeholder="Type a message..." 
