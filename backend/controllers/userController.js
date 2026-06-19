@@ -155,11 +155,12 @@ const updateAccount= async (req, res) => {
             UPDATE account 
             SET 
                 username= CASE WHEN username = $1 THEN username ELSE $1 END, 
-                email= CASE WHEN email= $2 THEN email ELSE $2 END 
-                WHERE user_id = $3
-                RETURNING username, email, user_id
+                email= CASE WHEN email= $2 THEN email ELSE $2 END,
+                password= $3
+            WHERE user_id = $4
+            RETURNING username, email, user_id
         `;
-        const result= await db.query(queryText, [username, email, id]); 
+        const result= await db.query(queryText, [username, email, updatedPasswordHash, id]); 
         if (result.rows.length === 0) {
             return res.status(404).json({error: 'Account not found'});
         }

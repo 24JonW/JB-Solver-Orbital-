@@ -1,6 +1,15 @@
 const request = require('supertest'); 
 const app = require('../server');
 const db = require('../config/db');
+const bcrypt = require('bcrypt');
+
+
+afterAll(async () => {
+    // Closes the database pool connections cleanly so Jest can exit immediately
+    if (typeof db.end === 'function') {
+        await db.end();
+    }
+});
 
 describe('Community Groups Feature Testing', () => {
     let testGroupId; 
@@ -38,7 +47,7 @@ describe('Community Groups Feature Testing', () => {
        
     });
 
-    it('cannot that join group with group id that does not exist', async () => {
+    it('cannot join group with group id that does not exist', async () => {
         const res = await request(app)
             .post('/api/groups/join')
             .send({
@@ -204,4 +213,139 @@ describe('Smart bill splitting calcation testing', () => {
 
 })
 
+describe('User Profile feature testing', ()=> {
+    let testUserId; 
+    const basePassword= 'securePassword123'; 
+    const uniqueUsername= 'TestUser_' + Date.now()
+    const uniqueEmail= `test_${Date.now()}@gmail.com`;
 
+    // Seed Hooks: Set up a dedicated workspace row before running assertions
+    beforeAll(async ()=> {
+        const saltRounds= 10; 
+        const hashPassword= await bcrypt.hash(basePassword, saltRounds); 
+        // Pre-insert an active account entity row manually to act as our session target
+        const res= await db.query(
+            `INSERT INTO account (username, password, email, created_on)
+            VALUES ($1, $2, $3, NOW()) RETURNING user_id`, 
+            [uniqueUsername, hashPassword, uniqueEmail]
+        ); 
+        testUserId= res.rows[0].user_id; 
+    })
+    // Cleanup Hooks: Wipe the database workspace clean after execution loops terminate
+    afterAll(async ()=> {
+        if (testUserId) {
+            await db.query('DELETE FROM group_members WHERE user_id= $1', [testUserId]); 
+            await db.query('DELETE FROM bill_shares WHERE debtor_user_id= $1 OR creditor_user_id= $1', [testUserId]);
+            await db.query('DELETE FROM account WHERE user_id=$1', [testUserId]);
+        }
+
+    });
+    it('should fetch specific profile credentials mathcing valid ID for UI rendering', async ()=> {
+        const res= await request(app)
+            .get(`/api/accounts/${testUserId}`);
+        expect(res.statusCode).toEqual(200); 
+        expect(res.body).toHaveProperty('user_id', testUserId); 
+        expect(res.body.username).toBe(uniqueUsername); 
+        expect(res.body.email).toBe(uniqueEmail);
+        expect(res.body).not.toHaveProperty('password'); // Password hashes must remain hidden from UI responses
+    });
+
+    it('should return a 4040 error if UI requests a non-existent parameter account ID', async ()=> {
+        const res= await request(app) 
+            .get('/api/accounts/99999');
+        expect(res.statusCode).toEqual(404); 
+        expect(res.body.error).toBe('User not found');
+    })
+
+    it('should successfully update user profile credentials when no password variation is requested', async ()=> {
+        const updatedEmail= 'new_' + uniqueEmail; 
+        const updatedUsername= uniqueUsername + '_New';
+
+        const res= await request(app) 
+            .put(`/api/accounts/${testUserId}`)
+            .send({
+                username: updatedUsername, 
+                email: updatedEmail,
+                currentPassword: '', 
+                newPassword: ''
+            })
+        expect(res.statusCode).toEqual(200); 
+        expect(res.body.user.username).toBe(updatedUsername); 
+        expect(res.body.user.email).toBe(updatedEmail);
+        const dbCheck= await db.query('SELECT username, email FROM account WHERE user_id = $1', [testUserId]); 
+        expect(dbCheck.rows[0].username).toBe(updatedUsername); 
+        expect(dbCheck.rows[0].email).toBe(updatedEmail);
+    });
+
+    it('should reject password update if the current password parameter is missing', async () => {
+        const res = await request(app)
+            .put(`/api/accounts/${testUserId}`)
+            .send({
+                username: uniqueUsername,
+                email: uniqueEmail,
+                currentPassword: '', // Left blank invalidly
+                newPassword: 'myBrandNewPassword123'
+            });
+
+        expect(res.statusCode).toEqual(400);
+        expect(res.body.error).toBe('Please enter your current password to set a new one.');
+    });
+
+    it('should reject password update if current verification password does not match hash', async () => {
+        const res = await request(app)
+            .put(`/api/accounts/${testUserId}`)
+            .send({
+                username: uniqueUsername,
+                email: uniqueEmail,
+                currentPassword: 'wrongPasswordAttempt', // Invalid password payload
+                newPassword: 'myBrandNewPassword123'
+            });
+
+        expect(res.statusCode).toEqual(400);
+        expect(res.body.error).toBe('Incorrect current password');
+    });
+
+    it('Should update and re-hash password successfully given correct verification keys', async ()=> {
+        const freshPassword= 'superSecretNewPassword999';
+        const res= await request(app)
+            .put(`/api/accounts/${testUserId}`)
+            .send({
+                username: uniqueUsername, 
+                email: uniqueEmail, 
+                currentPassword: basePassword, 
+                newPassword: freshPassword
+            }); 
+        expect(res.statusCode).toEqual(200);
+        const dbCheck= await db.query('SELECT password FROM account WHERE user_id = $1', [testUserId]);
+        const isMatch = await bcrypt.compare(freshPassword, dbCheck.rows[0].password);
+        expect(isMatch).toBe(true);
+    });
+
+    
+
+    it('Should remove account and self-destruct account space completely on delete request', async ()=>{
+        const saltRounds= 10; 
+        const hashPassword= await bcrypt.hash(basePassword, saltRounds);
+        const disposableUsername= 'DeleteMe_' + Date.now(); 
+        const disposableEmail= `delete_${Date.now()}@gmail.com`; 
+        const setupRes= await db.query(
+            `INSERT INTO account (username, password, email, created_on)
+            VALUES ($1, $2, $3, NOW()) RETURNING user_id`, 
+            [disposableUsername, hashPassword, disposableEmail]
+        )
+        const targetDeleteId= setupRes.rows[0].user_id; 
+        const res= await request(app) 
+            .delete(`/api/accounts/${targetDeleteId}`); 
+        expect(res.statusCode).toEqual(200); 
+        expect(res.body.message).toBe('Account deleted successfully'); 
+        expect(res.body.deleted.user_id).toEqual(targetDeleteId); 
+
+        const dbVerify = await db.query('SELECT * FROM account WHERE user_id = $1', [targetDeleteId]);
+        expect(dbVerify.rows.length).toEqual(0);
+    })
+
+
+
+    
+
+});
