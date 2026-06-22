@@ -214,6 +214,185 @@ describe('Smart bill splitting calcation testing', () => {
 
 })
 
+
+describe('Smart bill splitting calculation comprehensive engine testing', () => {
+    let testGroupId; 
+    let userIds = [];
+
+    beforeAll(async () => {
+        // 1. Create 4 dedicated test users sequentially in the correct 'account' table
+        const usernames = ['Alpha', 'Bravo', 'Charlie', 'Delta'];
+        for (const name of usernames) {
+            const userRes = await db.query(
+                'INSERT INTO account (username, email, password) VALUES ($1, $2, $3) RETURNING user_id',
+                [name, `${name.toLowerCase()}@test.com`, 'hashed_test_password_123']
+            );
+            userIds.push(userRes.rows[0].user_id);
+        }
+
+        // 2. Setup a temporary group owned by User 1 (Alpha) in 'community_groups'
+        const groupRes = await request(app)
+            .post('/api/groups/create')
+            .send({
+                groupName: 'Calculation Validation Sandbox Group',
+                userId: userIds[0]
+            }); 
+        testGroupId = groupRes.body.group_id; 
+
+        // 3. Link the remaining 3 test users as group members in 'group_members'
+        for (let i = 1; i < userIds.length; i++) {
+            await db.query(
+                'INSERT INTO group_members (group_id, user_id) VALUES ($1, $2)',
+                [testGroupId, userIds[i]]
+            );
+        }
+    });
+
+    afterAll(async () => {
+        if (testGroupId) {
+            // Clean up using lowercase table structures matching your ER diagram precisely
+            await db.query('DELETE FROM bill_shares WHERE bill_id IN (SELECT bill_id FROM bills WHERE group_id = $1)', [testGroupId]);
+            await db.query('DELETE FROM bills WHERE group_id = $1', [testGroupId]);
+            await db.query('DELETE FROM group_messages WHERE group_id = $1', [testGroupId]);
+            await db.query('DELETE FROM group_members WHERE group_id = $1', [testGroupId]); 
+            await db.query('DELETE FROM community_groups WHERE group_id = $1', [testGroupId]);        
+        }
+        
+        // Purge the 4 test users cleanly out of 'account'
+        if (userIds.length > 0) {
+            await db.query('DELETE FROM account WHERE user_id = ANY($1::int[])', [userIds]);
+        }
+    });
+
+    // Test case 1: Equal split (Multi-Payer Edge Case)
+    it('should calculate an equal split correctly where multiple users pay uneven amounts', async () => {
+        const res = await request(app)
+            .post('/api/bills/split_smart')
+            .send({
+                groupId: testGroupId,
+                description: 'Uneven Multi-Payer Dinner',
+                category: 'Food',
+                currency: 'SGD',
+                targetCurrency: 'SGD',
+                currencyRate: 1.0,
+                splitMethod: 'equal',
+                payers: [
+                    { userId: userIds[0], paid: 80.00 },
+                    { userId: userIds[1], paid: 40.00 }
+                ],
+                individualItems: [],
+                sharedCost: 0
+            });
+
+        expect(res.statusCode).toEqual(201);
+        expect(res.body).toHaveProperty('transactions');
+        
+        const txs = res.body.transactions;
+        const totalSettled = txs.reduce((sum, t) => sum + parseFloat(t.amount), 0);
+        expect(totalSettled).toBeCloseTo(60.00, 2);
+
+        const debtors = txs.map(t => t.debtorId);
+        expect(debtors).toContain(userIds[2]);
+        expect(debtors).toContain(userIds[3]);
+    });
+
+    // test case 2: proportional split 
+    it('should calculate a proportional split assigned directly from individual item choices', async () => {
+        const res = await request(app)
+            .post('/api/bills/split_smart')
+            .send({
+                groupId: testGroupId,
+                description: 'Al La Carte Lunch Split',
+                category: 'Food',
+                currency: 'USD',
+                targetCurrency: 'USD',
+                currencyRate: 1.0,
+                splitMethod: 'proportional',
+                payers: [
+                    { userId: userIds[0], paid: 100.00 }
+                ],
+                individualItems: [
+                    { userId: userIds[1], itemCost: 50.00 },
+                    { userId: userIds[2], itemCost: 30.00 },
+                    { userId: userIds[3], itemCost: 20.00 }
+                ],
+                sharedCost: 0
+            });
+
+        expect(res.statusCode).toEqual(201);
+        const txs = res.body.transactions;
+        
+        txs.forEach(t => {
+            expect(t.creditorId).toEqual(userIds[0]);
+        });
+
+        const user2 = txs.find(t => t.debtorId === userIds[1]);
+        expect(parseFloat(user2.amount)).toBeCloseTo(50.00, 2);
+    });
+
+    // test 3: custom split (Individual + Shared Pool)
+    it('should calculate a custom split adding personal item cost to an evenly split shared pool', async () => {
+        const res = await request(app)
+            .post('/api/bills/split_smart')
+            .send({
+                groupId: testGroupId,
+                description: 'Drinks Platter plus mains',
+                category: 'Entertainment',
+                currency: 'SGD',
+                targetCurrency: 'SGD',
+                currencyRate: 1.0,
+                splitMethod: 'custom',
+                payers: [
+                    { userId: userIds[0], paid: 140.00 }
+                ],
+                individualItems: [
+                    { userId: userIds[1], itemCost: 60.00 },
+                    { userId: userIds[2], itemCost: 40.00 }
+                ],
+                sharedCost: 40.00
+            });
+
+        expect(res.statusCode).toEqual(201);
+        const txs = res.body.transactions;
+
+        const user4 = txs.find(t => t.debtorId === userIds[3]);
+        expect(user4).toBeDefined();
+        expect(parseFloat(user4.amount)).toBeCloseTo(10.00, 2);
+
+        const totalCollectedAmount = txs.reduce((sum, t) => sum + parseFloat(t.amount), 0);
+        expect(totalCollectedAmount).toBeCloseTo(130.00, 2);
+    });
+
+    // test case 4: cross currency split 
+    it('should calculate an equal split correctly with foreign cross-currency conversions', async () => {
+        const res = await request(app)
+            .post('/api/bills/split_smart')
+            .send({
+                groupId: testGroupId,
+                description: 'International Trip Dinner',
+                category: 'Travel',
+                currency: 'USD',
+                targetCurrency: 'AUD',
+                currencyRate: 1.40, 
+                splitMethod: 'equal',
+                payers: [
+                    { userId: userIds[1], paid: 100.00 }
+                ],
+                individualItems: [],
+                sharedCost: 0
+            });
+
+        expect(res.statusCode).toEqual(201);
+        const txs = res.body.transactions;
+
+        txs.forEach(t => {
+            expect(t.creditorId).toEqual(userIds[1]);
+            expect(parseFloat(t.amount)).toBeCloseTo(35.00, 2);
+        });
+    });
+});
+
+
 describe('User Profile feature testing', ()=> {
     let testUserId; 
     const basePassword= 'securePassword123'; 

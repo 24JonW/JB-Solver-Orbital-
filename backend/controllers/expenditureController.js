@@ -6,7 +6,7 @@ const getPersonalLedger = async (req, res) => {
     try {
         const queryText = `
                 SELECT
-                    b.bill_id,
+                    b.bill_id AS bill_id,
                     b.description,
                     b.category,
                     b.currency,
@@ -42,7 +42,7 @@ const getPersonalLedger = async (req, res) => {
                     ON b.bill_id = bs.bill_id  
                 WHERE
                     b.payer_user_id = $1
-                    OR (bs.debtor_user_id = $1 AND bs.payment_status = 'paid')
+                    OR (bs.debtor_user_id = $1)
 
                 ORDER BY b.bill_date DESC;
             `;
@@ -56,4 +56,44 @@ const getPersonalLedger = async (req, res) => {
     
 }
 
-module.exports = { getPersonalLedger }
+const createPersonalExpense = async (req, res) => {
+    const { payer_user_id, description, category, bill_date, total_amount, currency } = req.body;
+    
+    try {
+        const queryText = `
+            INSERT INTO bills (
+                group_id, 
+                payer_user_id, 
+                description, 
+                category, 
+                bill_date, 
+                total_amount, 
+                currency
+            )
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            RETURNING *, total_amount AS net_amount; 
+            -- We alias total_amount as net_amount so the frontend charts read it properly instantly!
+        `;
+        
+        const values = [null, payer_user_id, description, category, bill_date, total_amount, currency];
+        const response = await db.query(queryText, values);
+        
+        // Return the saved transaction back to the frontend
+        res.status(210).json(response.rows[0]);
+    } catch (err) {
+        console.error("Database insert error:", err);
+        res.status(500).json({ error: 'Server error, could not save personal expenditure.' });
+    }
+};
+
+const deleteTransactionRecord = async (req, res) => {
+    const { billId } = req.params; 
+    try {
+        await db.query(`DELETE FROM bills WHERE bill_id = $1`, [billId]);
+        res.status(200).json({message: 'Tranasaction record successfully deleted'}); 
+    } catch (err) {
+        console.error(err); 
+        res.status(500).json({ error: 'Database server failed to erase transaction row.'}); 
+    }
+}
+module.exports = { getPersonalLedger, createPersonalExpense, deleteTransactionRecord}; 

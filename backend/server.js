@@ -23,7 +23,6 @@ app.get('/', (req, res) => {
 const billRoutes = require('./routes/billRoutes');
 app.use('/api/bills', billRoutes);
 
-console.log('server.js')
 const expRoutes = require('./routes/expRoutes'); 
 app.use('/api/exp', expRoutes); 
 

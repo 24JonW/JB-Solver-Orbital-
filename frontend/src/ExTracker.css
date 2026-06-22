@@ -22,6 +22,13 @@
 
 }
 
+.history-card {
+    border: 1px solid #e8e5e5;
+    border-radius: 10px; 
+    
+
+}
+
 
 .transaction-list {
     max-height: 300px;
@@ -38,4 +45,87 @@
     border-bottom: none;
 }
 
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #2b2b2b;
+  color: white;
+  padding: 25px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+  border: 1px solid #c7c7c6;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input, .form-group select {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background-color: #fffdfd;
+  color: rgb(26, 25, 25);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-cancel {
+  background-color: #555;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-submit {
+  background-color: #edb601;
+  color: black;
+  font-weight: bold;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-delete-item {
+    background-color: #fad1c6;
+    border-radius: 5px; 
+    padding: 5px;
+    border: 0.1px solid rgb(100, 100, 100);
+}
+.exp-btn {
+    background-color: rgb(212, 249, 231); 
+    border-radius: 5px; 
+    padding: 10px;
+    margin-top: 20px; 
+    border: 0.1px solid rgb(100, 100, 100);
+}
 

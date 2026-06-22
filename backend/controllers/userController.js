@@ -156,15 +156,9 @@ const updateAccount= async (req, res) => {
             SET 
                 username= CASE WHEN username = $1 THEN username ELSE $1 END, 
                 email= CASE WHEN email= $2 THEN email ELSE $2 END,
-<<<<<<< HEAD
-                password= $3
-            WHERE user_id = $4
-            RETURNING username, email, user_id
-=======
                 password = CASE WHEN password = $3 THEN password ELSE $3 END
                 WHERE user_id = $4
                 RETURNING username, email, user_id
->>>>>>> 0546643 (changes to update account)
         `;
         const result= await db.query(queryText, [username, email, updatedPasswordHash, id]); 
         if (result.rows.length === 0) {
