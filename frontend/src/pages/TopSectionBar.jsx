@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import '../App.css';
+import '../TopSectionBar.css';
 import JBSolverLogo from '../assets/JBSolverLogo.png'; 
 
 import { GiHouse } from "react-icons/gi";
@@ -8,7 +8,7 @@ import { FaUsersGear } from "react-icons/fa6";
 import { ImStatsDots } from "react-icons/im";
 
 
-function TopSectionBar(){
+export function TopSectionBar(){
     const navigate = useNavigate();
     return (
               <div className="topSectionBar">
