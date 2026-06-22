@@ -56,25 +56,34 @@
 .editProfileButton{
     padding: 10px; 
     border-radius: 5px;
-    background-color: darkblue;
+    background-color: rgb(18, 129, 18);
     color: white; 
     margin: 5px; 
+    width: 50%;
 }
 
 .deleteProfileButton {
     padding: 10px; 
     border-radius: 5px;
-    background-color: darkblue;
+    background-color: rgb(240, 34, 34);
     color: white; 
     margin: 5px; 
+    width: 50%;
 
 }
 
 .userProfileInfo {
     text-align: center;
     width: 100%;
+    font: medium;
 
     
+}
+.userProfileInfo input {
+    width: 80%;
+    box-sizing: border-box;
+    margin-top: 5px; 
+    font-size: medium;
 }
 
 .infoChangeSection {
@@ -96,4 +105,61 @@
     color: #718096;
     font-size: 0.9 rem;
     margin-bottom: 10px;
+}
+
+
+@media (max-width: 768px) {
+    .homepage-container {
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
+    }
+
+    .home-body-userProfile {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: auto;
+        padding: 15px;
+        gap: 0;
+        flex: none;
+    }
+
+    /* 3. Hide the empty left and right spacer boxes completely on mobile screens */
+    .body-item-userProfile.box1,
+    .body-item-userProfile.box3 {
+        display: none !important;
+    }
+
+    .body-item-userProfile.box2 {
+        width: 100%;
+        padding: 24px 16px;
+        height: auto;
+        min-height: 550px; /* Gives the profile card a solid vertical frame */
+    }
+
+    /* Stacks the inputs neatly beneath labels on small widths */
+    .userProfileInfo input {
+        width: 80%;
+        box-sizing: border-box;
+        margin-top: 5px; 
+        font-size: medium;
+    }
+    .editProfileButton {
+    width: 100%;
+    margin: 0;
+    padding: 12px; /* Increases tap target height for thumbs */
+    font-size: 14px;
+    background-color: rgb(18, 129, 18);
+  }
+  .deleteProfileButton {
+    background-color: rgb(240, 34, 34);
+    width: 100%;
+    margin: 0;
+    padding: 12px; /* Increases tap target height for thumbs */
+    font-size: 14px;
+    
+  }
+    
 }

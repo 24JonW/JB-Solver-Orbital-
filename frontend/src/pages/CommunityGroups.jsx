@@ -29,7 +29,7 @@ import { FcCancel } from "react-icons/fc";
 import { FcCheckmark } from "react-icons/fc";
 import { FcMoneyTransfer } from "react-icons/fc";
 import { IoIosAddCircle } from "react-icons/io";
-
+import { GrReturn } from "react-icons/gr";
 
 function CommunityGroups() {
   const navigate = useNavigate();
@@ -432,10 +432,11 @@ function CommunityGroups() {
         </div>
 
         {/* Right Conversation Window */}
-        <div className="chat-window-pane">
+        <div className={`chat-window-pane ${selectedGroup ? 'active' : ''}`}>
           {selectedGroup ? (
             <div className="active-chat-container">
               <div className="chat-header-title">
+                <button className='mobile-back-btn' onClick={() => setSelectedGroup(null)}> <GrReturn /> </button> 
                 <h3>{selectedGroup.group_name} <span className="id-badge">(Group ID: {selectedGroup.group_id})</span></h3>
                 <div className='settings-container'>
                   <FcCalculator className='calculator-btn' onClick={() => setShowCalculatorModal(!showCalculatorModal)} size={35}/>

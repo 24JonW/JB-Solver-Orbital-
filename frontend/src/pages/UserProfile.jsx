@@ -9,7 +9,9 @@ import { GiHouse } from "react-icons/gi";
 import { FaUserCircle } from "react-icons/fa";
 import { FaUsersGear } from "react-icons/fa6";
 import { ImStatsDots } from "react-icons/im";
-
+import { MdOutlineMail } from "react-icons/md";
+import { TbUserHexagon } from "react-icons/tb";
+import { RiLockPasswordLine } from "react-icons/ri";
 
 
 
@@ -167,7 +169,10 @@ function UserProfile() {
             <h2> User account details</h2>
             <p>User Id:  {userId}</p>
             <div style= {{margin: '15px 0'}}>
+              <MdOutlineMail size={20} /> <br/>
               <strong>email: </strong>
+              
+              <br/>
               {isEditing ? (
                 <input 
                   type= "email"
@@ -180,7 +185,10 @@ function UserProfile() {
               )}
             </div>
             <div style= {{margin: '15px 0'}}> 
+              <TbUserHexagon size={20}/> <br/>
               <strong>username: </strong>
+              
+              <br/>
               {isEditing ? (
                 <input 
                   type= "text"
@@ -196,11 +204,13 @@ function UserProfile() {
             </div>
             {isEditing && (
               <div> 
+                <RiLockPasswordLine size={20}/> <br/>
                 <p className= "setPasswordNotification"> 
                   Leave password fields blank if you don't wish to change it.
                 </p>
                 <div className="passwordSection"> 
                   <strong>Current Password: </strong>
+                  <br/>
                   <input 
                     type= "password"
                     value= {currentPassword}
@@ -211,6 +221,7 @@ function UserProfile() {
                 </div>
                 <div className= "passwordSection"> 
                   <strong>New Password: </strong>
+                  <br/>
                   <input 
                     type= "password"
                     value= {newPassword}
