@@ -9,6 +9,7 @@ import messageBubble from '../assets/chatMessage.png';
 import groupChatIcon from '../assets/groupChatIcon.png';
 import '../App.css';
 import '../CommunityGroup.css';
+
 import SmartSplitCalculator from './SmartSplitCalculator';
 import EmojiPicker from 'emoji-picker-react'; 
 

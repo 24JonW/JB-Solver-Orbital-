@@ -10,6 +10,7 @@ import axios from 'axios';
 import { FaMoneyBillTransfer } from "react-icons/fa6";
 import { GiPartyPopper } from "react-icons/gi";
 
+
 import { TopSectionBar } from './TopSectionBar'; 
 
 function HomePage() {

@@ -1,0 +1,193 @@
+
+.topSectionBar {
+  background: linear-gradient(135deg, #517ee7, #76ABDF);
+  background: linear-gradient(135deg, #28549a 0%, #21498a 100%);
+
+  
+  
+  /* #517ee7   #76ABDF*/
+  height: 20%; 
+  padding: 10px 20px; 
+  display: flex; 
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  border-bottom-left-radius: 10px; 
+  border-bottom-right-radius: 10px; 
+   
+}
+.right-buttons-4 {
+  display: flex; 
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 25px;
+  align-items: center;
+  
+}
+
+.homepageButton, .communityGroupButton, .expenditureTracker, .userProfileButton {
+  
+  /*
+  background: linear-gradient(135deg, #3dc1a8, #76cadf);
+  background: linear-gradient(135deg, #4cd0b8, #6cc4cb);
+  */
+  background: linear-gradient(135deg, #28549a 0%, #21498a 100%);
+  background: None; 
+  position: relative; 
+  border: None; 
+  margin-right: 10px; 
+  border-radius: 10px; 
+
+}
+
+.homepageButton:hover {
+  background: None; 
+}
+.communityGroupButton:hover {
+  background: None; 
+}
+.expenditureTracker:hover {
+  background: None; 
+}
+.userProfileButton:hover {
+  background: None; 
+}
+
+.logo-img {
+  padding: 10px; 
+  border-radius: 15px; 
+  
+}
+.expense-img , .userProfile-img {
+  width: 60px;
+  height: 60px; 
+  border-radius: 15px; 
+  padding: 5px; 
+  
+  
+}
+
+.group-img {
+  width: 72px; 
+  height: 72px; 
+}
+
+button:hover {
+  transform: translateY(-10px); 
+  transition: 0.5s ease; 
+  background: linear-gradient(135deg, #edb601,#eec926);
+  background: white;
+  
+}
+
+.button-wrapper {
+  position: relative; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+}
+
+.hover-tooltip {
+  position: absolute; 
+  bottom: 0px;
+  background: rgba(0,0,0,0.75);
+  color: white; 
+  padding: 6px 10px; 
+  border-radius: 12px; 
+
+  font-size: 12px;
+  white-space: nowrap; 
+  opacity: 0; 
+  transition: 1s;
+  transform: translateY(25px);
+}
+
+.button-wrapper:hover {
+  transform: translateY(-10px);
+}
+.button-wrapper:hover .hover-tooltip {
+  opacity: 1; 
+  
+}
+
+
+
+
+
+
+
+.homePageSettleButton {
+  border:None; 
+  background-color: white;
+  border-radius: None; 
+}
+
+
+
+
+/* Backdrop layer dimming the background screen workspace */
+
+
+.buttons {
+  display: flex; 
+  justify-content: center; 
+}
+
+
+
+
+/*  Mobile & Tablet responsive styles (Max 768px) */
+  
+   @media (max-width: 768px) {
+  
+    /* 1. Allow the container to expand vertically instead of forcing a tight viewport height */
+    .homepage-container {
+      height: auto;
+      min-height: 100vh;
+      overflow-y: auto;
+    }
+  
+    /* 2. Convert Top Navigation Bar from a side-by-side layout into a stacked layout */
+    .topSectionBar {
+      height: auto;
+      flex-direction: row;
+      gap: 15px;
+      padding: 15px;
+    }
+  
+    .logo-img {
+      max-width: 240px; /* Shrink logo slightly so it fits nicely */
+      margin-right: 0;
+    }
+  
+    .right-buttons-4 {
+      gap: 15px; /* Bring your navigation icons slightly closer together */
+    }
+  
+    .edit-profile-btn {
+      width: 100%; /* Make the button easy to tap with a thumb on mobile phones */
+    }
+  
+    /* 5. Clean up the footer structure at the bottom */
+    .footer {
+      height: auto;
+      justify-content: center; /* Center-align the logout option on phones */
+    }
+    .button-wrapper:hover {
+      transform: translateY(-10px);
+    }
+    .button-wrapper:hover .hover-tooltip {
+      opacity: 1;
+      transform: translateY(25px);
+    }
+    
+    button:hover {
+      transform: translateY(-10px); 
+      transition: 0.5s ease; 
+      background: white;
+    }
+  }
+
+  
