@@ -1,9 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; 
 import { jwtDecode } from 'jwt-decode'; 
-
-import JBSolverLogo from '../assets/JBSolverLogo.png';
 
 //Import images
 import starWars from '../assets/starWars.png';
@@ -16,10 +14,7 @@ import EmojiPicker from 'emoji-picker-react';
 
 //Import icons from react-icons
 import { X } from 'lucide-react'; 
-import { GiHouse } from "react-icons/gi";
-import { FaUserCircle } from "react-icons/fa";
-import { FaUsersGear } from "react-icons/fa6";
-import { ImStatsDots } from "react-icons/im";
+
 import { FcCalculator } from "react-icons/fc";
 import { FcSettings } from "react-icons/fc";
 import { FcClearFilters } from "react-icons/fc";
@@ -30,6 +25,8 @@ import { FcCheckmark } from "react-icons/fc";
 import { FcMoneyTransfer } from "react-icons/fc";
 import { IoIosAddCircle } from "react-icons/io";
 import { GrReturn } from "react-icons/gr";
+
+import { TopSectionBar } from './TopSectionBar'; 
 
 function CommunityGroups() {
   const navigate = useNavigate();
@@ -354,38 +351,7 @@ function CommunityGroups() {
   return (
     <div className="homepage-container">
       {/* top section/navigation bar of the page */}
-      <div className="topSectionBar">
-        <img src={JBSolverLogo} className="logo-img" />
-
-        <div className="right-buttons-4">
-          <div className="button-wrapper">
-            <button className="homepageButton" onClick={() => navigate("/home")}>
-              <GiHouse size={45} color={'#edb601'}/>
-            </button>
-            <span className="hover-tooltip">Home Page</span>
-          </div>
-          <div className="button-wrapper">
-            <button className="expenditureTracker" onClick={() => navigate("/tracker")}>
-              <ImStatsDots size={45} color={'#edb601'}/>
-            </button>
-            <span className="hover-tooltip">Expenditure Tracker</span>
-          </div>
-
-          <div className="button-wrapper">
-            <button className="communityGroupButton" onClick={() => navigate("/groups")}>
-              <FaUsersGear size={45} color={'#edb601'}/>
-            </button>
-            <span className="hover-tooltip">Community Groups</span>
-          </div>
-
-          <div className="button-wrapper">
-            <button className="userProfileButton" onClick={() => navigate("/profile")}>
-              <FaUserCircle size={45} color={'#edb601'}/>
-            </button>
-            <span className="hover-tooltip">User Profile</span>
-          </div>
-        </div>
-      </div>
+      <TopSectionBar/>
       
       <div className="chat-app-layout">
         {/* Left Sidebar */}

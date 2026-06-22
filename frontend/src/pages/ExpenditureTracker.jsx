@@ -1,15 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react'; 
 import axios from 'axios'; 
-import JBSolverLogo from '../assets/JBSolverLogo.png';
 import { jwtDecode } from 'jwt-decode'; 
 
 import '../App.css'; 
 import '../ExTracker.css'; 
-import { GiHouse } from "react-icons/gi";
-import { FaUserCircle } from "react-icons/fa";
-import { FaUsersGear } from "react-icons/fa6";
-import { ImStatsDots } from "react-icons/im";
 
 import {
   Chart as ChartJS,
@@ -24,6 +19,7 @@ import {
 } from 'chart.js';
 import { Bar, Line } from 'react-chartjs-2';
 
+import { TopSectionBar } from './TopSectionBar'; 
 
 // Register ChartJS sub-modules securely
 ChartJS.register(
@@ -211,36 +207,7 @@ function ExpenditureTracker() {
 
   return (
     <div className="homepage-container">
-      <div className="topSectionBar">
-        <img src={JBSolverLogo} className="logo-img" alt="JBSolver Logo" />
-
-        <div className="right-buttons-4">
-          <div className="button-wrapper">
-            <button className="homepageButton" onClick={() => navigate("/home")}>
-              <GiHouse size={45} color={'#edb601'}/>
-            </button>
-            <span className="hover-tooltip">Home Page</span>
-          </div>
-          <div className="button-wrapper">
-            <button className="expenditureTracker" onClick={() => navigate("/tracker")}>
-              <ImStatsDots size={45} color={'#edb601'}/>
-            </button>
-            <span className="hover-tooltip">Expenditure Tracker</span>
-          </div>
-          <div className="button-wrapper">
-            <button className="communityGroupButton" onClick={() => navigate("/groups")}>
-              <FaUsersGear size={45} color={'#edb601'}/>
-            </button>
-            <span className="hover-tooltip">Community Groups</span>
-          </div>
-          <div className="button-wrapper">
-            <button className="userProfileButton" onClick={() => navigate("/profile")}>
-              <FaUserCircle size={45} color={'#edb601'}/>
-            </button>
-            <span className="hover-tooltip">User Profile</span>
-          </div>
-        </div>
-      </div>
+      <TopSectionBar/>
     
       <div className='home-body-ex'>
         <div className='card' style={{gridArea: 'box-1'}}>Budget this month</div>
