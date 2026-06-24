@@ -140,54 +140,67 @@ button:hover {
 
 /*  Mobile & Tablet responsive styles (Max 768px) */
   
-   @media (max-width: 768px) {
-  
+@media (max-width: 768px) {
+
     /* 1. Allow the container to expand vertically instead of forcing a tight viewport height */
     .homepage-container {
-      height: auto;
-      min-height: 100vh;
-      overflow-y: auto;
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
     }
-  
+
     /* 2. Convert Top Navigation Bar from a side-by-side layout into a stacked layout */
     .topSectionBar {
-      height: auto;
-      flex-direction: row;
-      gap: 15px;
-      padding: 15px;
+        height: auto;
+        flex-direction: row;
+        gap: 15px;
+        padding: 15px;
     }
-  
+
     .logo-img {
-      max-width: 240px; /* Shrink logo slightly so it fits nicely */
-      margin-right: 0;
+        max-width: 240px; /* Shrink logo slightly so it fits nicely */
+        margin-right: 0;
     }
-  
+
     .right-buttons-4 {
-      gap: 15px; /* Bring your navigation icons slightly closer together */
+        gap: 15px; /* Bring your navigation icons slightly closer together */
     }
-  
+
     .edit-profile-btn {
-      width: 100%; /* Make the button easy to tap with a thumb on mobile phones */
+        width: 100%; /* Make the button easy to tap with a thumb on mobile phones */
     }
-  
+
     /* 5. Clean up the footer structure at the bottom */
     .footer {
-      height: auto;
-      justify-content: center; /* Center-align the logout option on phones */
+        height: auto;
+        justify-content: center; /* Center-align the logout option on phones */
     }
     .button-wrapper:hover {
-      transform: translateY(-10px);
+        transform: translateY(-10px);
     }
     .button-wrapper:hover .hover-tooltip {
-      opacity: 1;
-      transform: translateY(25px);
+        opacity: 1;
+        transform: translateY(25px);
     }
-    
+
     button:hover {
-      transform: translateY(-10px); 
-      transition: 0.5s ease; 
-      background: white;
+        transform: translateY(-10px); 
+        transition: 0.5s ease; 
+        background: white;
     }
-  }
+}
+
+.number {
+    font-size: 25px; 
+}
+
+.card-description {
+    font-size: 12px; 
+}
+
+.percentage-description {
+    font-size: 18px; 
+}
+
 
   
