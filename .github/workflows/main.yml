@@ -24,9 +24,9 @@ jobs:
 
     - name: Install Frontend dependencies
       # This forces the command to run inside the frontend folder      
-      run: npm ci
+      run: npm install
       working-directory: ./frontend
 
     - name: Run Frontend automated tests
-      run: npm test
+      run: npx vitest run
       working-directory: ./frontend
