@@ -4,12 +4,7 @@ const db = require('../config/db');
 const bcrypt = require('bcrypt');
 
 
-afterAll(async () => {
-    // Closes the database pool connections cleanly so Jest can exit immediately
-    if (typeof db.end === 'function') {
-        await db.end();
-    }
-});
+
 
 
 describe('Community Groups Feature Testing', () => {
@@ -528,4 +523,13 @@ describe('User Profile feature testing', ()=> {
 
     
 
+});
+afterAll(async () => {
+    if (global.server) {
+        await global.server.close();
+    }
+    // Closes the database pool connections cleanly so Jest can exit immediately
+    if (typeof db.end === 'function') {
+        await db.end();
+    }
 });
