@@ -14,3 +14,8 @@ describe('Basic JBSolver Frontend Sanity Check', () => {
       expect(element).toBeInTheDocument();
     });
   });
+
+
+
+
+expect.extend(matchers); 
