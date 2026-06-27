@@ -44,8 +44,6 @@ jobs:
         cache-dependency-path: /package-lock.json'
     - name: Install Backend dependencies 
       run: npm install 
-      working-directory: ./backend 
     - name: Run Backend automated tests 
       run: npm test 
-      working-directory: ./backend 
 
