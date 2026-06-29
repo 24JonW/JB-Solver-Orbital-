@@ -284,49 +284,38 @@ function ExpenditureTracker() {
     
       <div className='home-body-ex'>
         <div className='card' style={{gridArea: 'box-1'}}>
-          <div className="number" >${budget.toFixed(2)}</div>
-          <div className="card-description">Budget this month</div>
-          
-        </div>
-        <div className='card' style={{gridArea: 'box-2'}}>
-          <div className="number">${totalAmountMonth.toFixed(2)}</div>
-          <div className="card-description">Expenditure this month</div> 
-
-          <div className="percentage-description" style={{ 
-            fontSize: '0.85rem', 
-            fontWeight: 'bold', 
-            color: budgetUsedPercent > 100 ? '#ff4d4d' : '#2ecc71',
-            marginTop: '4px' 
-          }}>
-            {budgetUsedPercent > 0 ? `${budgetUsedPercent.toFixed(1)}% of budget used` : '0% used'}
-          </div>
-        </div>
-        <div className='card' style={{gridArea: 'box-3'}}>
-          <div className="number">${totalAmountPrevMonth.toFixed(2)}</div>
-          <div className="card-description">Comparison with prev month</div>
-          <div className="percentage-description" style={{ 
-            fontSize: '0.85rem', 
-            fontWeight: 'bold', 
-            color: momVariancePercent > 0 ? '#ff4d4d' : '#2ecc71', // Spending up is bad (red), down is good (green)
-            marginTop: '4px' 
-          }}>
-            {momVariancePercent >= 0 ? '▲ ' : '▼ '}
-            {Math.abs(momVariancePercent).toFixed(1)}% 
+            <div className="card-description">Budget this month</div>
+            <div className="number">${budget.toFixed(2)}</div>
+            <div className={`percentage-description ${(budget - totalAmountMonth).toFixed(2) > 0 ? 'status-good' : 'status-bad'}`}>{(budget - totalAmountMonth).toFixed(2) > 0 ? 'Within Budget' : 'Exceeded Budget'}</div> {/* Keeps layout 1/5 structural symmetry */}
           </div>
 
-        </div>
-        <div className='card' style={{gridArea: 'box-4'}}>
-          <div className="number">${(budget - totalAmountMonth).toFixed(2)}</div>
-          <div className="card-description">Remaining Budget</div>
-          <div className="percentage-description" style={{ 
-            fontSize: '0.85rem', 
-            fontWeight: 'bold', 
-            color: (budget - totalAmountMonth) >= 0 ? '#2ecc71' : '#ff4d4d',
-            marginTop: '4px' 
-          }}>
-            {budgetRemainingPercent.toFixed(1)}% left
+          {/* Box 2: Expenditure */}
+          <div className='card' style={{gridArea: 'box-2'}}>
+            <div className="card-description">Expenditure this month</div> 
+            <div className="number">${totalAmountMonth.toFixed(2)}</div>
+            <div className={`percentage-description ${budgetUsedPercent > 100 ? 'status-bad' : 'status-good'}`}>
+              {budgetUsedPercent > 0 ? `${budgetUsedPercent.toFixed(1)}% of budget used` : '0% used'}
+            </div>
           </div>
-        </div>
+
+          {/* Box 3: Comparison */}
+          <div className='card' style={{gridArea: 'box-3'}}>
+            <div className="card-description">Comparison with prev month</div>
+            <div className="number">${totalAmountPrevMonth.toFixed(2)}</div>
+            <div className={`percentage-description ${momVariancePercent > 0 ? 'status-bad' : 'status-good'}`}>
+              {momVariancePercent >= 0 ? '▲ ' : '▼ '}
+              {Math.abs(momVariancePercent).toFixed(1)}% 
+            </div>
+          </div>
+
+          {/* Box 4: Remaining Budget */}
+          <div className='card' style={{gridArea: 'box-4'}}>
+            <div className="card-description">Remaining Budget</div>
+            <div className="number">${(budget - totalAmountMonth).toFixed(2)}</div>
+            <div className={`percentage-description ${(budget - totalAmountMonth) >= 0 ? 'status-good' : 'status-bad'}`}>
+              {budgetRemainingPercent.toFixed(1) < 0 ? "Cut down spending" : budgetRemainingPercent.toFixed(1) + "left"}
+            </div>
+          </div>
         
         <div className="card" style={{ gridArea: "box-5", minHeight: '320px', padding: '15px', display: 'flex', flexDirection: 'column' }}>
             <h3 style={{ margin: '0 0 10px 0' }}>Spending Trend</h3>
