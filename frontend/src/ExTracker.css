@@ -149,19 +149,36 @@
 }
 
 .btn-delete-item {
-    background-color: #fad1c6;
-    border-radius: 5px; 
-    padding: 5px;
-    border: 0.1px solid rgb(100, 100, 100);
-}
-.exp-btn {
-    background-color: rgb(212, 249, 231); 
-    border-radius: 5px; 
-    padding: 10px;
-    margin-top: 20px; 
-    border: 0.1px solid rgb(100, 100, 100);
+    background-color: white; 
+    border-radius: None;
+    border: None; 
 }
 
+.btn-delete-item:hover {
+    transform: translateY(-6px);
+    background-color: white; 
+}
+.exp-btn {
+    background-color: White; 
+    border-radius: 5px; 
+    padding: None; 
+    margin-top: 20px; 
+    border: None; 
+}
+
+.budget-btn {
+    background-color: White; 
+    border-radius: 5px; 
+    padding: None; 
+    margin-top: 20px; 
+    border: None; 
+}
+
+.btns {
+    display:flex; 
+    flex-direction: row; 
+    justify-content: center; 
+}
 .number {
   color: var(--text-main);
   font-size: 1.875rem; /* Large and highly legible */
@@ -204,6 +221,34 @@
   color: var(--error-red);
 }
 
+.button-wrapper {
+  position: relative; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  z-index: 1; 
+}
+.button-wrapper:hover {
+  z-index: 10; /* Temporarily lifts this specific button box above its neighbor */
+}
+.hover-tooltip {
+  position: absolute; 
+  background: rgba(0,0,0,0.75);
+  color: white; 
+  padding: 6px 10px; 
+  border-radius: 12px;
+  font-size: 12px;
+  white-space: nowrap; 
+  opacity: 0; 
+  z-index: 9999;
+}
+
+.button-wrapper:hover .hover-tooltip {
+  opacity: 1; 
+  
+}
+  
+
 
 @media(max-width: 769px) {
     .homepage-container {
@@ -232,3 +277,4 @@
             "box-5 box-5 box-6 box-6 box-7 box-7" */
     }
 }
+

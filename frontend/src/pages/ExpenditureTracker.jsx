@@ -2,6 +2,10 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react'; 
 import axios from 'axios'; 
 import { jwtDecode } from 'jwt-decode'; 
+import { FcCancel } from "react-icons/fc";
+import { FcPlus } from "react-icons/fc";
+
+import { FcSalesPerformance } from "react-icons/fc";
 
 import '../App.css'; 
 import '../ExTracker.css'; 
@@ -354,7 +358,7 @@ function ExpenditureTracker() {
                       <p>{item.currency} {item.net_amount}</p>
                       <p>{new Date(item.bill_date).toLocaleDateString()}</p>
                       <button onClick={() => handleDelete(item.bill_id)}
-                              className='btn-delete-item'>Delete</button>
+                              className='btn-delete-item'><FcCancel size={30}/></button>
                       <hr/>
                     </div>
                   ))}
@@ -362,13 +366,38 @@ function ExpenditureTracker() {
               )}
             </div>
             
-            <button className="exp-btn" onClick={() => setIsModalOpen(true)}>Add new expenditure</button>
-            <button className="budget-btn" onClick={() => {
-              setIsBudgetModalOpen(true); 
-              setBudgetInput(budget);
-            }}>
-              Set Budget
-            </button>
+            <div className='btns'>
+                <div className="button-wrapper">
+                    <button
+                        className="exp-btn"
+                        onClick={() => setIsModalOpen(true)}
+                    >
+                        <FcPlus size={40} />
+                    </button>
+
+                    <span className="hover-tooltip">
+                        Add Expenditure
+                    </span>
+                </div>
+
+                <div className="button-wrapper">
+                    <button
+                        className="exp-btn"
+                        onClick={() => {
+                            setIsBudgetModalOpen(true);
+                            setBudgetInput(budget);
+                        }}
+                    >
+                        <FcSalesPerformance size={40} />
+                    </button>
+
+                    <span className="hover-tooltip">
+                        Set Budget
+                    </span>
+                </div>
+                                
+              
+            </div>
         </div>
       </div>
 
