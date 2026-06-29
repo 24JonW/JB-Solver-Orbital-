@@ -1,25 +1,58 @@
 
+:root {
+  --text-main: #2d2d2d;
+  --text-muted: #4b5563;
+  --border-color: #f3f4f6;
+  --success-green: #10b981;
+  --error-red: #ef4444;
+}
+
+
+
 
 .home-body-ex {
     display: grid;
     flex: 1;              /* Automatically fills available vertical space without spilling */
-    min-height: 0;
     gap: 0.8em;
     margin: 1em; 
-    overflow: hidden;
+    max-width: 100%;
+    overflow-y: auto; 
+    overflow-x: hidden; 
+    grid-template-columns: repeat(6, 1fr);
     grid-template-areas: 
         "box-1 box-2 box-3 box-4 box-7 box-7"
         "box-5 box-5 box-6 box-6 box-7 box-7"
         "box-5 box-5 box-6 box-6 box-7 box-7";
+    
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-areas: 
+        "box-1 box-2 box-3 box-4 box-7"
+        "box-5 box-5 box-6 box-6 box-7"
+        "box-5 box-5 box-6 box-6 box-7";
+     
 }
 
 .card {
-    padding: 24px; 
+    padding: 0.7rem; 
     box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border-color);
     border-radius: 18px; 
-    overflow: hidden;  
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    min-height: 100px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    /* overflow:visible; */
+    min-width: 0;
+    overflow: hidden; 
 
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  border-color: #e5e7eb;
 }
 
 .history-card {
@@ -129,6 +162,47 @@
     border: 0.1px solid rgb(100, 100, 100);
 }
 
+.number {
+  color: var(--text-main);
+  font-size: 1.875rem; /* Large and highly legible */
+  font-weight: 700;
+  letter-spacing: -0.03em; /* Tight tracking like professional banking apps */
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+}
+
+.card-description {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase; /* Gives an enterprise SaaS look */
+  letter-spacing: 0.05em;
+  order: -1; /* Puts the title ABOVE the big number naturally in flexbox */
+  margin-bottom: 0.5rem;
+}
+
+
+.percentage-description {
+  display: flex;
+  align-items: center; 
+  font-size: 0.825rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  width: fit-content;
+  /* Pushes the indicator pill cleanly to the bottom */
+}
+
+
+.percentage-description.status-good {
+  background-color: #ecfdf5;
+  color: var(--success-green);
+}
+
+.percentage-description.status-bad {
+  background-color: #fef2f2;
+  color: var(--error-red);
+}
 
 
 @media(max-width: 769px) {
@@ -144,7 +218,8 @@
         min-height: 0;
         gap: 0.8em;
         margin: 1em; 
-        overflow: hidden;
+        overflow-y: auto; 
+        grid-template-columns: repeat(2, 1fr);
         grid-template-areas: 
             "box-1 box-2"
             "box-3 box-4"
