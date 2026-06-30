@@ -26,7 +26,6 @@ app.use('/api/bills', billRoutes);
 const expRoutes = require('./routes/expRoutes'); 
 app.use('/api/exp', expRoutes); 
 
-
 const PORT = process.env.PORT || 5433;
 app.listen(PORT,async () => {
   console.log(`🚀 Server running cleanly on port ${PORT}`);
