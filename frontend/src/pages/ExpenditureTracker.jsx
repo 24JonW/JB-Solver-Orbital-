@@ -4,7 +4,6 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode'; 
 import { FcCancel } from "react-icons/fc";
 import { FcPlus } from "react-icons/fc";
-
 import { FcSalesPerformance } from "react-icons/fc";
 
 import '../App.css'; 
@@ -47,6 +46,16 @@ const chartOptions = {
   },
 };
 
+// Helper to format any date string into YYYY-MM based on Asia/Singapore timezone
+const formatYearMonth = (dateInput) => {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Singapore",
+    year: "numeric",
+    month: "2-digit"
+  }).format(new Date(dateInput));
+};
+
+
 const getDynamicBarData = (ledgerItems) => {
   const categoryTotals = {};  
   ledgerItems.forEach(item => {
@@ -82,9 +91,7 @@ const getDynamicLineData = (ledgerItems) => {
         }).format(new Date(item.bill_date)); 
 
         const amount = Number(item.net_amount || item.total_amount) || 0;
-
-        dateTotals[normalizedDate] =
-            (dateTotals[normalizedDate] || 0) + amount;
+        dateTotals[normalizedDate] = (dateTotals[normalizedDate] || 0) + amount;
     });
 
     const sortedDates = Object.keys(dateTotals).sort();
@@ -112,7 +119,6 @@ function ExpenditureTracker() {
   const [ ledger, setLedger ] = useState([]); 
   const [currentUser, setCurrentUser] = useState(null); 
 
-  // const API_EXP_URL = 'http://localhost:5001/api/exp';
   const API_EXP_URL = 'https://jb-solver-orbital.onrender.com/api/exp';
   
   const [isModalOpen, setIsModalOpen ] = useState(false); 
@@ -127,37 +133,36 @@ function ExpenditureTracker() {
   const [ isBudgetModalOpen, setIsBudgetModalOpen ] = useState(false); 
   const [ budget, setBudget ] = useState(0); 
   const [ budgetInput, setBudgetInput ] = useState(""); 
-  const [ totalAmountMonth, setTotalAmountMonth ] = useState(0); 
-  const [ totalAmountPrevMonth, setTotalAmountPrevMonth ] = useState(0); 
+  
 
-  // Helper function to calculate current month spend given an items array
-  const calculateCurrentMonthSpend = (items) => {
-    const now = new Date(); 
-    const currentMonth = now.getMonth(); 
-    const currentYear = now.getFullYear(); 
-    return items.reduce((total, item) => {
-      const billDate = new Date(item.bill_date); 
-      if (billDate.getMonth() === currentMonth && billDate.getFullYear() === currentYear) {
-        return total + Number(item.net_amount || item.total_amount); 
-      }
-      return total; 
-    }, 0);
+  const [ selectedMonth, setSelectedMonth ] = useState(() => formatYearMonth(new Date()));
+
+  const filterLedger = ledger.filter(item => {
+    if (!item.bill_date) return false; 
+    return formatYearMonth(item.bill_date) === selectedMonth; 
+  });
+
+    
+
+  const calculatePrevMonthSpend = (items, currentSelectedMonth) => {
+      const [year, month] = currentSelectedMonth.split("-").map(Number);
+      // JS months are 0-indexed. passing (month - 2) automatically rolls back to the correct previous month safely
+      const previousDate = new Date(year, month - 2, 1);
+      const prevMonthStr = formatYearMonth(previousDate);
+
+      return items.reduce((total, item) => {
+          if (!item.bill_date) return total;
+          if (formatYearMonth(item.bill_date) === prevMonthStr) {
+              return total + Number(item.net_amount || item.total_amount);
+          }
+          return total;
+      }, 0);
+
   };
 
-  const calculatePrevMonthSpend = (items) => {
-    const now = new Date(); 
-    const targetDate = new Date(now.getFullYear(), now.getMonth() - 1, 1); 
-    const prevMonth = targetDate.getMonth(); 
-    const prevMonthYear = targetDate.getFullYear(); 
-    return items.reduce((total, item) => {
-      const billDate = new Date(item.bill_date); 
-      if (billDate.getMonth() === prevMonth && billDate.getFullYear() === prevMonthYear) {
-        return total + Number(item.net_amount || item.total_amount); 
-      }
-      return total; 
-    }, 0); 
 
-  }; 
+  const totalAmountMonth = filterLedger.reduce((sum, item) => sum + Number(item.net_amount || item.total_amount), 0);
+  const totalAmountPrevMonth = calculatePrevMonthSpend(ledger, selectedMonth); 
 
   const handleInputChange = (e) => {
     const { name, value } = e.target; 
@@ -181,8 +186,6 @@ function ExpenditureTracker() {
     axios.post(`${API_EXP_URL}/transaction`, newTransaction)
          .then(res => {
             const savedTransaction = res.data.transaction || res.data; 
-            
-            // Generate the exact updated ledger array directly
             const updatedLedger = [savedTransaction, ...ledger];
             setLedger(updatedLedger); 
 
@@ -194,10 +197,6 @@ function ExpenditureTracker() {
               total_amount: '', 
               currency: 'SGD'
             });
-
-            // Calculate using the updated array so values refresh instantly
-            setTotalAmountMonth(calculateCurrentMonthSpend(updatedLedger)); 
-            setTotalAmountPrevMonth(calculatePrevMonthSpend(updatedLedger));
          })
          .catch(err => console.error('Error creating expenditure record:', err)); 
   }
@@ -209,14 +208,8 @@ function ExpenditureTracker() {
     axios.delete(`${API_EXP_URL}/transaction/${billId}`)
         .then((res) => {
           alert('Transaction deleted successfully!'); 
-          
-          // Generate the filtered array directly
           const updatedLedger = ledger.filter(item => item.bill_id !== billId);
           setLedger(updatedLedger);
-
-          // Calculate using the remaining items so cards refresh instantly
-          setTotalAmountMonth(calculateCurrentMonthSpend(updatedLedger));
-          setTotalAmountPrevMonth(calculatePrevMonthSpend(updatedLedger)); 
         })
         .catch(err => {
           console.error('Error removing transaction record:', err);
@@ -247,11 +240,8 @@ function ExpenditureTracker() {
     if (!currentUser) return; 
     axios.get(`${API_EXP_URL}/transaction/${currentUser.user_id}`)
     .then(res => {
-      console.log(res.data);
       if (Array.isArray(res.data)) {
         setLedger(res.data);
-        setTotalAmountMonth(calculateCurrentMonthSpend(res.data));
-        setTotalAmountPrevMonth(calculatePrevMonthSpend(res.data));
       } 
     })
     .catch(err => console.error(err)); 
@@ -264,13 +254,52 @@ function ExpenditureTracker() {
     }
   }, [])
 
-  const handleBudgetInput = (e) => {
-    e.preventDefault(); 
-    const value = Number(budgetInput); 
-    setBudget(value); 
-    localStorage.setItem("budget", value); 
-    setIsBudgetModalOpen(false); 
-  }
+  // const handleBudgetInput = (e) => {
+  //   e.preventDefault(); 
+  //   const value = Number(budgetInput); 
+  //   setBudget(value); 
+  //   localStorage.setItem("budget", value); 
+  //   setIsBudgetModalOpen(false); 
+  // }
+  
+// Helper to turn "YYYY-MM" from state into database-friendly "YYYY-MM-01"
+const getFirstOfMonthString = (yearMonthStr) => `${yearMonthStr}-01`;
+
+// Fetch budget dynamically from backend when month or user changes
+useEffect(() => {
+  if (!currentUser) return;
+  
+  const monthTarget = getFirstOfMonthString(selectedMonth);
+  axios.get(`https://jb-solver-orbital.onrender.com/api/exp/budget/${currentUser.user_id}/${monthTarget}`)
+    .then(res => {
+      setBudget(Number(res.data.budget_amount));
+    })
+    .catch(err => console.error("Error fetching budget:", err));
+}, [selectedMonth, currentUser]);
+
+// Submit budget to database
+const handleBudgetInput = (e) => {
+  e.preventDefault();
+  if (!currentUser) return;
+
+  const budgetData = {
+    user_id: currentUser.user_id,
+    budget_amount: parseFloat(budgetInput) || 0,
+    budget_month: getFirstOfMonthString(selectedMonth) // Saves it targeted to currently viewed month
+  };
+
+  axios.post(`https://jb-solver-orbital.onrender.com/api/exp/budget`, budgetData)
+    .then(res => {
+       setBudget(Number(res.data.budget_amount));
+       setIsBudgetModalOpen(false);
+       alert("Budget updated for this month!");
+    })
+    .catch(err => {
+       console.error('Error saving budget:', err);
+       alert(`Failed to save budget ${err.response?.data?.error || err.message}`);
+    });
+};
+
 
   const budgetUsedPercent = budget > 0 ? (totalAmountMonth / budget) * 100 : 0; 
   let momVariancePercent = 0; 
@@ -290,10 +319,9 @@ function ExpenditureTracker() {
         <div className='card' style={{gridArea: 'box-1'}}>
             <div className="card-description">Budget this month</div>
             <div className="number">${budget.toFixed(2)}</div>
-            <div className={`percentage-description ${(budget - totalAmountMonth).toFixed(2) > 0 ? 'status-good' : 'status-bad'}`}>{(budget - totalAmountMonth).toFixed(2) > 0 ? 'Within Budget' : 'Exceeded Budget'}</div> {/* Keeps layout 1/5 structural symmetry */}
+            <div className={`percentage-description ${(budget - totalAmountMonth).toFixed(2) > 0 ? 'status-good' : 'status-bad'}`}>{(budget - totalAmountMonth).toFixed(2) > 0 ? 'Within Budget' : 'Exceeded Budget'}</div>
           </div>
 
-          {/* Box 2: Expenditure */}
           <div className='card' style={{gridArea: 'box-2'}}>
             <div className="card-description">Expenditure this month</div> 
             <div className="number">${totalAmountMonth.toFixed(2)}</div>
@@ -302,7 +330,6 @@ function ExpenditureTracker() {
             </div>
           </div>
 
-          {/* Box 3: Comparison */}
           <div className='card' style={{gridArea: 'box-3'}}>
             <div className="card-description">Comparison with prev month</div>
             <div className="number">${totalAmountPrevMonth.toFixed(2)}</div>
@@ -312,22 +339,21 @@ function ExpenditureTracker() {
             </div>
           </div>
 
-          {/* Box 4: Remaining Budget */}
           <div className='card' style={{gridArea: 'box-4'}}>
             <div className="card-description">Remaining Budget</div>
             <div className="number">${(budget - totalAmountMonth).toFixed(2)}</div>
             <div className={`percentage-description ${(budget - totalAmountMonth) >= 0 ? 'status-good' : 'status-bad'}`}>
-              {budgetRemainingPercent.toFixed(1) < 0 ? "Cut down spending" : budgetRemainingPercent.toFixed(1) + "left"}
+              {budgetRemainingPercent < 0 ? "Cut down spending" : budgetRemainingPercent.toFixed(1) + "% left"}
             </div>
           </div>
         
         <div className="card" style={{ gridArea: "box-5", minHeight: '320px', padding: '15px', display: 'flex', flexDirection: 'column' }}>
             <h3 style={{ margin: '0 0 10px 0' }}>Spending Trend</h3>
             <div style={{ flex: 1, position: 'relative', width: '100%', height: '100%' }}>
-              {ledger.length === 0 ? (
-                <p>No transactions found.</p>
+              {filterLedger.length === 0 ? (
+                <p>No transactions found for this month.</p>
               ) : (
-                <Line data={getDynamicLineData(ledger)} options={chartOptions} />
+                <Line data={getDynamicLineData(filterLedger)} options={chartOptions} />
               )}
             </div>
         </div>
@@ -335,22 +361,29 @@ function ExpenditureTracker() {
         <div className='card' style={{ gridArea: 'box-6', minHeight: '320px', padding: '15px', display: 'flex', flexDirection: 'column' }}>
             <h3 style={{ margin: '0 0 10px 0' }}>Category Breakdown</h3> 
             <div style={{ flex: 1, position: 'relative', width: '100%', height: '100%' }}>
-              {ledger.length === 0 ? (
-                <p>No transactions found.</p>
+              {filterLedger.length === 0 ? (
+                <p>No transactions found for this month.</p>
               ) : (
-                <Bar data={getDynamicBarData(ledger)} options={chartOptions} />
+                <Bar data={getDynamicBarData(filterLedger)} options={chartOptions} />
               )}
             </div>
         </div>
 
         <div className='card' style={{gridArea: 'box-7'}}>
             <h3>Transaction History</h3>
+            <input
+              type='month'
+              className='date-selector'
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+            />
+
             <div className="history-card">
-              {ledger.length === 0 ? (
-                <p>No transactions found.</p>
+              {filterLedger.length === 0 ? (
+                <p>No transactions found for this month.</p>
               ) : (
                 <div className='transaction-list'>
-                  {ledger.map((item, index) => (
+                  {filterLedger.map((item, index) => (
                     <div key={index} className='transaction-row'>
                       <p>Category: {item.category}</p>
                       <p>Description: {item.description} </p>
@@ -368,35 +401,18 @@ function ExpenditureTracker() {
             
             <div className='btns'>
                 <div className="button-wrapper">
-                    <button
-                        className="exp-btn"
-                        onClick={() => setIsModalOpen(true)}
-                    >
+                    <button className="exp-btn" onClick={() => setIsModalOpen(true)}>
                         <FcPlus size={40} />
                     </button>
-
-                    <span className="hover-tooltip">
-                        Add Expenditure
-                    </span>
+                    <span className="hover-tooltip">Add Expenditure</span>
                 </div>
 
                 <div className="button-wrapper">
-                    <button
-                        className="exp-btn"
-                        onClick={() => {
-                            setIsBudgetModalOpen(true);
-                            setBudgetInput(budget);
-                        }}
-                    >
+                    <button className="exp-btn" onClick={() => { setIsBudgetModalOpen(true); setBudgetInput(budget); }}>
                         <FcSalesPerformance size={40} />
                     </button>
-
-                    <span className="hover-tooltip">
-                        Set Budget
-                    </span>
+                    <span className="hover-tooltip">Set Budget</span>
                 </div>
-                                
-              
             </div>
         </div>
       </div>
@@ -468,3 +484,4 @@ function ExpenditureTracker() {
 }
 
 export default ExpenditureTracker;
+
