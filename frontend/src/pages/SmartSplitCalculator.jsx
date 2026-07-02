@@ -139,8 +139,8 @@ function SmartSplitCalculator({
 
       // Issue payload bundle mapping parameters configuration to the server controller endpoint
       const response = await axios.post(
-        'https://jb-solver-orbital.onrender.com/api/bills/split_smart',
-        // 'http://localhost:5001/api/bills/split_smart',
+        // 'https://jb-solver-orbital.onrender.com/api/bills/split_smart',
+        'http://localhost:5001/api/bills/split_smart',
         {
           groupId: selectedGroup.group_id,
           description: billData.description,
@@ -182,8 +182,8 @@ function SmartSplitCalculator({
 
         // Publish raw text body payload out to the shared group conversation endpoint
         await axios.post(
-            'https://jb-solver-orbital.onrender.com/api/groups/message',
-            // 'http://localhost:5001/api/groups/message', 
+            // 'https://jb-solver-orbital.onrender.com/api/groups/message',
+            'http://localhost:5001/api/groups/message', 
             {
                 groupId: selectedGroup.group_id, 
                 senderId: currentUser.user_id, 

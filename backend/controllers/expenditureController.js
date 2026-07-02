@@ -44,19 +44,20 @@ const getPersonalLedger = async (req, res) => {
 };
 
 const createPersonalExpense = async (req, res) => {
-    const { payer_user_id, description, category, bill_date, total_amount, currency } = req.body;
+    const { payer_user_id, description, category, bill_date, total_amount, currency, target_currency, gst, tax, exchangeRates} = req.body;
     try {
         const queryText = `
-            INSERT INTO bills (group_id, payer_user_id, description, category, bill_date, total_amount, currency)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            INSERT INTO bills (group_id, payer_user_id, description, category, bill_date, total_amount, currency, target_currency, gst_percent, tax_percent, exchange_rate)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
             RETURNING *, total_amount AS net_amount; 
         `;
-        const values = [null, payer_user_id, description, category, bill_date, total_amount, currency];
+        const values = [null, payer_user_id, description, category, bill_date, total_amount, currency, target_currency, gst, tax, exchangeRates];
         const response = await db.query(queryText, values);
-        res.status(210).json(response.rows[0]);
+        return res.status(201).json(response.rows[0]);
+
     } catch (err) {
         console.error("Database insert error:", err);
-        res.status(500).json({ error: 'Server error, could not save personal expenditure.' });
+        return res.status(500).json({ error: 'Server error, could not save personal expenditure.' });
     }
 };
 

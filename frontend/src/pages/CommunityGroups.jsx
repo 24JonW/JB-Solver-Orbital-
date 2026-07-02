@@ -61,11 +61,11 @@ function CommunityGroups() {
   const pickerRef = useRef(null); 
 
 
-  // const API_BASE_URL= 'http://localhost:5001/api/groups'; 
-  // const API_BILLS_URL= 'http://localhost:5001/api/bills';
+  const API_BASE_URL= 'http://localhost:5001/api/groups'; 
+  const API_BILLS_URL= 'http://localhost:5001/api/bills';
 
-  const API_BASE_URL = 'https://jb-solver-orbital.onrender.com/api/groups'; 
-  const API_BILLS_URL = 'https://jb-solver-orbital.onrender.com/api/bills';
+  // const API_BASE_URL = 'https://jb-solver-orbital.onrender.com/api/groups'; 
+  // const API_BILLS_URL = 'https://jb-solver-orbital.onrender.com/api/bills';
 
   //Get user identity from localStorage token on mount
   useEffect(()=> {
