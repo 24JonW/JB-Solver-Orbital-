@@ -119,8 +119,8 @@ function ExpenditureTracker() {
   const [ ledger, setLedger ] = useState([]); 
   const [currentUser, setCurrentUser] = useState(null); 
 
-  // const API_EXP_URL= 'http://localhost:5001/api/exp'; 
-  const API_EXP_URL = 'https://jb-solver-orbital.onrender.com/api/exp';
+  const API_EXP_URL= 'http://localhost:5001/api/exp'; 
+  // const API_EXP_URL = 'https://jb-solver-orbital.onrender.com/api/exp';
   
   const [isModalOpen, setIsModalOpen ] = useState(false); 
   const [formData, setFormData] = useState({
@@ -128,7 +128,11 @@ function ExpenditureTracker() {
     category: 'Food', 
     bill_date: new Date().toISOString().split('T')[0], 
     total_amount: '', 
-    currency: 'SGD'
+    currency: 'SGD', 
+    target_currency: 'SGD',
+    gst: 0,
+    tax: 0,
+    exchangeRates: 1,
   }); 
 
   const [ isBudgetModalOpen, setIsBudgetModalOpen ] = useState(false); 
@@ -138,12 +142,34 @@ function ExpenditureTracker() {
 
   const [ selectedMonth, setSelectedMonth ] = useState(() => formatYearMonth(new Date()));
 
+  //Currency exchange 
+  const [currencies, setCurrencies]= useState(['SGD', 'MYR', 'USD', 'EUR', 'GBP', 'RMB', 'THB', 'IDR']); 
+  const [targetCurrency, setTargetCurrency]= useState('SGD'); 
+  const [exchangeRates, setExchangeRates]= useState({}); 
+
   const filterLedger = ledger.filter(item => {
     if (!item.bill_date) return false; 
     return formatYearMonth(item.bill_date) === selectedMonth; 
   });
 
-    
+  useEffect(()=>{
+    const fetchGlobalCurrencies= async ()=> {
+      try {
+        const response= await axios.get('https://open.er-api.com/v6/latest/USD'); 
+        if (response.data && response.data.rates) {
+          const currencyCodes= Object.keys(response.data.rates);
+          setCurrencies(currencyCodes.sort()); // Sort codes alphabetically for cleaner dropdown selection
+          setExchangeRates(response.data.rates); //store all rates relative to USD 
+        }
+      } catch (err) {
+        console.error("Failed to fetch global currency list API, using local fallbacks:", err);
+      }
+    }; 
+    if (isModalOpen) {
+      fetchGlobalCurrencies(); 
+    }
+
+  }, [isModalOpen])
 
   const calculatePrevMonthSpend = (items, currentSelectedMonth) => {
       const [year, month] = currentSelectedMonth.split("-").map(Number);
@@ -179,8 +205,12 @@ function ExpenditureTracker() {
       category: formData.category, 
       bill_date: formData.bill_date, 
       total_amount: parseFloat(formData.total_amount) || 0, 
-      net_amount: parseFloat(formData.total_amount || 0), 
+      net_amount: parseFloat(finalConvertedTotal.toFixed(2) || 0), 
       currency: formData.currency, 
+      target_currency: formData.target_currency,
+      gst: parseFloat(formData.gst) || 0,
+      tax: parseFloat(formData.tax) || 0,
+      exchangeRates: derivedExchangeRate,
       group_id: null
     }
 
@@ -196,7 +226,10 @@ function ExpenditureTracker() {
               category: 'Food', 
               bill_date: new Date().toISOString().split('T')[0],
               total_amount: '', 
-              currency: 'SGD'
+              currency: 'SGD', 
+              target_currency: 'SGD', 
+              gst: 0, 
+              tax: 0
             });
          })
          .catch(err => console.error('Error creating expenditure record:', err)); 
@@ -310,7 +343,17 @@ const handleBudgetInput = (e) => {
     momVariancePercent = 100; 
   }
 
+  //Derived calculations for the add expense modal.
   const budgetRemainingPercent = budget > 0 ? (((budget - totalAmountMonth) / budget) * 100) : 0;
+  const baseCurrency= formData.currency || 'SGD'; 
+  const baseRate= exchangeRates[baseCurrency] || 1; 
+  const targetRate= exchangeRates[targetCurrency] ||1;
+  const derivedExchangeRate= baseCurrency=== targetCurrency ? 1: (targetRate/ baseRate);
+  const rawAmount= parseFloat(formData.total_amount) || 0; 
+  const gstModifier= (parseFloat(formData.gst) || 0)/100; 
+  const taxModifier= (parseFloat(formData.tax) || 0)/100;
+  const amountWithTaxesBase= rawAmount *(1+ gstModifier + taxModifier); 
+  const finalConvertedTotal= amountWithTaxesBase* derivedExchangeRate;
 
   return (
     <div className="homepage-container">
@@ -421,8 +464,8 @@ const handleBudgetInput = (e) => {
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h3>Add Personal Expenditure</h3>
-            <form onSubmit={handleFormSubmit}>
+            <h3 className="modal-header-banner">Add Personal Expenditure</h3>
+            <form onSubmit={handleFormSubmit} className= "form-content">
               <div className="form-group">
                 <label>Description:</label>
                 <input type="text" name="description" value={formData.description} onChange={handleInputChange} required />
@@ -448,18 +491,73 @@ const handleBudgetInput = (e) => {
                 <input type="number" step="0.01" name="total_amount" value={formData.total_amount} onChange={handleInputChange} required />
               </div>
               <div className="form-group">
+                <label className= "GSTLabel">GST (%): </label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  name="gst"
+                  value={formData.gst}
+                  onChange={handleInputChange}
+                  className= "GSTInput"
+                /> 
+              </div>
+              <div className= "form-group"> 
+                <label className= "addition_TaxLabel">Additional Tax (%): </label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  name="tax"
+
+                  value={formData.tax}
+                  onChange={handleInputChange}
+                  className= "addition_TaxInput"
+                />
+              </div>
+              <div className="form-group">
                 <label>Currency:</label>
                 <select name="currency" value={formData.currency} onChange={handleInputChange}>
-                  <option value="SGD">SGD</option>
+                  {/* <option value="SGD">SGD</option>
                   <option value="USD">USD</option>
                   <option value="EUR">EUR</option>
-                  <option value="MYR">MYR</option>
+                  <option value="MYR">MYR</option> */}
+                  {currencies.map(code=> (
+                    <option key= {`target-${code}`} value= {code}> 
+                      {code}
+                    </option>
+                  ))}
                 </select>
               </div>
+              <div className="form-group">
+                <label>Convert To:</label>
+                <select name="target_currency" value={targetCurrency} onChange={(e)=> setTargetCurrency(e.target.value)}>
+                  {currencies.map(code=> (
+                    <option key= {`target-${code}`} value= {code}> 
+                      {code}
+                    </option>
+                  ))}
+                </select>
+              </div >
+              <div> 
+                <p> 
+                  <strong>Exchange Rate: </strong> 1 {baseCurrency} = {derivedExchangeRate.toFixed(4)} {targetCurrency}
+                </p>
+                <p> 
+                  <strong>Subtotal (with Taxes): </strong> {baseCurrency} {amountWithTaxesBase.toFixed(2)}
+                </p>
+                <p> 
+                  <strong>Final Converted Total: </strong> {targetCurrency} {finalConvertedTotal.toFixed(2)}
+                </p>
+              </div>
+
               <div className="modal-actions">
                 <button type="button" className="btn-cancel" onClick={() => setIsModalOpen(false)}>Cancel</button>
                 <button type="submit" className="btn-submit">Save</button>
               </div>
+
             </form>
           </div>
         </div>
