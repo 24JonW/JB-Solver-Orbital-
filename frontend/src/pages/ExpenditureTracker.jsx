@@ -77,9 +77,27 @@ const getDynamicBarData = (ledgerItems) => {
   };
 };
 
-const getDynamicLineData = (ledgerItems) => {
+const getDynamicLineData = (ledgerItems, selectedMonth) => {
     const dateTotals = {};
 
+    // Break down selected month (e.g 2026-07)
+    const [year, month] = selectedMonth.split("-").map(Number);
+
+    // Get the total number of days in this specific month
+    // Passing 0 as the day returns the last day of the prior month, matching current month indexing
+    const daysInMonth = new Date(year, month, 0).getDate();
+
+    // Initialize every day of the month with 0 spending
+    for (let day = 1; day <= daysInMonth; day++) {
+        // Pad days to ensure "YYYY-MM-DD" matches your formatting consistency
+        const fday = String(day).padStart(2, '0');
+        const fmonth = String(month).padStart(2, '0');
+        const fullDateKey = `${year}-${fmonth}-${fday}`;
+        
+        dateTotals[fullDateKey] = 0;
+    }
+
+    // Aggregate actual spending data onto those pre-defined keys
     ledgerItems.forEach(item => {
         if (!item.bill_date) return;
 
@@ -90,15 +108,19 @@ const getDynamicLineData = (ledgerItems) => {
             day: "2-digit"
         }).format(new Date(item.bill_date)); 
 
-        const amount = Number(item.net_amount || item.total_amount) || 0;
-        dateTotals[normalizedDate] = (dateTotals[normalizedDate] || 0) + amount;
+        // Only add if it falls within our pre-initialized days
+        if (dateTotals[normalizedDate] !== undefined) {
+            const amount = Number(item.net_amount || item.total_amount) || 0;
+            dateTotals[normalizedDate] += amount;
+        }
     });
 
+    // Sort dates chronologically
     const sortedDates = Object.keys(dateTotals).sort();
 
     return {
         labels: sortedDates.map(date => {
-            const [year, month, day] = date.split("-");
+            const [,month, day] = date.split("-");
             return `${day}/${month}`;
         }),
         datasets: [
@@ -353,7 +375,7 @@ const handleBudgetInput = (e) => {
               {filterLedger.length === 0 ? (
                 <p>No transactions found for this month.</p>
               ) : (
-                <Line data={getDynamicLineData(filterLedger)} options={chartOptions} />
+                <Line data={getDynamicLineData(filterLedger, selectedMonth)} options={chartOptions} />
               )}
             </div>
         </div>
