@@ -19,8 +19,9 @@ import {
   Title,
   Tooltip,
   Legend,
+  ArcElement,
 } from 'chart.js';
-import { Bar, Line } from 'react-chartjs-2';
+import { Bar, Line, Pie } from 'react-chartjs-2';
 
 import { TopSectionBar } from './TopSectionBar'; 
 
@@ -31,6 +32,7 @@ ChartJS.register(
   BarElement,
   PointElement,
   LineElement,
+  ArcElement,
   Title,
   Tooltip,
   Legend
@@ -133,6 +135,31 @@ const getDynamicLineData = (ledgerItems, selectedMonth) => {
     };
 };
 
+const getDynamicPieData= (ledgerItems) => {
+  const categoryTotals = {} 
+  ledgerItems.forEach(item=> {
+    const category= item.category || 'others'; 
+    const amount= parseFloat(item.net_amount || item.total_amount) || 0; 
+    categoryTotals[category]= (categoryTotals[category] || 0)  + amount;
+  });
+
+  const colorPalette= [
+    '#edb601', '#2ec4b6', '#e71d36', '#ff9f1c', 
+    '#4361ee', '#7209b7', '#4caf50', '#9e9e9e'
+  ]; 
+  return {
+    labels: Object.keys(categoryTotals), 
+    datasets: [
+      {
+        label: "Proportion ($)",
+        data: Object.values(categoryTotals), 
+        backgroundColor: colorPalette.slice(0, Object.keys(categoryTotals).length), 
+        borderWidth: 1,
+      }
+    ]
+  }
+}
+
 function ExpenditureTracker() {
   const navigate = useNavigate(); 
   const [ ledger, setLedger ] = useState([]); 
@@ -165,6 +192,9 @@ function ExpenditureTracker() {
   const [currencies, setCurrencies]= useState(['SGD', 'MYR', 'USD', 'EUR', 'GBP', 'RMB', 'THB', 'IDR']); 
   const [targetCurrency, setTargetCurrency]= useState('SGD'); 
   const [exchangeRates, setExchangeRates]= useState({}); 
+
+  //Option to toggle between barchart or piechart
+  const [chartViewMode, setChartViewMode]= useState('bar');
 
   const filterLedger = ledger.filter(item => {
     if (!item.bill_date) return false; 
@@ -315,43 +345,43 @@ function ExpenditureTracker() {
   //   setIsBudgetModalOpen(false); 
   // }
   
-// Helper to turn "YYYY-MM" from state into database-friendly "YYYY-MM-01"
-const getFirstOfMonthString = (yearMonthStr) => `${yearMonthStr}-01`;
+  // Helper to turn "YYYY-MM" from state into database-friendly "YYYY-MM-01"
+    const getFirstOfMonthString = (yearMonthStr) => `${yearMonthStr}-01`;
 
-// Fetch budget dynamically from backend when month or user changes
-useEffect(() => {
-  if (!currentUser) return;
-  
-  const monthTarget = getFirstOfMonthString(selectedMonth);
-  axios.get(`${API_EXP_URL}/budget/${currentUser.user_id}/${monthTarget}`)
-    .then(res => {
-      setBudget(Number(res.data.budget_amount));
-    })
-    .catch(err => console.error("Error fetching budget:", err));
-}, [selectedMonth, currentUser]);
+  // Fetch budget dynamically from backend when month or user changes
+  useEffect(() => {
+    if (!currentUser) return;
+    
+    const monthTarget = getFirstOfMonthString(selectedMonth);
+    axios.get(`${API_EXP_URL}/budget/${currentUser.user_id}/${monthTarget}`)
+      .then(res => {
+        setBudget(Number(res.data.budget_amount));
+      })
+      .catch(err => console.error("Error fetching budget:", err));
+  }, [selectedMonth, currentUser]);
 
 // Submit budget to database
-const handleBudgetInput = (e) => {
-  e.preventDefault();
-  if (!currentUser) return;
+  const handleBudgetInput = (e) => {
+    e.preventDefault();
+    if (!currentUser) return;
 
-  const budgetData = {
-    user_id: currentUser.user_id,
-    budget_amount: parseFloat(budgetInput) || 0,
-    budget_month: getFirstOfMonthString(selectedMonth) // Saves it targeted to currently viewed month
+    const budgetData = {
+      user_id: currentUser.user_id,
+      budget_amount: parseFloat(budgetInput) || 0,
+      budget_month: getFirstOfMonthString(selectedMonth) // Saves it targeted to currently viewed month
+    };
+
+    axios.post(`${API_EXP_URL}/budget`, budgetData)
+      .then(res => {
+        setBudget(Number(res.data.budget_amount));
+        setIsBudgetModalOpen(false);
+        alert("Budget updated for this month!");
+      })
+      .catch(err => {
+        console.error('Error saving budget:', err);
+        alert(`Failed to save budget ${err.response?.data?.error || err.message}`);
+      });
   };
-
-  axios.post(`${API_EXP_URL}/budget`, budgetData)
-    .then(res => {
-       setBudget(Number(res.data.budget_amount));
-       setIsBudgetModalOpen(false);
-       alert("Budget updated for this month!");
-    })
-    .catch(err => {
-       console.error('Error saving budget:', err);
-       alert(`Failed to save budget ${err.response?.data?.error || err.message}`);
-    });
-};
 
 
   const budgetUsedPercent = budget > 0 ? (totalAmountMonth / budget) * 100 : 0; 
@@ -421,13 +451,20 @@ const handleBudgetInput = (e) => {
             </div>
         </div>
 
-        <div className='card' style={{ gridArea: 'box-6', minHeight: '320px', padding: '15px', display: 'flex', flexDirection: 'column' }}>
-          <h3 style={{ margin: '0 0 10px 0' }}>Category Breakdown</h3> 
+        <div className='card' style={{ gridArea: 'box-6', minHeight: '320px', padding: '15px', display: 'flex', flexDirection: 'column' }}> 
+          <div className= 'category_breakdown_title'> 
+            <h3>Category Breakdown</h3> 
+            <button onClick= {()=> setChartViewMode(chartViewMode=== 'bar'? 'pie': 'bar')} className= 'chart_toggle_button'> 
+              View as {chartViewMode=== 'bar' ? 'Pie Chart' : 'Bar Chart'}
+            </button>
+          </div> 
           <div style={{ flex: 1, position: 'relative', width: '100%', height: '100%' }}>
             {filterLedger.length === 0 ? (
               <p>No transactions found for this month.</p>
-            ) : (
+            ) : chartViewMode=== 'bar' ? (
               <Bar data={getDynamicBarData(filterLedger)} options={chartOptions} />
+            ) : (
+              <Pie data= {getDynamicPieData(filterLedger)} options= {chartOptions} />
             )}
           </div>
         </div>
