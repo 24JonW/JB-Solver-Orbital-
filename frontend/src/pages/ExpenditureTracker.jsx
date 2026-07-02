@@ -110,8 +110,16 @@ const getDynamicLineData = (ledgerItems, selectedMonth) => {
             day: "2-digit"
         }).format(new Date(item.bill_date)); 
 
+<<<<<<< HEAD
         const amount = Number((item.net_amount || item.total_amount)* (item.exchange_rate || 1)) || 0;
         dateTotals[normalizedDate] = (dateTotals[normalizedDate] || 0) + amount;
+=======
+        // Only add if it falls within our pre-initialized days
+        if (dateTotals[normalizedDate] !== undefined) {
+            const amount = Number(item.net_amount || item.total_amount) || 0;
+            dateTotals[normalizedDate] += amount;
+        }
+>>>>>>> 09039bc0 (edit x axis of line graph)
     });
 
     // Sort dates chronologically
