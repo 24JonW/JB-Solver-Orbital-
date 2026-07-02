@@ -72,6 +72,39 @@ function HomePage() {
       .catch((err) => console.error("Error settling payment:", err));
   };
 
+  // Group and sum up the outstanding items by creditor_user_id
+  const quickPaymentLedger = Object.values(
+    outstandingLedger.reduce((acc, item) => {
+      const cId = item.creditor_user_id;
+      if (!acc[cId]) {
+        acc[cId] = {
+          creditor_user_id: cId,
+          creditor_name: item.creditor_name,
+          target_currency: item.target_currency,
+          total_owed: 0
+        };
+      }
+      acc[cId].total_owed += parseFloat(item.amount_owed || 0);
+      return acc;
+    }, {})
+  );
+
+  // Handles settling ALL combined debts to a single creditor user at once
+  const handleSettleBulkShares = (creditorId, creditorName) => {
+    const confirmed = window.confirm(`Are you sure you want to settle all debts with ${creditorName}?`); 
+    if (!confirmed) return;
+
+    axios.post(`${API_BILLS_URL}/settle-bulk`, { 
+      debtorId: userId, // Current logged-in user
+      creditorId: creditorId 
+    })
+    .then(() => {
+        // Optimistically remove all settled rows belonging to this creditor from UI state immediately
+        setOutstandingLedger(prev => prev.filter(item => item.creditor_user_id !== creditorId));
+        alert(`Successfully settled all balances with ${creditorName}!`);
+    })
+    .catch((err) => console.error("Error with bulk settlement:", err));
+  };
 
   return (
     <div className="homepage-container">
@@ -107,6 +140,39 @@ function HomePage() {
         {/* CARD 2: Placeholder Box for Task Management features */}
         <div className='profile-card' style={{ gridArea: 'box2'}}>
           <h2>Tasks to do</h2>
+  
+          {/* CARD 2: Converted Quick Payment / Task Management features */}
+          <div>
+            <h3>Quick Payment (By Person)</h3>
+            <div>
+              {quickPaymentLedger.length === 0 ? (
+                <p>
+                  All clear! No group summaries to pay off.
+                </p>
+              ) : (
+                quickPaymentLedger.map((summary) => (
+                  <div key={summary.creditor_user_id} className="home-ledger-row" style={{ padding: '10px 0', borderBottom: '1px solid #f0f2f5', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <h4 style={{ margin: '0 0 4px 0', fontSize: '16px' }}>Total Owed to {summary.creditor_name}</h4>
+                      <span style={{ fontSize: '15px', fontWeight: 'bold', color: '#dc2626' }}>
+                        {summary.target_currency} {summary.total_owed.toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="button-wrapper"> 
+                      <button 
+                        className="homePageSettleButton" 
+                        style={{ margin: 0, padding: '6px 12px', fontSize: '14px', backgroundColor: '#eefcf0', border: '1px solid #6bc16f', borderRadius: '6px' }}
+                        onClick={() => handleSettleBulkShares(summary.creditor_user_id, summary.creditor_name)}
+                      >
+                        <FaMoneyBillTransfer size={24} color={'#6bc16f'}/>
+                      </button>
+                      <span className="hover-tooltip">Settle All</span>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
           
         </div>
 

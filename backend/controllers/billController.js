@@ -192,5 +192,21 @@ const getOutstandingPayments = async (req, res) => {
     }
 }
 
-module.exports = { createSmartBill, getGroupLedger, clearSharePayment, clearPaidHistory, getOutstandingPayments};
+const clearBulkPayments = async (req, res) => {
+    const { debtorId, creditorId } = req.body;
+    try {
+        await db.query(
+            `UPDATE Bill_Shares 
+             SET payment_status = 'paid', paid_at = NOW() 
+             WHERE debtor_user_id = $1 AND creditor_user_id = $2 AND payment_status = 'unpaid'`,
+            [debtorId, creditorId]
+        );
+        res.json({ message: 'All outstanding balances settled with this user!' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to clear bulk ledger balances' });
+    }
+};
+
+module.exports = { createSmartBill, getGroupLedger, clearSharePayment, clearPaidHistory, getOutstandingPayments, clearBulkPayments};
 
