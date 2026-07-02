@@ -370,6 +370,16 @@ button:hover {
   justify-content: center; 
 }
 
+.totalOwed {
+  margin: 0 0 4px 0; 
+  font-size: 16px; 
+}
+
+.bulkPaymentAmount{
+  font-Size: 15px;
+  font-weight: bold; 
+  color: #dc2626;
+}
 
 
 
@@ -441,4 +451,4 @@ button:hover {
     }
   }
 
-  
+
