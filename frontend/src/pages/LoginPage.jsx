@@ -12,9 +12,9 @@ function LoginPage() {
     const [ errorMessage, setErrorMessage ] = useState(''); 
 
     // Base endpoint for account-related authentication requests
-    // const API_URL = 'http://localhost:5001/api/accounts'; 
+    const API_URL = 'http://localhost:5001/api/accounts'; 
 
-    const API_URL = 'https://jb-solver-orbital.onrender.com/api/accounts'; 
+    // const API_URL = 'https://jb-solver-orbital.onrender.com/api/accounts'; 
 
     const handlelogin = (e) => {
         e.preventDefault(); // Prevents the browser from reloading the page on form submission
