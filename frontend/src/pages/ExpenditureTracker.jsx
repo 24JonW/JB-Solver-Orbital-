@@ -60,7 +60,7 @@ const getDynamicBarData = (ledgerItems) => {
   const categoryTotals = {};  
   ledgerItems.forEach(item => {
     const category = item.category || "Others"; 
-    const amount = parseFloat(item.net_amount || item.total_amount) || 0; 
+    const amount = parseFloat((item.net_amount || item.total_amount)* (item.exchange_rate || 1)) || 0; 
     categoryTotals[category] = (categoryTotals[category] || 0) + amount;  
   });
   return {
@@ -108,11 +108,16 @@ const getDynamicLineData = (ledgerItems, selectedMonth) => {
             day: "2-digit"
         }).format(new Date(item.bill_date)); 
 
+<<<<<<< HEAD
         // Only add if it falls within our pre-initialized days
         if (dateTotals[normalizedDate] !== undefined) {
             const amount = Number(item.net_amount || item.total_amount) || 0;
             dateTotals[normalizedDate] += amount;
         }
+=======
+        const amount = Number((item.net_amount || item.total_amount)* (item.exchange_rate || 1)) || 0;
+        dateTotals[normalizedDate] = (dateTotals[normalizedDate] || 0) + amount;
+>>>>>>> c2e3fc06 (Added considerations for currency and corrected calculation error for expenditure tracker)
     });
 
     // Sort dates chronologically
@@ -176,7 +181,7 @@ function ExpenditureTracker() {
       return items.reduce((total, item) => {
           if (!item.bill_date) return total;
           if (formatYearMonth(item.bill_date) === prevMonthStr) {
-              return total + Number(item.net_amount || item.total_amount);
+              return total + Number((item.net_amount || item.total_amount)*(item.exchange_rate || 1));
           }
           return total;
       }, 0);
@@ -184,7 +189,7 @@ function ExpenditureTracker() {
   };
 
 
-  const totalAmountMonth = filterLedger.reduce((sum, item) => sum + Number(item.net_amount || item.total_amount), 0);
+  const totalAmountMonth = filterLedger.reduce((sum, item) => sum + Number((item.net_amount || item.total_amount)*(item.exchange_rate || 1)), 0);
   const totalAmountPrevMonth = calculatePrevMonthSpend(ledger, selectedMonth); 
 
   const handleInputChange = (e) => {
@@ -293,7 +298,7 @@ useEffect(() => {
   if (!currentUser) return;
   
   const monthTarget = getFirstOfMonthString(selectedMonth);
-  axios.get(`https://jb-solver-orbital.onrender.com/api/exp/budget/${currentUser.user_id}/${monthTarget}`)
+  axios.get(`${API_EXP_URL}/budget/${currentUser.user_id}/${monthTarget}`)
     .then(res => {
       setBudget(Number(res.data.budget_amount));
     })
@@ -311,7 +316,7 @@ const handleBudgetInput = (e) => {
     budget_month: getFirstOfMonthString(selectedMonth) // Saves it targeted to currently viewed month
   };
 
-  axios.post(`https://jb-solver-orbital.onrender.com/api/exp/budget`, budgetData)
+  axios.post(`${API_EXP_URL}/budget`, budgetData)
     .then(res => {
        setBudget(Number(res.data.budget_amount));
        setIsBudgetModalOpen(false);
@@ -340,37 +345,38 @@ const handleBudgetInput = (e) => {
     
       <div className='home-body-ex'>
         <div className='card' style={{gridArea: 'box-1'}}>
-            <div className="card-description">Budget this month</div>
-            <div className="number">${budget.toFixed(2)}</div>
-            <div className={`percentage-description ${(budget - totalAmountMonth).toFixed(2) > 0 ? 'status-good' : 'status-bad'}`}>{(budget - totalAmountMonth).toFixed(2) > 0 ? 'Within Budget' : 'Exceeded Budget'}</div>
-          </div>
+          <div className="card-description">Budget this month</div>
+          <div className="number">${budget.toFixed(2)}</div>
+          <div className={`percentage-description ${(budget - totalAmountMonth).toFixed(2) > 0 ? 'status-good' : 'status-bad'}`}>{(budget - totalAmountMonth).toFixed(2) > 0 ? 'Within Budget' : 'Exceeded Budget'}</div>
+        </div>
 
-          <div className='card' style={{gridArea: 'box-2'}}>
-            <div className="card-description">Expenditure this month</div> 
-            <div className="number">${totalAmountMonth.toFixed(2)}</div>
-            <div className={`percentage-description ${budgetUsedPercent > 100 ? 'status-bad' : 'status-good'}`}>
-              {budgetUsedPercent > 0 ? `${budgetUsedPercent.toFixed(1)}% of budget used` : '0% used'}
-            </div>
+        <div className='card' style={{gridArea: 'box-2'}}>
+          <div className="card-description">Expenditure this month</div> 
+          <div className="number">${totalAmountMonth.toFixed(2)}</div>
+          <div className={`percentage-description ${budgetUsedPercent > 100 ? 'status-bad' : 'status-good'}`}>
+            {budgetUsedPercent > 0 ? `${budgetUsedPercent.toFixed(1)}% of budget used` : '0% used'}
           </div>
+        </div>
 
-          <div className='card' style={{gridArea: 'box-3'}}>
-            <div className="card-description">Comparison with prev month</div>
-            <div className="number">${totalAmountPrevMonth.toFixed(2)}</div>
-            <div className={`percentage-description ${momVariancePercent > 0 ? 'status-bad' : 'status-good'}`}>
-              {momVariancePercent >= 0 ? '▲ ' : '▼ '}
-              {Math.abs(momVariancePercent).toFixed(1)}% 
-            </div>
+        <div className='card' style={{gridArea: 'box-3'}}>
+          <div className="card-description">Comparison with prev month</div>
+          <div className="number">${totalAmountPrevMonth.toFixed(2)}</div>
+          <div className={`percentage-description ${momVariancePercent > 0 ? 'status-bad' : 'status-good'}`}>
+            {momVariancePercent >= 0 ? '▲ ' : '▼ '}
+            {Math.abs(momVariancePercent).toFixed(1)}% 
           </div>
+        </div>
 
-          <div className='card' style={{gridArea: 'box-4'}}>
-            <div className="card-description">Remaining Budget</div>
-            <div className="number">${(budget - totalAmountMonth).toFixed(2)}</div>
-            <div className={`percentage-description ${(budget - totalAmountMonth) >= 0 ? 'status-good' : 'status-bad'}`}>
-              {budgetRemainingPercent < 0 ? "Cut down spending" : budgetRemainingPercent.toFixed(1) + "% left"}
-            </div>
+        <div className='card' style={{gridArea: 'box-4'}}>
+          <div className="card-description">Remaining Budget</div>
+          <div className="number">${(budget - totalAmountMonth).toFixed(2)}</div>
+          <div className={`percentage-description ${(budget - totalAmountMonth) >= 0 ? 'status-good' : 'status-bad'}`}>
+            {budgetRemainingPercent < 0 ? "Cut down spending" : budgetRemainingPercent.toFixed(1) + "% left"}
           </div>
+        </div>
         
         <div className="card" style={{ gridArea: "box-5", minHeight: '320px', padding: '15px', display: 'flex', flexDirection: 'column' }}>
+<<<<<<< HEAD
             <h3 style={{ margin: '0 0 10px 0' }}>Spending Trend</h3>
             <div style={{ flex: 1, position: 'relative', width: '100%', height: '100%' }}>
               {filterLedger.length === 0 ? (
@@ -379,64 +385,74 @@ const handleBudgetInput = (e) => {
                 <Line data={getDynamicLineData(filterLedger, selectedMonth)} options={chartOptions} />
               )}
             </div>
+=======
+          <h3 style={{ margin: '0 0 10px 0' }}>Spending Trend</h3>
+          <div style={{ flex: 1, position: 'relative', width: '100%', height: '100%' }}>
+            {filterLedger.length === 0 ? (
+              <p>No transactions found for this month.</p>
+            ) : (
+              <Line data={getDynamicLineData(filterLedger)} options={chartOptions} />
+            )}
+          </div>
+>>>>>>> c2e3fc06 (Added considerations for currency and corrected calculation error for expenditure tracker)
         </div>
 
         <div className='card' style={{ gridArea: 'box-6', minHeight: '320px', padding: '15px', display: 'flex', flexDirection: 'column' }}>
-            <h3 style={{ margin: '0 0 10px 0' }}>Category Breakdown</h3> 
-            <div style={{ flex: 1, position: 'relative', width: '100%', height: '100%' }}>
-              {filterLedger.length === 0 ? (
-                <p>No transactions found for this month.</p>
-              ) : (
-                <Bar data={getDynamicBarData(filterLedger)} options={chartOptions} />
-              )}
-            </div>
+          <h3 style={{ margin: '0 0 10px 0' }}>Category Breakdown</h3> 
+          <div style={{ flex: 1, position: 'relative', width: '100%', height: '100%' }}>
+            {filterLedger.length === 0 ? (
+              <p>No transactions found for this month.</p>
+            ) : (
+              <Bar data={getDynamicBarData(filterLedger)} options={chartOptions} />
+            )}
+          </div>
         </div>
 
         <div className='card' style={{gridArea: 'box-7'}}>
-            <h3>Transaction History</h3>
-            <input
-              type='month'
-              className='date-selector'
-              value={selectedMonth}
-              onChange={(e) => setSelectedMonth(e.target.value)}
-            />
+          <h3>Transaction History</h3>
+          <input
+            type='month'
+            className='date-selector'
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+          />
 
-            <div className="history-card">
-              {filterLedger.length === 0 ? (
-                <p>No transactions found for this month.</p>
-              ) : (
-                <div className='transaction-list'>
-                  {filterLedger.map((item, index) => (
-                    <div key={index} className='transaction-row'>
-                      <p>Category: {item.category}</p>
-                      <p>Description: {item.description} </p>
-                      <p>Currency: {item.currency}</p>
-                      <p>{item.currency} {item.net_amount}</p>
-                      <p>{new Date(item.bill_date).toLocaleDateString()}</p>
-                      <button onClick={() => handleDelete(item.bill_id)}
-                              className='btn-delete-item'><FcCancel size={30}/></button>
-                      <hr/>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+          <div className="history-card">
+            {filterLedger.length === 0 ? (
+              <p>No transactions found for this month.</p>
+            ) : (
+              <div className='transaction-list'>
+                {filterLedger.map((item, index) => (
+                  <div key={index} className='transaction-row'>
+                    <p>Category: {item.category}</p>
+                    <p>Description: {item.description} </p>
+                    <p>Currency: {item.currency}</p>
+                    <p>{item.currency} {item.net_amount}</p>
+                    <p>{new Date(item.bill_date).toLocaleDateString()}</p>
+                    <button onClick={() => handleDelete(item.bill_id)}
+                            className='btn-delete-item'><FcCancel size={30}/></button>
+                    <hr/>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
             
-            <div className='btns'>
-                <div className="button-wrapper">
-                    <button className="exp-btn" onClick={() => setIsModalOpen(true)}>
-                        <FcPlus size={40} />
-                    </button>
-                    <span className="hover-tooltip">Add Expenditure</span>
-                </div>
+          <div className='btns'>
+              <div className="button-wrapper">
+                  <button className="exp-btn" onClick={() => setIsModalOpen(true)}>
+                      <FcPlus size={40} />
+                  </button>
+                  <span className="hover-tooltip">Add Expenditure</span>
+              </div>
 
-                <div className="button-wrapper">
-                    <button className="exp-btn" onClick={() => { setIsBudgetModalOpen(true); setBudgetInput(budget); }}>
-                        <FcSalesPerformance size={40} />
-                    </button>
-                    <span className="hover-tooltip">Set Budget</span>
-                </div>
-            </div>
+              <div className="button-wrapper">
+                  <button className="exp-btn" onClick={() => { setIsBudgetModalOpen(true); setBudgetInput(budget); }}>
+                      <FcSalesPerformance size={40} />
+                  </button>
+                  <span className="hover-tooltip">Set Budget</span>
+              </div>
+          </div>
         </div>
       </div>
 
