@@ -10,6 +10,8 @@ const getPersonalLedger = async (req, res) => {
                     b.category,
                     b.currency,
                     b.bill_date,
+                    b.target_currency, 
+                    b.exchange_rate,
                     CASE
                         WHEN b.payer_user_id != $1 THEN bs.amount_owed
                         ELSE b.total_amount - COALESCE(
@@ -29,7 +31,7 @@ const getPersonalLedger = async (req, res) => {
                     END AS role,
                     bs.payment_status
                 FROM bills b
-                LEFT JOIN bill_shares bs ON b.bill_id = bs.bill_id  
+                LEFT JOIN bill_shares bs ON b.bill_id = bs.bill_id  AND bs.debtor_user_id = $1
                 WHERE b.payer_user_id = $1 OR (bs.debtor_user_id = $1)
                 ORDER BY b.bill_date DESC;
             `;
