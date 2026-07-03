@@ -79,9 +79,27 @@ const getDynamicBarData = (ledgerItems) => {
   };
 };
 
-const getDynamicLineData = (ledgerItems) => {
+const getDynamicLineData = (ledgerItems, selectedMonth) => {
     const dateTotals = {};
 
+    // Break down selected month (e.g 2026-07)
+    const [year, month] = selectedMonth.split("-").map(Number);
+
+    // Get the total number of days in this specific month
+    // Passing 0 as the day returns the last day of the prior month, matching current month indexing
+    const daysInMonth = new Date(year, month, 0).getDate();
+
+    // Initialize every day of the month with 0 spending
+    for (let day = 1; day <= daysInMonth; day++) {
+        // Pad days to ensure "YYYY-MM-DD" matches your formatting consistency
+        const fday = String(day).padStart(2, '0');
+        const fmonth = String(month).padStart(2, '0');
+        const fullDateKey = `${year}-${fmonth}-${fday}`;
+        
+        dateTotals[fullDateKey] = 0;
+    }
+
+    // Aggregate actual spending data onto those pre-defined keys
     ledgerItems.forEach(item => {
         if (!item.bill_date) return;
 
@@ -96,11 +114,12 @@ const getDynamicLineData = (ledgerItems) => {
         dateTotals[normalizedDate] = (dateTotals[normalizedDate] || 0) + amount;
     });
 
+    // Sort dates chronologically
     const sortedDates = Object.keys(dateTotals).sort();
 
     return {
         labels: sortedDates.map(date => {
-            const [year, month, day] = date.split("-");
+            const [,month, day] = date.split("-");
             return `${day}/${month}`;
         }),
         datasets: [
@@ -146,8 +165,8 @@ function ExpenditureTracker() {
   const [ ledger, setLedger ] = useState([]); 
   const [currentUser, setCurrentUser] = useState(null); 
 
-  const API_EXP_URL= 'http://localhost:5001/api/exp'; 
-  // const API_EXP_URL = 'https://jb-solver-orbital.onrender.com/api/exp';
+  // const API_EXP_URL = 'http://localhost:5001/api/exp';
+  const API_EXP_URL = 'https://jb-solver-orbital.onrender.com/api/exp';
   
   const [isModalOpen, setIsModalOpen ] = useState(false); 
   const [formData, setFormData] = useState({
@@ -422,14 +441,14 @@ function ExpenditureTracker() {
         </div>
         
         <div className="card" style={{ gridArea: "box-5", minHeight: '320px', padding: '15px', display: 'flex', flexDirection: 'column' }}>
-          <h3 style={{ margin: '0 0 10px 0' }}>Spending Trend</h3>
-          <div style={{ flex: 1, position: 'relative', width: '100%', height: '100%' }}>
-            {filterLedger.length === 0 ? (
-              <p>No transactions found for this month.</p>
-            ) : (
-              <Line data={getDynamicLineData(filterLedger)} options={chartOptions} />
-            )}
-          </div>
+            <h3 style={{ margin: '0 0 10px 0' }}>Spending Trend</h3>
+            <div style={{ flex: 1, position: 'relative', width: '100%', height: '100%' }}>
+              {filterLedger.length === 0 ? (
+                <p>No transactions found for this month.</p>
+              ) : (
+                <Line data={getDynamicLineData(filterLedger, selectedMonth)} options={chartOptions} />
+              )}
+            </div>
         </div>
 
         <div className='card' style={{ gridArea: 'box-6', minHeight: '320px', padding: '15px', display: 'flex', flexDirection: 'column' }}> 
