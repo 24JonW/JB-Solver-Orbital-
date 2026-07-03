@@ -135,6 +135,22 @@ function SmartSplitCalculator({
         alert('Please enter a description.');
         return;
       }
+
+      const totalIndividualOrders = individualItems.reduce((sum, item) => sum + Number(item.itemCost || 0), 0);
+      const sharedCost = Number(billData.sharedCost || 0); 
+      const expectedTotal = totalIndividualOrders + sharedCost; 
+      if ((billData.splitMethod === "proportional" || billData.splitMethod === "custom") && Math.abs(expectedTotal - subtotalPaid) > 0.01) {
+        alert(
+        `The bill does not balance.\n\n` +
+        `Total Paid: ${billData.currency} ${subtotalPaid.toFixed(2)}\n` +
+        `Individual Orders + Shared Items: ${billData.currency} ${expectedTotal.toFixed(2)}\n\n` +
+        `Please ensure the totals match before submitting.`
+        );
+        return;
+      }
+
+
+
       setLoading(true);
 
       // Issue payload bundle mapping parameters configuration to the server controller endpoint
@@ -301,7 +317,7 @@ function SmartSplitCalculator({
             </div>
 
             <div className= "whoPaidDivision"> 
-              <strong style={{ fontSize: "large", padding: '10px' }}>Who Paid?</strong>
+              <strong style={{ fontSize: "large", padding: '10px' }}>Who Paid? (Before GST)</strong>
         
               {payers.length === 0 ? (
                 <p>Loading members profile details...</p>
@@ -335,7 +351,7 @@ function SmartSplitCalculator({
               ) }
               {billData.splitMethod === 'proportional' && (
                 <>
-                  <strong style={{ fontSize: "large", padding: '10px' }}>Individual Orders</strong>
+                  <strong style={{ fontSize: "large", padding: '10px' }}>Individual Orders (Before GST)</strong>
                   <p style={{ padding: '10px' }}>Enter what each member personally consumed.</p>
                   {individualItems.map(item => (
                     <div key={item.userId} className="payer-row">
