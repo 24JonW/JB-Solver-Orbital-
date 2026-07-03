@@ -29,6 +29,7 @@ function SmartSplitCalculator({
   const [individualItems, setIndividualItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [billTransactions, setBillTransactions] = useState([]);
+  const [billPreview, setBillPreview] = useState("");
 
   //Initialize core currencies 
   const [currencies, setCurrencies]= useState(['SGD', 'MYR', 'USD', 'EUR', 'GBP', 'RMB', 'THB', 'IDR']); 
@@ -121,6 +122,25 @@ function SmartSplitCalculator({
   }
   const finalAmount= baseFinalAmount*currencyRate;
 
+
+
+  const generateBillSummary = (transactions) => {
+  let summary = `💰 Bill Summary\n${billData.description}\n\n`;
+
+  transactions.forEach(tx => {
+    const debtor = groupMembers.find(
+      m => m.user_id == tx.debtorId
+    );
+
+    const creditor = groupMembers.find(
+      m => m.user_id == tx.creditorId
+    );
+
+    summary += `${debtor?.username} owes ${creditor?.username} ${targetCurrency} ${Number(tx.amount).toFixed(2)}\n`;
+  });
+
+  return summary;
+};
   // Action Handler: Dispatches bill metrics calculations blocks to backend database routes
   const submitBill = async () => {
     try {
@@ -135,23 +155,30 @@ function SmartSplitCalculator({
         alert('Please enter a description.');
         return;
       }
+        const totalIndividualOrders = individualItems.reduce(
+        (sum, item) => sum + Number(item.itemCost || 0),
+        0
+        );
 
-      const totalIndividualOrders = individualItems.reduce((sum, item) => sum + Number(item.itemCost || 0), 0);
-      const sharedCost = Number(billData.sharedCost || 0); 
-      const expectedTotal = totalIndividualOrders + sharedCost; 
-      if ((billData.splitMethod === "proportional" || billData.splitMethod === "custom") && Math.abs(expectedTotal - subtotalPaid) > 0.01) {
+        const sharedCost = Number(billData.sharedCost || 0);
+        const expectedTotal = totalIndividualOrders + sharedCost;
+
+        if (
+        (billData.splitMethod === "proportional" ||
+            billData.splitMethod === "custom") &&
+        Math.abs(expectedTotal - subtotalPaid) > 0.01
+        ) {
         alert(
-        `The bill does not balance.\n\n` +
-        `Total Paid: ${billData.currency} ${subtotalPaid.toFixed(2)}\n` +
-        `Individual Orders + Shared Items: ${billData.currency} ${expectedTotal.toFixed(2)}\n\n` +
-        `Please ensure the totals match before submitting.`
+            `The bill does not balance.\n\n` +
+            `Total Paid: ${billData.currency} ${subtotalPaid.toFixed(2)}\n` +
+            `Individual Orders + Shared Items: ${billData.currency} ${expectedTotal.toFixed(2)}\n\n` +
+            `Please ensure the totals match before submitting.`
         );
         return;
-      }
-
-
+        }
 
       setLoading(true);
+
 
       // Issue payload bundle mapping parameters configuration to the server controller endpoint
       const response = await axios.post(
@@ -171,6 +198,8 @@ function SmartSplitCalculator({
         }
       );
       setBillTransactions(response.data.transactions);
+      const summary = generateBillSummary(response.data.transactions);
+      setBillPreview(summary);
       alert(`Bill created successfully!\n${response.data.settlementsGenerated} settlement(s) generated`);
       
     } catch (err) {
@@ -181,6 +210,8 @@ function SmartSplitCalculator({
     }
   }; 
 
+
+
   // Action Handler: Generates a human-readable chat announcement summary and transmits it to the chat timeline
   const sendBillSummaryToGroup = async () => {
     if (billTransactions.length === 0) {
@@ -188,13 +219,7 @@ function SmartSplitCalculator({
         return; 
     }
     try {
-        let summary = `💰 Bill Summary\n` + `${billData.description}\n\n`;
-        // Loop through transactions to extract username text blocks
-        billTransactions.forEach(tx => {
-            const debtor = groupMembers.find(m => m.user_id == tx.debtorId); 
-            const creditor = groupMembers.find(m => m.user_id == tx.creditorId); 
-            summary += `${debtor?.username} owes ${creditor?.username} ${targetCurrency} ${Number(tx.amount).toFixed(2)}\n`; 
-        });
+        const summary = billPreview;
 
         // Publish raw text body payload out to the shared group conversation endpoint
         await axios.post(
@@ -317,7 +342,7 @@ function SmartSplitCalculator({
             </div>
 
             <div className= "whoPaidDivision"> 
-              <strong style={{ fontSize: "large", padding: '10px' }}>Who Paid? (Before GST)</strong>
+              <strong style={{ fontSize: "large", padding: '10px' }}>Who Paid?</strong>
         
               {payers.length === 0 ? (
                 <p>Loading members profile details...</p>
@@ -351,7 +376,7 @@ function SmartSplitCalculator({
               ) }
               {billData.splitMethod === 'proportional' && (
                 <>
-                  <strong style={{ fontSize: "large", padding: '10px' }}>Individual Orders (Before GST)</strong>
+                  <strong style={{ fontSize: "large", padding: '10px' }}>Individual Orders</strong>
                   <p style={{ padding: '10px' }}>Enter what each member personally consumed.</p>
                   {individualItems.map(item => (
                     <div key={item.userId} className="payer-row">
@@ -438,7 +463,13 @@ function SmartSplitCalculator({
               
 
             </div>
+                {billPreview && (
+                <div className="bill-preview">
+                    <h4>Settlement Preview</h4>
 
+                    <pre>{billPreview}</pre>
+                </div>
+                )}
           </form>
         </div>
 
