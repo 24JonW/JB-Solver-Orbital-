@@ -143,7 +143,7 @@ function HomePage() {
   
           {/* CARD 2: Converted Quick Payment / Task Management features */}
           <div>
-            <h3>Quick Payment (By Person)</h3>
+            <h3>Quick Bulk Payment (By Person)</h3>
             <div>
               {quickPaymentLedger.length === 0 ? (
                 <p>
@@ -153,18 +153,18 @@ function HomePage() {
                 quickPaymentLedger.map((summary) => (
                   <div key={summary.creditor_user_id} className="home-ledger-row" style={{ padding: '10px 0', borderBottom: '1px solid #f0f2f5', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                      <h4 style={{ margin: '0 0 4px 0', fontSize: '16px' }}>Total Owed to {summary.creditor_name}</h4>
-                      <span style={{ fontSize: '15px', fontWeight: 'bold', color: '#dc2626' }}>
+                      <h4 className="totalOwed">Total Owed to {summary.creditor_name}</h4>
+                      <span className='bulkPaymentAmount'>
                         {summary.target_currency} {summary.total_owed.toFixed(2)}
                       </span>
                     </div>
                     <div className="button-wrapper"> 
                       <button 
                         className="homePageSettleButton" 
-                        style={{ margin: 0, padding: '6px 12px', fontSize: '14px', backgroundColor: '#eefcf0', border: '1px solid #6bc16f', borderRadius: '6px' }}
+                        style={{ margin: 0, padding: '6px 12px', fontSize: '14px' }}
                         onClick={() => handleSettleBulkShares(summary.creditor_user_id, summary.creditor_name)}
                       >
-                        <FaMoneyBillTransfer size={24} color={'#6bc16f'}/>
+                        <FaMoneyBillTransfer size={45} color={'#6bc16f'}/>
                       </button>
                       <span className="hover-tooltip">Settle All</span>
                     </div>

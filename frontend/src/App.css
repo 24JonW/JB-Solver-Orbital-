@@ -370,8 +370,37 @@ button:hover {
   justify-content: center; 
 }
 
+.totalOwed {
+  margin: 0 0 4px 0; 
+  font-size: 16px; 
+}
+
+.bulkPaymentAmount{
+  font-Size: 15px;
+  font-weight: bold; 
+  color: #dc2626;
+}
 
 
+.bill-preview {
+    margin-top: 5px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #f9fafb;
+}
+
+.bill-preview h4 {
+    margin-bottom: 10px;
+    margin-top: 1px;
+}
+
+.bill-preview pre {
+    margin: 0;
+    white-space: pre-wrap;
+    font-family: inherit;
+    line-height: 1.6;
+}
 
 /*  Mobile & Tablet responsive styles (Max 768px) */
   
@@ -441,4 +470,4 @@ button:hover {
     }
   }
 
-  
+
