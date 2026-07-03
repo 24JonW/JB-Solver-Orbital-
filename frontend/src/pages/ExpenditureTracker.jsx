@@ -5,6 +5,8 @@ import { jwtDecode } from 'jwt-decode';
 import { FcCancel } from "react-icons/fc";
 import { FcPlus } from "react-icons/fc";
 import { FcSalesPerformance } from "react-icons/fc";
+import { TbPigMoney } from "react-icons/tb";
+import { GiPayMoney } from "react-icons/gi";
 
 import '../App.css'; 
 import '../ExTracker.css'; 
@@ -46,6 +48,9 @@ const chartOptions = {
       position: 'top',
     },
   },
+  
+
+
 };
 
 // Helper to format any date string into YYYY-MM based on Asia/Singapore timezone
@@ -422,8 +427,11 @@ function ExpenditureTracker() {
         </div>
         
         <div className="card" style={{ gridArea: "box-5", minHeight: '320px', padding: '15px', display: 'flex', flexDirection: 'column' }}>
-          <h3 style={{ margin: '0 0 10px 0' }}>Spending Trend</h3>
-          <div style={{ flex: 1, position: 'relative', width: '100%', height: '100%' }}>
+          {/* <h3 style={{ margin: '0 0 10px 0' }}>Spending Trend</h3> */}
+          <div style= {{display: 'flex', alignItems: 'center', minHeight: '34px', marginBottom: '10px'}}>  
+            <h3 style= {{margin: 0 }}>Spending Trend</h3>
+          </div>
+          <div style={{ position: 'relative', width: '100%', height: '95%', paddingBottom: '10px'}}>
             {filterLedger.length === 0 ? (
               <p>No transactions found for this month.</p>
             ) : (
@@ -434,7 +442,7 @@ function ExpenditureTracker() {
 
         <div className='card' style={{ gridArea: 'box-6', minHeight: '320px', padding: '15px', display: 'flex', flexDirection: 'column' }}> 
           <div className= 'category_breakdown_title'> 
-            <h3>Category Breakdown</h3> 
+            <h3 style= {{margin: 0}}>Category Breakdown</h3> 
             <button onClick= {()=> setChartViewMode(chartViewMode=== 'bar'? 'pie': 'bar')} className= 'chart_toggle_button'> 
               View as {chartViewMode=== 'bar' ? 'Pie Chart' : 'Bar Chart'}
             </button>
@@ -451,14 +459,15 @@ function ExpenditureTracker() {
         </div>
 
         <div className='card' style={{gridArea: 'box-7'}}>
-          <h3>Transaction History</h3>
-          <input
-            type='month'
-            className='date-selector'
-            value={selectedMonth}
-            onChange={(e) => setSelectedMonth(e.target.value)}
-          />
-
+          <div className= "transactionHistory_header"> 
+            <h3>Transaction History</h3>
+            <input
+              type='month'
+              className='date-selector'
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+            />
+          </div>
           <div className="history-card">
             {filterLedger.length === 0 ? (
               <p>No transactions found for this month.</p>
@@ -602,11 +611,19 @@ function ExpenditureTracker() {
 
       {isBudgetModalOpen && (
           <div className="modal-overlay">
-            <div className="modal-content">
+            <div className="modal-content-2">
                 <form onSubmit={handleBudgetInput}>
-                  <input type="number" name="budget" value={budgetInput} onChange={e => setBudgetInput(e.target.value)} />
-                  <button type='button' className='btn-cancel' onClick={() => setIsBudgetModalOpen(false)}>Cancel</button>
-                  <button type='submit' className='btn-submit'>Save</button>
+                  <div className= "budget_input_division">  
+                    <GiPayMoney size= {50}/>
+                    <TbPigMoney size={50}/>
+                    <p> Set your budget for the month: </p>
+                    <input type="number" name="budget" className= "budget_input_text" value={budgetInput} onChange={e => setBudgetInput(e.target.value)} />
+                  </div>
+                  <div className= "budget_btn_division"> 
+                    <button type='button' className='btn-cancel' onClick={() => setIsBudgetModalOpen(false)}>Cancel</button>
+                    <button type='submit' className='btn-submit'>Save</button>
+                  </div>
+                  
                 </form>
             </div>
           </div>
