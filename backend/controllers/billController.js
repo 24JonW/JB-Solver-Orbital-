@@ -36,16 +36,16 @@ const createSmartBill = async (req, res) => {
         const rateFactor = parseFloat(currencyRate || 1.0); 
         const grandTotalAmount = TotalAmount * rateFactor; 
 
+        const convertedSubtotal = subtotalAmount * rateFactor;
+        const compositeRatioFactor = convertedSubtotal > 0 ? (grandTotalAmount / convertedSubtotal) : 1;
+
         const adjustedPayers = payers.map(p => ({
             userId: p.userId,
-            paid: p.paid * rateFactor 
+            paid: p.paid * rateFactor * compositeRatioFactor
         })); 
 
         let adjustedIndividualItems = []; 
         let adjustedSharedCost = 0; 
-
-        const convertedSubtotal = subtotalAmount * rateFactor;
-        const compositeRatioFactor = convertedSubtotal > 0 ? (grandTotalAmount / convertedSubtotal) : 1;
 
         if (splitMethod === 'equal') {
             adjustedSharedCost = 0; 
