@@ -29,6 +29,7 @@ function SmartSplitCalculator({
   const [individualItems, setIndividualItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [billTransactions, setBillTransactions] = useState([]);
+  const [billPreview, setBillPreview] = useState("");
 
   //Initialize core currencies 
   const [currencies, setCurrencies]= useState(['SGD', 'MYR', 'USD', 'EUR', 'GBP', 'RMB', 'THB', 'IDR']); 
@@ -121,7 +122,27 @@ function SmartSplitCalculator({
   }
   const finalAmount= baseFinalAmount*currencyRate;
 
+
+
+  const generateBillSummary = (transactions) => {
+  let summary = `💰 Bill Summary\n${billData.description}\n\n`;
+
+  transactions.forEach(tx => {
+    const debtor = groupMembers.find(
+      m => m.user_id == tx.debtorId
+    );
+
+    const creditor = groupMembers.find(
+      m => m.user_id == tx.creditorId
+    );
+
+    summary += `${debtor?.username} owes ${creditor?.username} ${targetCurrency} ${Number(tx.amount).toFixed(2)}\n`;
+  });
+
+  return summary;
+};
   // Action Handler: Dispatches bill metrics calculations blocks to backend database routes
+// Action Handler: ONLY calculates split metrics without database insertion
   const submitBill = async () => {
     try {
       const activePayers = payers.filter(p => p.paid > 0);
@@ -135,66 +156,110 @@ function SmartSplitCalculator({
         alert('Please enter a description.');
         return;
       }
+      
+      const totalIndividualOrders = individualItems.reduce(
+        (sum, item) => sum + Number(item.itemCost || 0),
+        0
+      );
+
+      const sharedCost = Number(billData.sharedCost || 0);
+      const expectedTotal = totalIndividualOrders + sharedCost;
+
+      if (
+        (billData.splitMethod === "proportional" || billData.splitMethod === "custom") &&
+        Math.abs(expectedTotal - subtotalPaid) > 0.01
+      ) {
+        alert(
+          `The bill does not balance.\n\n` +
+          `Total Paid: ${billData.currency} ${subtotalPaid.toFixed(2)}\n` +
+          `Individual Orders + Shared Items: ${billData.currency} ${expectedTotal.toFixed(2)}\n\n` +
+          `Please ensure the totals match before submitting.`
+        );
+        return;
+      }
+
       setLoading(true);
 
-      // Issue payload bundle mapping parameters configuration to the server controller endpoint
+      // Issue payload bundle mapping parameters configuration to the server controller endpoint with dryRun: true
       const response = await axios.post(
-        // 'https://jb-solver-orbital.onrender.com/api/bills/split_smart',
         'http://localhost:5001/api/bills/split_smart',
         {
           groupId: selectedGroup.group_id,
           description: billData.description,
           category: billData.category,
           currency: billData.currency,
-          targetCurrency: targetCurrency,  //newly added
-          currencyRate: currencyRate, //newly added
+          targetCurrency: targetCurrency,  
+          currencyRate: currencyRate, 
           splitMethod: billData.splitMethod,
           payers: activePayers,
           individualItems: individualItems.filter(item => item.itemCost > 0),
-          sharedCost: Number(billData.sharedCost || 0)
+          sharedCost: Number(billData.sharedCost || 0),
+          gst: Number(billData.gst || 0),
+          tax: Number(billData.tax || 0),
+          dryRun: true // 👈 Safeguard against DB write
         }
       );
+      
       setBillTransactions(response.data.transactions);
-      alert(`Bill created successfully!\n${response.data.settlementsGenerated} settlement(s) generated`);
+      const summary = generateBillSummary(response.data.transactions);
+      setBillPreview(summary);
+      alert(`Calculation completed! Preview generated below. Click send to finalize and save.`);
       
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.error || 'Failed to create smart split');
+      alert(err.response?.data?.error || 'Failed to calculate smart split');
     } finally {
       setLoading(false);
     }
   }; 
 
-  // Action Handler: Generates a human-readable chat announcement summary and transmits it to the chat timeline
+  // Action Handler: Commits the bill data permanently to DB, then pushes to chat
   const sendBillSummaryToGroup = async () => {
     if (billTransactions.length === 0) {
-        alert('Create the bill first');
+        alert('Please calculate the bill preview first before saving.');
         return; 
     }
     try {
-        let summary = `💰 Bill Summary\n` + `${billData.description}\n\n`;
-        // Loop through transactions to extract username text blocks
-        billTransactions.forEach(tx => {
-            const debtor = groupMembers.find(m => m.user_id == tx.debtorId); 
-            const creditor = groupMembers.find(m => m.user_id == tx.creditorId); 
-            summary += `${debtor?.username} owes ${creditor?.username} ${targetCurrency} ${Number(tx.amount).toFixed(2)}\n`; 
-        });
+        setLoading(true);
+        const activePayers = payers.filter(p => p.paid > 0);
 
-        // Publish raw text body payload out to the shared group conversation endpoint
+        // 1. Permanently record bill details to database right now
+        const dbResponse = await axios.post(
+          'http://localhost:5001/api/bills/split_smart',
+          {
+            groupId: selectedGroup.group_id,
+            description: billData.description,
+            category: billData.category,
+            currency: billData.currency,
+            targetCurrency: targetCurrency,  
+            currencyRate: currencyRate, 
+            splitMethod: billData.splitMethod,
+            payers: activePayers,
+            individualItems: individualItems.filter(item => item.itemCost > 0),
+            sharedCost: Number(billData.sharedCost || 0),
+            gst: Number(billData.gst || 0),
+            tax: Number(billData.tax || 0),
+            dryRun: false // 👈 Tells database to commit changes now
+          }
+        );
+
+        // 2. Transmit the calculated plain-text string out to the group conversation timeline
         await axios.post(
-            // 'https://jb-solver-orbital.onrender.com/api/groups/message',
             'http://localhost:5001/api/groups/message', 
             {
                 groupId: selectedGroup.group_id, 
                 senderId: currentUser.user_id, 
-                messageText: summary
+                messageText: billPreview
             }
         );
-        alert('Bill summary sent. '); 
+
+        alert('Bill saved securely and summary sent to your group chat!'); 
         onClose();
     } catch (err) {
         console.error(err); 
-        alert('Failed to send bill summary. '); 
+        alert(err.response?.data?.error || 'Failed to save bill or send summary.'); 
+    } finally {
+        setLoading(false);
     }
   };
 
@@ -422,7 +487,13 @@ function SmartSplitCalculator({
               
 
             </div>
+                {billPreview && (
+                <div className="bill-preview">
+                    <h4>Settlement Preview</h4>
 
+                    <pre>{billPreview}</pre>
+                </div>
+                )}
           </form>
         </div>
 
