@@ -86,6 +86,7 @@ const getDynamicBarData = (ledgerItems) => {
 
 const getDynamicLineData = (ledgerItems, selectedMonth) => {
     const dateTotals = {};
+    if (!selectedMonth) return { labels: [], datasets: [] };
 
     // Break down selected month (e.g 2026-07)
     const [year, month] = selectedMonth.split("-").map(Number);
@@ -454,7 +455,7 @@ function ExpenditureTracker() {
             {filterLedger.length === 0 ? (
               <p>No transactions found for this month.</p>
             ) : (
-              <Line data={getDynamicLineData(filterLedger)} options={chartOptions} />
+              <Line data={getDynamicLineData(filterLedger, selectedMonth)} options={chartOptions} />
             )}
           </div>
         </div>
