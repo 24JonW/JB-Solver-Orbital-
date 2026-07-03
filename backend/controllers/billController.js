@@ -4,6 +4,7 @@ const { calculateSmartSplit } = require('../utils/billCalculator');
 
 // Creates a bill entry, applies tax/currency conversions, and generates split transaction shares
 // POST /api/bills/split_smart
+// POST /api/bills/split_smart
 const createSmartBill = async (req, res) => {
     const { 
         groupId, 
@@ -17,7 +18,8 @@ const createSmartBill = async (req, res) => {
         individualItems, 
         sharedCost,
         gst = 0,
-        tax = 0
+        tax = 0,
+        dryRun = false // 👈 Added dryRun parameter default to false
     } = req.body;
 
     try {
@@ -25,61 +27,43 @@ const createSmartBill = async (req, res) => {
         if (hasNegatives) {
             return res.status(400).json({error: 'negative money paid is not allowed'}); 
         }
-        // Establish the primary payer identity
         const primaryPayerId = payers[0].userId; 
 
-        // Calculate the total bill from values provided
         const subtotalAmount = payers.reduce((sum, p) => sum + parseFloat(p.paid || 0), 0);
         const gstTotal = subtotalAmount * (parseFloat(gst) / 100);
         const taxTotal = subtotalAmount * (parseFloat(tax) / 100);
-        const TotalAmount = subtotalAmount + gstTotal + taxTotal; // Total bill in original currency
-        // Handle conversion multipliers gracefully (fallback to baseline 1.0 factor)
-        const rateFactor= parseFloat(currencyRate || 1.0) 
-        const grandTotalAmount= TotalAmount*rateFactor; // Final bill amount converted entirely into the target settlement currency
+        const TotalAmount = subtotalAmount + gstTotal + taxTotal; 
+        const rateFactor = parseFloat(currencyRate || 1.0); 
+        const grandTotalAmount = TotalAmount * rateFactor; 
 
-
-        // Insert primary bill details to the database
-        const billResult = await db.query(
-            `INSERT INTO Bills (group_id, payer_user_id, description, category, total_amount, currency, target_currency, exchange_rate) 
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING bill_id`,
-            [groupId, primaryPayerId, description, category, grandTotalAmount, currency, targetCurrency || currency, parseFloat(currencyRate || 1.0)]
-        ); // return bill_id after inserting table
-        const billId = billResult.rows[0].bill_id; 
-
-        // Adjust user data arrays to pass to the processing engine with tax weight distribution
         const adjustedPayers = payers.map(p => ({
             userId: p.userId,
-            paid: p.paid * rateFactor // raw cash inputs used to determine credit
-        })); // to insert into calculateSmartBills function 
+            paid: p.paid * rateFactor 
+        })); 
 
-        let adjustedIndividualItems = []; // to insert into calculateSmartBills function 
-        let adjustedSharedCost = 0; // to insert into calculateSmartBills function 
+        let adjustedIndividualItems = []; 
+        let adjustedSharedCost = 0; 
 
-        // Establish structural ratio scales to distribute tax/GST weights down onto items proportionally
         const convertedSubtotal = subtotalAmount * rateFactor;
         const compositeRatioFactor = convertedSubtotal > 0 ? (grandTotalAmount / convertedSubtotal) : 1;
 
-        // Apply mathematical splits based on selected distribution mode conditions
         if (splitMethod === 'equal') {
-            // Equal weights will be handled by internal engine conditions using grandTotalAmount
             adjustedSharedCost = 0; 
         } else if (splitMethod === 'proportional') {
-            // Convert individual values and add distributed tax weight ratios
             adjustedIndividualItems = individualItems.map(i => ({
                 userId: i.userId,
                 itemCost: i.itemCost * compositeRatioFactor * rateFactor
             }));
         } else if (splitMethod === 'custom') {
-            // Convert and weight balance attributes for both individual orders and shared costs
             adjustedIndividualItems = individualItems.map(i => ({
                 userId: i.userId,
                 itemCost: i.itemCost * compositeRatioFactor * rateFactor
             }));
             adjustedSharedCost = sharedCost * compositeRatioFactor * rateFactor;
         }
-        // Get all members of the group to pass to the engine
+
         const membersRes = await db.query('SELECT user_id FROM group_members WHERE group_id = $1', [groupId]);
-        const totalGroupMembers = membersRes.rows.map(m => m.user_id); // to insert into calculateSmartBills function 
+        const totalGroupMembers = membersRes.rows.map(m => m.user_id); 
 
         // Run Settle Algorithm Engine
         const paymentTransactions = calculateSmartSplit({
@@ -90,7 +74,23 @@ const createSmartBill = async (req, res) => {
             totalGroupMembers
         });
 
-        // Bulk insert transaction maps into Bill_Shares table
+        // 🛑 CRITICAL CHECK: If dryRun is true, stop here and return calculations without DB writes
+        if (dryRun) {
+            return res.status(200).json({ 
+                message: 'Dry run calculated successfully!', 
+                settlementsGenerated: paymentTransactions.length,
+                transactions: paymentTransactions 
+            });
+        }
+
+        // Otherwise, save to Database
+        const billResult = await db.query(
+            `INSERT INTO Bills (group_id, payer_user_id, description, category, total_amount, currency, target_currency, exchange_rate) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING bill_id`,
+            [groupId, primaryPayerId, description, category, grandTotalAmount, currency, targetCurrency || currency, parseFloat(currencyRate || 1.0)]
+        ); 
+        const billId = billResult.rows[0].bill_id; 
+
         for (let tx of paymentTransactions) {
             await db.query(
                 `INSERT INTO Bill_Shares (bill_id, debtor_user_id, creditor_user_id, amount_owed, payment_status) 
@@ -100,10 +100,10 @@ const createSmartBill = async (req, res) => {
         }
 
         res.status(201).json({ 
-            message: 'Smart split processed cleanly!', 
+            message: 'Smart split processed cleanly and saved!', 
             billId, 
             settlementsGenerated: paymentTransactions.length,
-            transactions: paymentTransactions // Return transactions array back to client side mapping
+            transactions: paymentTransactions 
         });
 
     } catch (err) {
@@ -111,7 +111,6 @@ const createSmartBill = async (req, res) => {
         res.status(500).json({ error: 'Server failed to calculate and save smart split.' });
     }
 };
-
 // Retrieves all split transaction debt shares for a group 
 // Route: GET /api/bills/ledger/:groupId
 const getGroupLedger = async (req, res) => {
