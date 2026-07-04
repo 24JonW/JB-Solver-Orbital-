@@ -26,6 +26,7 @@ import { FcCheckmark } from "react-icons/fc";
 import { FcMoneyTransfer } from "react-icons/fc";
 import { IoIosAddCircle } from "react-icons/io";
 import { GrReturn } from "react-icons/gr";
+import { FaUser } from "react-icons/fa";
 
 import { TopSectionBar } from './TopSectionBar'; 
 
@@ -511,7 +512,7 @@ function CommunityGroups() {
                   <div className="members-list">
                     {groupMembers.map((member) => (
                       <div key={member.user_id} className="member-item">
-                        <div className="member-avatar">👤</div>
+                        <div className="member-avatar"><FaUser /></div>
                         <div className="member-info">
                           <span className="member-name">
                             {member.username} {member.user_id === currentUser.user_id && <span className="you-badge">(You)</span>}
