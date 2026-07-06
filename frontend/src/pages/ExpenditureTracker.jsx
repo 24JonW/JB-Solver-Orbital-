@@ -7,6 +7,8 @@ import { FcPlus } from "react-icons/fc";
 import { FcSalesPerformance } from "react-icons/fc";
 import { TbPigMoney } from "react-icons/tb";
 import { GiPayMoney } from "react-icons/gi";
+import { FcBarChart } from "react-icons/fc";
+import { FcPieChart } from "react-icons/fc";
 
 import '../App.css'; 
 import '../ExTracker.css'; 
@@ -141,6 +143,82 @@ const getDynamicLineData = (ledgerItems, selectedMonth) => {
     };
 };
 
+
+const getDynamicLineDataMonths = (ledgerItems, selectedMonth) => {
+  if (!selectedMonth) return { labels: [], datasets: [] };
+  const [year] = selectedMonth.split("-");
+  const monthTotals = {};
+
+  // Initialize all 12 months for the selected year
+  for (let m = 1; m <= 12; m++) {
+    const fmonth = String(m).padStart(2, '0');
+    monthTotals[`${year}-${fmonth}`] = 0;
+  }
+  // Aggregate expenditures
+  ledgerItems.forEach(item => {
+    if (!item.bill_date) return;
+    const itemYearMonth = formatYearMonth(item.bill_date); // YYYY-MM
+    if (itemYearMonth.startsWith(year)) {
+      const amount = Number((item.net_amount || item.total_amount) * (item.exchange_rate || 1)) || 0;
+      monthTotals[itemYearMonth] = (monthTotals[itemYearMonth] || 0) + amount;
+    }
+  });
+
+  const sortedMonths = Object.keys(monthTotals).sort();
+  const monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  return {
+    labels: monthLabels,
+    datasets: [
+      {
+        label: `Monthly Spending for ${year} ($)`,
+        data: sortedMonths.map(m => monthTotals[m]),
+        borderColor: "#edb601",
+        backgroundColor: "#edb601",
+        fill: false,
+        tension: 0.2,
+      },
+    ],
+  };
+};
+
+const getDynamicLineDataYears = (ledgerItems) => {
+  const yearTotals = {};
+
+  ledgerItems.forEach(item => {
+    if (!item.bill_date) return;
+    const year = new Date(item.bill_date).getFullYear();
+    const amount = Number((item.net_amount || item.total_amount) * (item.exchange_rate || 1)) || 0;
+    yearTotals[year] = (yearTotals[year] || 0) + amount;
+  });
+
+  const sortedYears = Object.keys(yearTotals).sort();
+  if (sortedYears.length === 0) {
+    const currentYear = new Date().getFullYear();
+    sortedYears.push(currentYear.toString());
+    yearTotals[currentYear] = 0;
+  }
+
+  return {
+    labels: sortedYears,
+    datasets: [
+      {
+        label: "Yearly Spending Trend ($)",
+        data: sortedYears.map(y => yearTotals[y]),
+        borderColor: "#edb601",
+        // "#2ec4b6"
+        backgroundColor: "#edb601",
+        fill: false,
+        tension: 0.2,
+      },
+    ],
+  };
+};
+
+
+
+
+
 const getDynamicPieData= (ledgerItems) => {
   const categoryTotals = {} 
   ledgerItems.forEach(item=> {
@@ -150,8 +228,8 @@ const getDynamicPieData= (ledgerItems) => {
   });
 
   const colorPalette= [
-    '#edb601', '#2ec4b6', '#e71d36', '#ff9f1c', 
-    '#4361ee', '#7209b7', '#4caf50', '#9e9e9e'
+    '#2ec4b6', '#e71d36', '#edb601', '#4361ee', '#ff9f1c', 
+   '#7209b7', '#4caf50', '#9e9e9e'
   ]; 
   return {
     labels: Object.keys(categoryTotals), 
@@ -201,6 +279,7 @@ function ExpenditureTracker() {
 
   //Option to toggle between barchart or piechart
   const [chartViewMode, setChartViewMode]= useState('bar');
+  const [lineChartViewMode, setLineChartViewMode] = useState('daily'); 
 
   const filterLedger = ledger.filter(item => {
     if (!item.bill_date) return false; 
@@ -448,14 +527,30 @@ function ExpenditureTracker() {
         
         <div className="card" style={{ gridArea: "box-5", minHeight: '320px', padding: '15px', display: 'flex', flexDirection: 'column' }}>
           {/* <h3 style={{ margin: '0 0 10px 0' }}>Spending Trend</h3> */}
-          <div style= {{display: 'flex', alignItems: 'center', minHeight: '34px', marginBottom: '10px'}}>  
+          <div className='linechart_title' style= {{display: 'flex', alignItems: 'center', minHeight: '34px', marginBottom: '10px'}}>  
             <h3 style= {{margin: 0 }}>Spending Trend</h3>
+            <select className='slider' value={lineChartViewMode} onChange={(e) => setLineChartViewMode(e.target.value)}>
+              <option value="daily">Daily</option>
+              <option value="monthly">Monthly</option>
+              <option value="yearly">Yearly</option>
+            </select>
           </div>
+          
           <div style={{ position: 'relative', width: '100%', height: '95%', paddingBottom: '10px'}}>
             {filterLedger.length === 0 ? (
               <p>No transactions found for this month.</p>
             ) : (
-              <Line data={getDynamicLineData(filterLedger, selectedMonth)} options={chartOptions} />
+              <>
+                {lineChartViewMode === 'daily' && (
+                  filterLedger.length === 0 ? <p>No transactions this month.</p> : <Line data={getDynamicLineData(filterLedger, selectedMonth)} options={chartOptions} />
+                )}
+                {lineChartViewMode === 'monthly' && (
+                  <Line data={getDynamicLineDataMonths(ledger, selectedMonth)} options={chartOptions} />
+                )}
+                {lineChartViewMode === 'yearly' && (
+                  <Line data={getDynamicLineDataYears(ledger)} options={chartOptions} />
+                )}
+              </>
             )}
           </div>
         </div>
@@ -463,9 +558,10 @@ function ExpenditureTracker() {
         <div className='card' style={{ gridArea: 'box-6', minHeight: '320px', padding: '15px', display: 'flex', flexDirection: 'column' }}> 
           <div className= 'category_breakdown_title'> 
             <h3 style= {{margin: 0}}>Category Breakdown</h3> 
-            <button onClick= {()=> setChartViewMode(chartViewMode=== 'bar'? 'pie': 'bar')} className= 'chart_toggle_button'> 
-              View as {chartViewMode=== 'bar' ? 'Pie Chart' : 'Bar Chart'}
-            </button>
+            <select className="slider" onClick={(e) => setChartViewMode(e.target.value)}>
+              <option value='pie'>Pie Chart View</option>
+              <option value='bar'>Bar Chart View</option>
+            </select>
           </div> 
           <div style={{ flex: 1, position: 'relative', width: '100%', height: '100%' }}>
             {filterLedger.length === 0 ? (
@@ -496,13 +592,12 @@ function ExpenditureTracker() {
                 {filterLedger.map((item, index) => (
                   <div key={index} className='transaction-row'>
                     <p>Category: {item.category}</p>
-                    <p>Description: {item.description} </p>
-                    <p>Currency: {item.currency}</p>
-                    <p>{item.currency} {item.net_amount}</p>
+                    <p className='desc'>Description: {item.description} </p>
+                    <p className='amt'>({item.currency} {item.net_amount})</p>
                     <p>{new Date(item.bill_date).toLocaleDateString()}</p>
                     <button onClick={() => handleDelete(item.bill_id)}
                             className='btn-delete-item'><FcCancel size={30}/></button>
-                    <hr/>
+            
                   </div>
                 ))}
               </div>

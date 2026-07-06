@@ -57,8 +57,8 @@
 
 .history-card {
     border: 1px solid #e8e5e5;
-    border-radius: 10px;
-    background-color: #e8e5e5; 
+    border-radius: 15px;
+    background-color: #ffffff; 
     
     
 }
@@ -242,7 +242,7 @@
     gap: 15px;
     height: fit-content;
     padding: 6px 16px;
-    background-color: cornflowerblue;
+     /* cornflowerblue */
     border-radius: 5px;
 
 }
@@ -252,6 +252,14 @@
   flex-direction: column;
 
 }
+
+.date-selector {
+  padding: 5px 5px 5px 15px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+}
+
 .number {
   color: var(--text-main);
   font-size: 1.875rem; /* Large and highly legible */
@@ -326,7 +334,7 @@
 .chart_toggle_button {
   margin: 0px  10px;
   background-color: #10b981;
-  background-color:olivedrab;
+  background-color:rgb(253, 253, 253);
   color: white;
   border: none;
   border-radius: 6px; 
@@ -336,6 +344,30 @@
   transition: background-color 0.2s ease;
   
   
+}
+.chart_toggle_button:hover {
+    
+    background-color: white; 
+    transform: translateY(-5px);
+}
+.linechart_title {
+    display: flex; 
+    flex-direction: row; 
+    justify-content: space-between; 
+}
+  
+
+.slider {
+  padding: 5px 40px 5px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6d6e6e;
+
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
 }
 
 .category_breakdown_title {
@@ -348,8 +380,18 @@
   width: 100%;
 
 }
-  
 
+
+
+.desc {
+    font-weight: bold; 
+}
+
+.amt {
+    color: rgb(231, 193, 26); 
+    /* rgb(99, 150, 99) */
+    font-weight: bold; 
+}
 
 @media(max-width: 769px) {
     .homepage-container {
