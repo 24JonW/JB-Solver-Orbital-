@@ -291,6 +291,9 @@ button:hover {
   width:100px; 
   height:100px; 
   object-fit:cover;
+  border-Radius: 50%; 
+  border: 4px solid #edb601; 
+  background-Color: #f0f0f0;
 }
 
 .profile-main-info h2 {
