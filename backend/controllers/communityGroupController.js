@@ -211,7 +211,7 @@ const getGroupMembers = async (req, res) => {
     const {groupId} = req.params; 
     try {
         const result = await db.query(
-            `SELECT account.user_id, account.username, account.email 
+            `SELECT account.user_id, account.username, account.email, account.avatar_seed
              FROM group_members 
              JOIN account ON group_members.user_id = account.user_id 
              WHERE group_members.group_id = $1 

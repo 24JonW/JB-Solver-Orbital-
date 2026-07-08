@@ -20,12 +20,14 @@ function HomePage() {
   const [username, setUsername] = useState(''); 
   const [outstandingLedger, setOutstandingLedger]= useState([]); // Stores the array of unpaid debts
 
-  // 2 API Endpoints 
-  // const API_BASE_URL= 'http://localhost:5001/api/accounts'; 
-  // const API_BILLS_URL= 'http://localhost:5001/api/bills'; 
+  const [seed, setSeed]= useState('default')
 
-  const API_BASE_URL = 'https://jb-solver-orbital.onrender.com/api/accounts'; 
-  const API_BILLS_URL = 'https://jb-solver-orbital.onrender.com/api/bills';
+  // 2 API Endpoints 
+  const API_BASE_URL= 'http://localhost:5001/api/accounts'; 
+  const API_BILLS_URL= 'http://localhost:5001/api/bills'; 
+
+  // const API_BASE_URL = 'https://jb-solver-orbital.onrender.com/api/accounts'; 
+  // const API_BILLS_URL = 'https://jb-solver-orbital.onrender.com/api/bills';
 
   
 
@@ -43,6 +45,7 @@ function HomePage() {
         setEmail(data.email);
         setUserId(data.user_id);
         setUsername(data.username);
+        setSeed(data.avatar_seed || 'default');
       })
       .catch((err)=> {
         console.error('Error fetching user profile with Axios:', err);
@@ -116,7 +119,7 @@ function HomePage() {
         {/* CARD 1: User Profile Context Box */}
         <div className='profile-card'>
           <div className='profile-header'>
-              <img src={picture} className='profilePicture-img' />
+              <img src={`https://api.dicebear.com/9.x/big-smile/svg?seed=${encodeURIComponent(seed)}`} className='profilePicture-img' />
               <div className='profile-main-info'>
                   <h2>Username: {username}</h2> {/* <p>Community Member</p> */}
                   

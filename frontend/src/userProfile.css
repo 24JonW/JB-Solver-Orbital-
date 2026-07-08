@@ -43,6 +43,12 @@
     justify-content: space-between; /* Pushes text to top, buttons to the bottom */
     align-items: center;
     box-sizing: border-box;
+    overflow-y: auto; 
+  
+    /* Optional: Prevents awkward horizontal scrollbars from appearing */
+    height: 75vh;             /* Fixes the height to 75% of the screen height */
+    overflow-y: auto;         /* Triggers scrollbar when content goes past 75vh */
+    overflow-x: hidden;
 
     
 
@@ -52,6 +58,15 @@
     grid-area: box-3;
     display: flex;
     flex-direction: column;
+}
+
+.avatarDivision {
+    display:flex; 
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    margin-bottom: 30px;
 }
 
 .editProfileButton{

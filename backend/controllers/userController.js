@@ -94,7 +94,7 @@ const getSpecificAccount= async (req, res) => {
     const userId= req.params.id; 
     try {
         
-        const result= await db.query('SELECT user_id, username, email FROM account WHERE user_id= $1', [userId]); 
+        const result= await db.query('SELECT user_id, username, email, avatar_seed FROM account WHERE user_id= $1', [userId]); 
         if (result.rows.length===0) {
             return res.status(404).json({error: 'User not found'})
         }
@@ -126,9 +126,10 @@ const createAccount = async (req, res) => {
 // PUT /api/accounts/:id
 const updateAccount= async (req, res) => {
     const {id}= req.params; 
-    const {username, email, currentPassword, newPassword}= req.body; 
+    console.log(" RAW BODY RECEIVED FROM FRONTEND:", req.body);
+    const {username, email, currentPassword, newPassword, avatar_seed}= req.body; 
     try {
-        const userQuery= await db.query(`SELECT password, username, email FROM account WHERE user_id = $1`, [id]);
+        const userQuery= await db.query(`SELECT password, username, email, avatar_seed FROM account WHERE user_id = $1`, [id]);
         if (userQuery.rows.length ==0) {
             return res.status(404).json({error: 'Account not found'});
         }
@@ -151,16 +152,22 @@ const updateAccount= async (req, res) => {
 
         // NULLIF checks if the new value matches the current value. This is to prevent to prevent 'unique clashing'
         // If it matches, it won't attempt to re-validate a "new" unique constraint against itself.
+
+        const finalUsername = username && username.trim() ? username : user.username;
+        const finalEmail = email && email.trim() ? email : user.email;
+        const finalSeed = avatar_seed !== undefined ? avatar_seed : user.avatar_seed;
+
         const queryText= `
             UPDATE account 
             SET 
-                username= CASE WHEN username = $1 THEN username ELSE $1 END, 
-                email= CASE WHEN email= $2 THEN email ELSE $2 END,
-                password = CASE WHEN password = $3 THEN password ELSE $3 END
-                WHERE user_id = $4
-                RETURNING username, email, user_id
+                username = $1,
+                email = $2,
+                password = $3,
+                avatar_seed = $4
+            WHERE user_id = $5
+            RETURNING username, email, user_id, avatar_seed
         `;
-        const result= await db.query(queryText, [username, email, updatedPasswordHash, id]); 
+        const result= await db.query(queryText, [finalUsername, finalEmail, updatedPasswordHash, finalSeed,id]); 
         if (result.rows.length === 0) {
             return res.status(404).json({error: 'Account not found'});
         }

@@ -62,11 +62,11 @@ function CommunityGroups() {
   const pickerRef = useRef(null); 
 
 
-  // const API_BASE_URL= 'http://localhost:5001/api/groups'; 
-  // const API_BILLS_URL= 'http://localhost:5001/api/bills';
+  const API_BASE_URL= 'http://localhost:5001/api/groups'; 
+  const API_BILLS_URL= 'http://localhost:5001/api/bills';
 
-  const API_BASE_URL = 'https://jb-solver-orbital.onrender.com/api/groups'; 
-  const API_BILLS_URL = 'https://jb-solver-orbital.onrender.com/api/bills';
+  // const API_BASE_URL = 'https://jb-solver-orbital.onrender.com/api/groups'; 
+  // const API_BILLS_URL = 'https://jb-solver-orbital.onrender.com/api/bills';
 
   //Get user identity from localStorage token on mount
   useEffect(()=> {
@@ -510,16 +510,25 @@ function CommunityGroups() {
                 <div className="modal-body">
                   <p className="member-count">{groupMembers.length} members</p>
                   <div className="members-list">
-                    {groupMembers.map((member) => (
+                    {groupMembers.map((member) => {
+                      const memberSeed = member.avatar_seed;
+                      const memberAvatarUrl = `https://api.dicebear.com/9.x/big-smile/svg?seed=${encodeURIComponent(memberSeed)}`;
+                      return (
                       <div key={member.user_id} className="member-item">
-                        <div className="member-avatar"><FaUser /></div>
+                        <div className="member-avatar">
+                          <img 
+                            src={memberAvatarUrl} 
+                            alt={`${member.username}'s avatar`} 
+                            style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid #edb601', backgroundColor: '#f0f0f0' }}
+                          />
+                        </div>
                         <div className="member-info">
                           <span className="member-name">
                             {member.username} {member.user_id === currentUser.user_id && <span className="you-badge">(You)</span>}
                           </span>
                         </div>
                       </div>
-                    ))}
+                    )})}
                   </div>
                 </div>
               </div>

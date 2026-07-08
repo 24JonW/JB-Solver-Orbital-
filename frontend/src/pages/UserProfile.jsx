@@ -28,8 +28,12 @@ function UserProfile() {
   const [editUsername, setEditUsername] = useState('');
   const [editEmail, setEditEmail] = useState('');
 
-  // const API_BASE_URL= 'http://localhost:5001/api/accounts'; 
-  const API_BASE_URL = 'https://jb-solver-orbital.onrender.com/api/accounts';
+  //Avatar customization states 
+  const [avatarSeed, setAvatarSeed]= useState('default');
+  const [editSeed, setEditSeed]= useState('default');
+
+  const API_BASE_URL= 'http://localhost:5001/api/accounts'; 
+  // const API_BASE_URL = 'https://jb-solver-orbital.onrender.com/api/accounts';
 
   
 
@@ -47,6 +51,11 @@ function UserProfile() {
         setEmail(data.email);
         setUserId(data.user_id);
         setUsername(data.username);
+
+        //Load stored avatar
+        const initialSeed= data.avatar_seed || 'default'; 
+        setAvatarSeed(initialSeed); 
+        setEditSeed(initialSeed);
 
         setEditUsername(data.username); 
         setEditEmail(data.email);
@@ -70,12 +79,14 @@ function UserProfile() {
           username: editUsername,
           email: editEmail, 
           currentPassword: currentPassword, 
-          newPassword: newPassword
+          newPassword: newPassword, 
+          avatar_seed: editSeed
         })
         if (response.status === 200) {
           setUsername(editUsername);
           setEmail(editEmail);
           setIsEditing(false); // Close edit view mode loop
+          setAvatarSeed(editSeed);
 
           setCurrentPassword('');
           setNewPassword('');
@@ -112,6 +123,7 @@ function UserProfile() {
     }
 
   }
+  const currentAvatarUrl= `https://api.dicebear.com/9.x/big-smile/svg?seed=${encodeURIComponent(isEditing ? editSeed : avatarSeed)}`;
 
   return (
     <div className="homepage-container">
@@ -167,6 +179,38 @@ function UserProfile() {
         </div>
         <div className= 'body-item-userProfile box2'> 
           <div className= "userProfileInfo"> 
+            <div> 
+              {isEditing ? (
+                <div className= "avatarDivision"> 
+                  <img 
+                    src= {currentAvatarUrl}
+                    alt= "Avatar Design"
+                    style={{ width: '150px', height: '150px', borderRadius: '50%', border: '4px solid #edb601', backgroundColor: '#f0f0f0' }}
+                  />
+                  <span> <strong> Set random seed </strong>: {avatarSeed} </span>
+                  <input 
+                    type= "text"
+                    value= {editSeed}
+                    onChange= {(e)=> setEditSeed(e.target.value)}
+                    placeholder= "change phrase to randomize layout"
+                    style= {{padding: '5px', borderRadius: '4px', border: '1px solid #ccc', width: '50%'}}
+                  />
+                </div> 
+              ) : (
+                <div className= "avatarDivision"> 
+                  <img 
+                    src= {currentAvatarUrl}
+                    alt= "Avatar Design"
+                    style={{ width: '150px', height: '150px', borderRadius: '50%', border: '4px solid #edb601', backgroundColor: '#f0f0f0' }}
+                  />
+                  {/* <span> <strong> Seed </strong>: {avatarSeed} </span> */}
+                </div>
+
+
+              )}
+
+            </div>
+            
             <h2> User account details</h2>
             <p>User Id:  {userId}</p>
             <div style= {{margin: '15px 0'}}>
@@ -248,6 +292,7 @@ function UserProfile() {
                   setEditUsername(username); // Reset tracking values
                   setEditEmail(email);
                   setIsEditing(false);        // Close input mode
+                  setEditSeed(avatarSeed);
                 }}
               >
                 Cancel
