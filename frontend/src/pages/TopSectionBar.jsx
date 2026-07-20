@@ -21,7 +21,7 @@ export function TopSectionBar(){
                       className="homepageButton"
                       onClick={() => navigate("/home")}
                     >
-                      <GiHouse size={45} color={'#edb601'}/>
+                      <GiHouse className="nav-icon"  color={'#edb601'}/>
                     </button>
                     <span className="hover-tooltip">Home Page</span>
                   </div>
@@ -31,7 +31,7 @@ export function TopSectionBar(){
                       className="expenditureTracker"
                       onClick={() => navigate("/tracker")}
                     >
-                      <ImStatsDots size={45} color={'#edb601'}/>
+                      <ImStatsDots className="nav-icon" color={'#edb601'}/>
                     </button>
                     <span className="hover-tooltip">Expenditure Tracker</span>
                   </div>
@@ -41,7 +41,7 @@ export function TopSectionBar(){
                       className="communityGroupButton"
                       onClick={() => navigate("/groups")}
                     >
-                      <FaUsersGear size={45} color={'#edb601'}/>
+                      <FaUsersGear className="nav-icon" color={'#edb601'}/>
                     </button>
                     <span className="hover-tooltip">Community Groups</span>
                   </div>
@@ -51,7 +51,7 @@ export function TopSectionBar(){
                       className="userProfileButton"
                       onClick={() => navigate("/profile")}
                     >
-                      <FaUserCircle size={45} color={'#edb601'}/>
+                      <FaUserCircle className="nav-icon" color={'#edb601'}/>
                     </button>
                     <span className="hover-tooltip">User Profile</span>
                   </div>

@@ -1,7 +1,8 @@
+require('dotenv').config(); 
 const express = require('express');
 const cors= require('cors');
 const db = require('./config/db'); // Imports our Postgres link
-require('dotenv').config(); //Old version
+
 
 const app = express();
 
@@ -25,6 +26,12 @@ app.use('/api/bills', billRoutes);
 
 const expRoutes = require('./routes/expRoutes'); 
 app.use('/api/exp', expRoutes); 
+
+
+const gmailRoutes = require("./routes/gmailRoutes");
+
+app.use("/api/gmail", gmailRoutes);
+
 
 const PORT = process.env.PORT || 5433;
 app.listen(PORT,async () => {
