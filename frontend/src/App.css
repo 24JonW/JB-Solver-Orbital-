@@ -257,7 +257,7 @@ button:hover {
   grid-template-columns: 1fr 1fr; 
   grid-template-rows: 1fr 1fr; 
   grid-template-areas: 'box1 box2'
-                       'box3 box2'; 
+                       'box3 box4'; 
   margin: 1em; 
   overflow: hidden;
     
@@ -277,6 +277,7 @@ button:hover {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  
   
 }
 
@@ -315,6 +316,29 @@ button:hover {
 
 
 
+}
+
+.chasePaymentButton {
+  background-color: #f59e0b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+
+}
+
+.chasePaymentButton:hover {
+  background-color: #d97706;
+}
+
+/* Ensure consistent card stretching inside flex blocks */
+.dashboard-right-stack .profile-card {
+  height: auto;
+  min-height: 240px; 
 }
 
 
@@ -435,8 +459,9 @@ button:hover {
   
     /* 3. Convert the grid blocks into a simple single-column stacked layout */
     .home-body {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      /* flex-direction: column; */
       height: auto;
       overflow: visible;
       margin: 10px;
