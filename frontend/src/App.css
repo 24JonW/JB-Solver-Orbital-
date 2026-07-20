@@ -296,13 +296,29 @@ button:hover {
   background-Color: #f0f0f0;
 }
 
+.profile-details {
+  margin-top: -20px; 
+}
+
+.profile-main-info {
+  display: flex; 
+  flex-direction: row; 
+  align-items: center; 
+  justify-content: center; 
+}
+
+
 .profile-main-info h2 {
   font-size:1.5rem; 
 }
 
+.task-icon {
+  margin-right: 20px; 
+}
+
 .edit-profile-btn {
   margin-top: 10px; 
-  width: 50%;
+  width: 60% !important;
   padding: 12px; 
   /* background: linear-gradient(135deg, #517ee7, #76ABDF); */
   background: linear-gradient(135deg, #28549a 0%, #21498a 100%);
@@ -446,11 +462,7 @@ button:hover {
     /* 4. Ensure individual cards scale to full width on smaller screens */
     .profile-card {
       height: auto; /* Allow cards to stretch down naturally based on content length */
-      padding: 16px;
-    }
-  
-    .edit-profile-btn {
-      width: 100%; /* Make the button easy to tap with a thumb on mobile phones */
+      padding: 15px;
     }
   
     /* 5. Clean up the footer structure at the bottom */
