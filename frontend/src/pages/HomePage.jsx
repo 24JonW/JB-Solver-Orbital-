@@ -12,7 +12,8 @@ import { GiPartyPopper } from "react-icons/gi";
 
 
 import { TopSectionBar } from './TopSectionBar'; 
-
+import { FcAdvertising } from "react-icons/fc";
+import { FcDebt } from "react-icons/fc";
 function HomePage() {
   const navigate = useNavigate(); // Hook to handle client-side programmatic routing
   const [email, setEmail]= useState(''); 
@@ -178,7 +179,15 @@ function HomePage() {
         </div>
         {/* CARD 2: Placeholder Box for Task Management features */}
         <div className='profile-card' style={{ gridArea: 'box2'}}>
-          <h2>Tasks to do: Quick Bulk payment (By person) </h2>
+          <div className='profile-main-info'>
+              <FcAdvertising className='task-icon' size={45}/>
+              <h2> Tasks to do!: Quick Bulk payment (By person) </h2>
+              
+
+          </div>
+        
+
+          
   
           {/* CARD 2: Converted Quick Payment / Task Management features */}
           <div style= {{ overflowY: 'auto' }}>
@@ -216,7 +225,7 @@ function HomePage() {
         
 
         {/* CARD 3. Updated Outstanding Payments UI block */}
-        <div className='profile-card' style={{ gridArea: 'box3' , display: 'flex', flexDirection: 'column' }}>
+        <div className='profile-card' style={{ gridArea: 'box3', display: 'flex', flexDirection: 'column' }}>
           <h2>Outstanding Payments </h2>
           <div className="home-debt-scroll-container" style={{ flex: 1, overflowY: 'auto', marginTop: '10px', textAlign: 'left' }}>
             {outstandingLedger.length === 0 ? (
