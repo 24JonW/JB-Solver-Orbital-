@@ -15,6 +15,8 @@ import { TopSectionBar } from './TopSectionBar';
 import { FooterSection } from './FooterSection';
 import { FcAdvertising } from "react-icons/fc";
 import { FcDebt } from "react-icons/fc";
+import { FcCallTransfer } from "react-icons/fc";
+
 function HomePage() {
   const navigate = useNavigate(); // Hook to handle client-side programmatic routing
   const [email, setEmail]= useState(''); 
@@ -156,7 +158,7 @@ function HomePage() {
                   
               </div>
           </div>
-          {/* <div className='profile-details'>
+          <div className='profile-details'>
               <p><strong>Email:</strong> {email}</p>
               <p><strong>ID:</strong> {userId}</p>
           </div>
@@ -167,7 +169,7 @@ function HomePage() {
                 Edit Profile      
             </button>
 
-          </div> */}
+          </div>
           
           
         </div>
@@ -176,16 +178,13 @@ function HomePage() {
           <div className='profile-main-info'>
               <FcAdvertising className='task-icon' size={45}/>
               <h2><b>Tasks to do!</b></h2>
-              
-
+            
           </div>
-        
-
-          
+         
   
           {/* CARD 2: Converted Quick Payment / Task Management features */}
           <div>
-            <h4>Quick Bulk Payment By Person</h4>
+            {/* <h4 className='bulk-payment-title'>Quick Bulk Payment By Person</h4> */}
             <div className='tasks-todo'>
               {quickPaymentLedger.length === 0 ? (
                 <p>
@@ -261,7 +260,11 @@ function HomePage() {
 
         {/* NEW CARD 4: People who still Owe you */}
         <div className= 'profile-card' style={{ gridArea: 'box4',  display: 'flex', flexDirection: 'column' }}> 
-          <h2>People who still owes you</h2>
+          <div className='profile-main-info'>
+              <FcCallTransfer size={45}/>
+              <h2 className='chase-title'><b> Chase people who still owes you</b></h2>
+          </div>
+          
           <div className= "home-debt-scroll-container" style= {{flex: 1, overflowY: 'auto', marginTop: '10px'}}> 
             {peopleWhoOweMe.length=== 0 ? (
               <p style={{ textAlign: 'center', color: '#667781', marginTop: '25px' }}> 
