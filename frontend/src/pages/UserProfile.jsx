@@ -31,8 +31,8 @@ function UserProfile() {
   const [editEmail, setEditEmail] = useState('');
 
   //Avatar customization states 
-  const [avatarSeed, setAvatarSeed]= useState('default');
-  const [editSeed, setEditSeed]= useState('default');
+  const [avatarSeed, setAvatarSeed]= useState('32');
+  const [editSeed, setEditSeed]= useState('32');
 
   const API_BASE_URL= 'http://localhost:5001/api/accounts'; 
   // const API_BASE_URL = 'https://jb-solver-orbital.onrender.com/api/accounts';
@@ -55,7 +55,7 @@ function UserProfile() {
         setUsername(data.username);
 
         //Load stored avatar
-        const initialSeed= data.avatar_seed || 'default'; 
+        const initialSeed= data.avatar_seed || '32'; 
         setAvatarSeed(initialSeed); 
         setEditSeed(initialSeed);
 
