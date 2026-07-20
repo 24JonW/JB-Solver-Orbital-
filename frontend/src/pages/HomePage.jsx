@@ -12,6 +12,7 @@ import { GiPartyPopper } from "react-icons/gi";
 
 
 import { TopSectionBar } from './TopSectionBar'; 
+import { FooterSection } from './FooterSection';
 import { FcAdvertising } from "react-icons/fc";
 import { FcDebt } from "react-icons/fc";
 function HomePage() {
@@ -150,14 +151,7 @@ function HomePage() {
           <div className='profile-header'>
               <img src={`https://api.dicebear.com/9.x/big-smile/svg?seed=${encodeURIComponent(seed)}`} className='profilePicture-img' />
               <div className='profile-main-info'>
-                  <h2>Username: {username}</h2> {/* <p>Community Member</p> */}
-                  <p><strong>Email:</strong> {email}</p>
-                  <p><strong>ID:</strong> {userId}</p>
-                  <button className='edit-profile-btn' onClick= {()=> {
-                    navigate("/profile");
-                  }}>
-                    Edit Profile      
-                  </button>
+                  <h2><b>Username: {username}</b></h2> {/* <p>Community Member</p> */}
 
                   
               </div>
@@ -181,7 +175,7 @@ function HomePage() {
         <div className='profile-card' style={{ gridArea: 'box2'}}>
           <div className='profile-main-info'>
               <FcAdvertising className='task-icon' size={45}/>
-              <h2> Tasks to do!: Quick Bulk payment (By person) </h2>
+              <h2><b>Tasks to do!</b></h2>
               
 
           </div>
@@ -190,8 +184,9 @@ function HomePage() {
           
   
           {/* CARD 2: Converted Quick Payment / Task Management features */}
-          <div style= {{ overflowY: 'auto' }}>
-            <div>
+          <div>
+            <h4>Quick Bulk Payment By Person</h4>
+            <div className='tasks-todo'>
               {quickPaymentLedger.length === 0 ? (
                 <p>
                   All clear! No group summaries to pay off.
@@ -226,8 +221,12 @@ function HomePage() {
 
         {/* CARD 3. Updated Outstanding Payments UI block */}
         <div className='profile-card' style={{ gridArea: 'box3', display: 'flex', flexDirection: 'column' }}>
-          <h2>Outstanding Payments </h2>
-          <div className="home-debt-scroll-container" style={{ flex: 1, overflowY: 'auto', marginTop: '10px', textAlign: 'left' }}>
+          <div className='profile-main-info'>
+            <FcDebt className='task-icon' size={45}/>
+            <h2><b>Outstanding Payments</b></h2>
+          </div>
+          
+          <div className="home-debt-scroll-container" style={{ flex: 1, overflowY: 'auto', marginTop: '10px', textAlign: 'left'}}>
             {outstandingLedger.length === 0 ? (
               <p style={{ textAlign: 'center', color: '#667781', marginTop: '20px' }}>
                 <GiPartyPopper size={45} color={'#edb601'}/> No pending payments. Your balance is completely clear!
@@ -237,10 +236,10 @@ function HomePage() {
                 <div key={item.share_id} className="home-ledger-row" style={{ padding: '10px 0', borderBottom: '1px solid #f0f2f5', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
                     <h4 style={{ margin: '0 0 4px 0', fontSize: '16px' }}>{item.description}</h4>
-                    <p style={{ margin: 0, fontSize: '14px', color: '#4b5563' }}>
+                    <p style={{ margin: 0, fontSize: '16px', color: '#4b5563' }}>
                       You owe <strong>{item.creditor_name}</strong>
                     </p>
-                    <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#dc2626' }}>
+                    <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#dc2626' }}>
                       {item.target_currency} {parseFloat(item.amount_owed).toFixed(2)}
                     </span>
                   </div>
@@ -293,14 +292,7 @@ function HomePage() {
         </div>
 
       </div>
-      <div className='footer'>
-        <button className='btn-logout' onClick={() => {
-          localStorage.removeItem('userId')
-          navigate('/')
-        }}>
-            Log Out
-        </button>
-      </div>
+      <FooterSection />
 
 
 

@@ -125,7 +125,6 @@
   max-width: 100%;
   text-align: center;
   position: relative;
-  /* CRITICAL CORRECTION: Fill the entire screen viewport dimensions */
   width: 100vw;
   height: 100vh;
   max-width: 100%;
@@ -259,8 +258,8 @@ button:hover {
   grid-template-areas: 'box1 box2'
                        'box3 box4'; 
   margin: 1em; 
-  overflow: hidden;
-    
+  overflow: hidden; 
+  max-height: 70vh;  
 }
 
 
@@ -358,6 +357,7 @@ button:hover {
 }
 
 
+
 .footer {
   
   background:#d4d5d6;
@@ -377,20 +377,6 @@ button:hover {
   /* #517ee7   #76ABDF*/
 
 }
-.btn-logout {
-  background: linear-gradient(135deg,#ef4444, #eb6348);
-  background: #E53935;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 10px;
-  cursor: pointer;
-  margin: 1em; 
- 
-  font-size:16px;
-  
-  
-}
 
 
 
@@ -407,15 +393,37 @@ button:hover {
 
 /* Backdrop layer dimming the background screen workspace */
 
+.owed {
+  font-size: 20px; 
+}
 
 .buttons {
   display: flex; 
   justify-content: center; 
 }
 
+.tasks-todo {
+  border: 1px solid #f0f2f5; 
+  border-radius: 15px;
+  padding: 15px; 
+  background-color:white; 
+  
+}
+
+
+.home-debt-scroll-container {
+  border: 1px solid #f0f2f5; 
+  border-radius: 15px;
+  padding: 15px; 
+  background-color: white ; 
+  /* rgb(255, 254, 237) */
+
+}
+
+
 .totalOwed {
   margin: 0 0 4px 0; 
-  font-size: 16px; 
+  font-size: 17px; 
 }
 
 .bulkPaymentAmount{
@@ -444,6 +452,10 @@ button:hover {
     font-family: inherit;
     line-height: 1.6;
 }
+
+
+
+
 
 /*  Mobile & Tablet responsive styles (Max 768px) */
   
@@ -482,7 +494,13 @@ button:hover {
       overflow: visible;
       margin: 10px;
       gap: 15px;
+      padding-top: 135px;
+      max-height:70%;
+      margin-bottom: 90px; 
     }
+
+
+
   
     /* 4. Ensure individual cards scale to full width on smaller screens */
     .profile-card {
@@ -491,10 +509,6 @@ button:hover {
     }
   
     /* 5. Clean up the footer structure at the bottom */
-    .footer {
-      height: auto;
-      justify-content: center; /* Center-align the logout option on phones */
-    }
     .button-wrapper:hover {
       transform: translateY(-10px);
     }
@@ -507,6 +521,28 @@ button:hover {
       transform: translateY(-10px); 
       transition: 0.5s ease; 
       background: white;
+    }
+
+
+    .totalOwed {
+      margin: 0 0 4px 0; 
+      font-size: 16px; 
+    }
+
+    .bulkPaymentAmount{
+      font-Size: 15px;
+      font-weight: bold; 
+      color: #dc2626;
+    }
+
+    .tasks-todo {
+      max-height: 300px; 
+    }
+
+    .home-debt-scroll-container {
+      max-height: 300px; 
+      overflow-y: auto;
+      
     }
   }
 

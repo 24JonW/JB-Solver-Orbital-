@@ -7,8 +7,7 @@
     height: 80%; 
     width: 100%;
     background-color: #f0f2f5;
-    overflow: hidden;
-    
+    overflow: hidden; 
   }
   
   /* Left Sidebar Area */
@@ -182,7 +181,7 @@
   .chat-header-title h3 { margin: 0; font-size: 16px; }
   .id-badge { font-size: 12px; color: #667781; font-weight: normal; }
   
-  
+
   .settings-container {
     position: relative; 
     display: inline-block; 
@@ -745,6 +744,11 @@
       right: 15px;
       flex-direction: column;
       gap: 5px;
+    }
+
+    .chat-app-layout {
+      padding-top: 135px; 
+      
     }
 
     

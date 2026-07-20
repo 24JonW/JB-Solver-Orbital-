@@ -6,6 +6,7 @@ import '../App.css';
 import '../userProfile.css';
 
 import { TopSectionBar } from './TopSectionBar'; 
+import { FooterSection } from './FooterSection';
 import { GiHouse } from "react-icons/gi";
 import { FaUserCircle } from "react-icons/fa";
 import { FaUsersGear } from "react-icons/fa6";
@@ -265,15 +266,7 @@ function UserProfile() {
         </div>
 
       </div>
-      <div className='footer'>
-        <button className='btn-logout' onClick={() => navigate('/')}>
-            Log Out
-        </button>
-      </div>
-
-
-
-
+      <FooterSection/>
     </div>
 
     );
