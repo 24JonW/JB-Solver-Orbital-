@@ -1,20 +1,27 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import * as matchers from '@testing-library/jest-dom/matchers';
 import axios from 'axios'; 
 import HomePage from './pages/HomePage'; 
 
+// Extend Vitest expect assertions with Testing Library DOM matchers
 expect.extend(matchers);
 
-// Mock Axios globally
+// Mock Axios network framework globally
 vi.mock('axios'); 
 
 const mockNavigate = vi.fn(); 
-vi.mock('react-router-dom', () => ({
-  useNavigate: () => mockNavigate,
-}));
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
+// Mock the global layout top navigation bar component out of the suite environment
 vi.mock("./pages/TopSectionBar", () => ({
   TopSectionBar: () => <div data-testid="top-bar">Top Bar</div>,
 }));
@@ -24,11 +31,11 @@ beforeEach(() => {
   window.localStorage.clear();
   window.localStorage.setItem("userId", "1"); 
 
-  // Direct mock implementation safely managing multi-endpoint Axios calls
+  // Intercept backend axios calls and return fake test data models
   axios.get.mockImplementation((url) => {
     if (url.includes('/api/accounts/')) {
       return Promise.resolve({
-        data: { username: "24JonW", email: "jonathanwongjunkiat@gmail.com", user_id: 1 }
+        data: { username: "John", email: "john@test.com", user_id: 1 }
       });
     }
     if (url.includes('/api/bills/outstanding/')) {
@@ -41,18 +48,22 @@ beforeEach(() => {
   });
 });
 
-describe('Basic JBSolver Frontend Sanity Check', () => {
-  it('should successfully render the main title or login screen text', () => {
+describe('JBSolver Frontend Integration Suite', () => {
+  it('should successfully render the sanity checking layout elements', () => {
     render(<div><h1>Welcome to JBSolver</h1></div>);
     const element = screen.getByText(/Welcome to JBSolver/i);
     expect(element).toBeInTheDocument();
   });
 
-  it("should display the username returned by the API", async () => {
-    render(<HomePage />); 
+  it("should asynchronously load and display user profile values returned from the mocked API", async () => {
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    ); 
     
-    // findByText looks for asynchronous DOM changes when state updates
-    const username = await screen.findByText(/Username:\s*24JonW/i); 
+    // findByText waits for async updates to happen when Axios finishes resolution cycles
+    const username = await screen.findByText(/Username:\s*John/i); 
     expect(username).toBeInTheDocument(); 
   });
 });

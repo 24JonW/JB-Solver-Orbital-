@@ -7,5 +7,6 @@ export default defineConfig({
   test: {
     environment: 'jsdom', //test React components
     globals: true,
+    setupFiles: './src/setupTests.test.jsx'
   },
 })
