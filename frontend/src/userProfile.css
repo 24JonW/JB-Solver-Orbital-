@@ -14,6 +14,12 @@
 
 }
 
+.homepage-container {
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
+    }
+
 .body-item-userProfile {
     margin: 5px;
     padding: 5px; 
@@ -23,6 +29,7 @@
     border: 1px solid #e5e7eb; 
     border-radius: 8px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    
 }
 
 .box1 {
@@ -46,7 +53,7 @@
     overflow-y: auto; 
   
     /* Optional: Prevents awkward horizontal scrollbars from appearing */
-    height: 75vh;             /* Fixes the height to 75% of the screen height */
+    height: 70vh;             /* Fixes the height to 75% of the screen height */
     overflow-y: auto;         /* Triggers scrollbar when content goes past 75vh */
     overflow-x: hidden;
 
@@ -140,10 +147,11 @@
         padding: 15px;
         gap: 0;
         flex: none;
-        padding-top: 50px; 
+        padding-top: 135px; 
     }
 
     /* 3. Hide the empty left and right spacer boxes completely on mobile screens */
+    
     .body-item-userProfile.box1,
     .body-item-userProfile.box3 {
         display: none !important;

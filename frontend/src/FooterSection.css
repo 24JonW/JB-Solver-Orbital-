@@ -1,11 +1,6 @@
 .footer {
     height: auto;
     background-color: #f2f1d1;
-    position: fixed; 
-    bottom: 0px; 
-    width: 100%; 
-    z-index: 1000; 
-     
     justify-content: flex-end; /* Center-align the logout option on phones */
 }
 
@@ -17,6 +12,10 @@
 
     .footer {
         height: auto;
+        position:fixed;
+        bottom: 0px; 
+        width: 100%; 
+        z-index: 1000; 
         justify-content: center; /* Center-align the logout option on phones */
     }
 }

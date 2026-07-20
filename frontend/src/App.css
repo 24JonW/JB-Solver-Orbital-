@@ -258,9 +258,8 @@ button:hover {
   grid-template-areas: 'box1 box2'
                        'box3 box2'; 
   margin: 1em; 
-  overflow: hidden;
-  padding-top: 135px; 
-    
+  overflow: hidden; 
+  max-height: 70vh;  
 }
 
 
@@ -430,6 +429,10 @@ button:hover {
     line-height: 1.6;
 }
 
+
+
+
+
 /*  Mobile & Tablet responsive styles (Max 768px) */
   
    @media (max-width: 768px) {
@@ -466,7 +469,13 @@ button:hover {
       overflow: visible;
       margin: 10px;
       gap: 15px;
+      padding-top: 135px;
+      max-height:70%;
+      margin-bottom: 90px; 
     }
+
+
+
   
     /* 4. Ensure individual cards scale to full width on smaller screens */
     .profile-card {
