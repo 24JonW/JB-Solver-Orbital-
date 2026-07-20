@@ -296,10 +296,7 @@ function HomePage() {
 
       </div>
       <FooterSection />
-
-
-
-
+      
     </div>
 
     );

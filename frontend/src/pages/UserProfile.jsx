@@ -7,15 +7,14 @@ import '../userProfile.css';
 
 import { TopSectionBar } from './TopSectionBar'; 
 import { FooterSection } from './FooterSection';
-import { GiHouse } from "react-icons/gi";
 import { FaUserCircle } from "react-icons/fa";
-import { FaUsersGear } from "react-icons/fa6";
-import { ImStatsDots } from "react-icons/im";
-import { MdOutlineMail } from "react-icons/md";
-import { TbUserHexagon } from "react-icons/tb";
 import { RiLockPasswordLine } from "react-icons/ri";
-
-
+import { MdEmail } from "react-icons/md";
+import { FaIdCard } from "react-icons/fa";
+import { FcLock } from "react-icons/fc";
+import { FcHighPriority } from "react-icons/fc";
+import { FcCommandLine } from "react-icons/fc";
+import { GiSeedling } from "react-icons/gi";
 
 function UserProfile() {
   const navigate = useNavigate(); 
@@ -146,13 +145,17 @@ function UserProfile() {
                     alt= "Avatar Design"
                     style={{ width: '150px', height: '150px', borderRadius: '50%', border: '4px solid #edb601', backgroundColor: '#f0f0f0' }}
                   />
-                  <span> <strong> Set random seed </strong>: {avatarSeed} </span>
+                  <div className='divider2-box'>
+                    <GiSeedling size={45} style={{ color: '#edb601'}}/>
+                    <span style={{marginTop:'10px', fontSize:'20px', marginLeft:'7px'}}> <strong> Set random seed: </strong> </span>
+                  </div>
+                  
                   <input 
                     type= "text"
                     value= {editSeed}
                     onChange= {(e)=> setEditSeed(e.target.value)}
                     placeholder= "change phrase to randomize layout"
-                    style= {{padding: '5px', borderRadius: '4px', border: '1px solid #ccc', width: '50%'}}
+                    style= {{padding: '7px', borderRadius: '4px', border: '1px solid #ccc', width: '80%', marginTop:'10px'}}
                   />
                 </div> 
               ) : (
@@ -170,46 +173,59 @@ function UserProfile() {
 
             </div>
             
-            <h2> User account details</h2>
-            <p>User Id:  {userId}</p>
-            <div style= {{margin: '15px 0'}}>
-              <MdOutlineMail size={20} /> <br/>
-              <strong>email: </strong>
-              
-              <br/>
-              {isEditing ? (
-                <input 
-                  type= "email"
-                  value= {editEmail}
-                  onChange={(e)=> setEditEmail(e.target.value)}
-                  style={{ padding: '5px', borderRadius: '4px', border: '1px solid #ccc' }}
-                />
-              ): (
-                <span> {email} </span>
-              )}
+            <h2 className='userprofile-details' style={{marginTop:'-10px'}}><b>User account details</b></h2>
+            {!isEditing ? (
+              <div className='divider-box'>
+                <div className='divider2-box'>
+                   <FaIdCard size={30} style={{ color: '#edb601'}}/>
+                   <p className='divider-title'><b>User Id:</b> </p>
+                </div>
+                <p>{userId}</p>
             </div>
-            <div style= {{margin: '15px 0'}}> 
-              <TbUserHexagon size={20}/> <br/>
-              <strong>username: </strong>
+            ) : <div/>}
+            
+            <div className='divider-box' style= {{margin: '15px 0'}}>
+              <div className='divider2-box'>
+                <MdEmail size={32} style={{ color: '#f49a50'}}/>
+                <p className='divider-title'><b>Email:</b></p>
+              </div>
               
-              <br/>
+              
               {isEditing ? (
-                <input 
-                  type= "text"
-                  value={editUsername}
-                  onChange={(e)=> setEditUsername(e.target.value)}
-                  style={{ padding: '5px', borderRadius: '4px', border: '1px solid #ccc' }}
-                />
+                    <input 
+                      type= "email"
+                      value= {editEmail}
+                      onChange={(e)=> setEditEmail(e.target.value)}
+                      style={{ padding: '7px', borderRadius: '4px', border: '1px solid #ccc', width:'80%', marginTop: '10px'}}
+                    />
+                  ): (
+                    <span> {email} </span>
+                  )}
+            </div>
+            <div className='divider-box' style= {{margin: '15px 0'}}> 
+              <div className='divider2-box'>
+                  <FaUserCircle size={32} style={{ color: '#d27162'}}/>
+                  <p className='divider-title'><b>Username:</b></p>
+              </div>    
+      
+                {isEditing ? (
+                  <input 
+                    type= "text"
+                    value={editUsername}
+                    onChange={(e)=> setEditUsername(e.target.value)}
+                    style={{ padding: '7px', borderRadius: '4px', border: '1px solid #ccc', width:'80%', marginTop: '10px'}}
+                  />
 
-              ): (
-                <span> {username}</span>
-              )}
-
+                ): (
+                  <span> {username}</span>
+                )}
             </div>
             {isEditing && (
               <div> 
-                <RiLockPasswordLine size={20}/> <br/>
-                <p className= "setPasswordNotification"> 
+                
+                
+                <FcHighPriority size={40}/>
+                <p className= "setPasswordNotification" style={{color:'red', fontWeight:'bold', fontsize:'5px' }}> 
                   Leave password fields blank if you don't wish to change it.
                 </p>
                 <div className="passwordSection"> 
@@ -220,7 +236,7 @@ function UserProfile() {
                     value= {currentPassword}
                     onChange= {(e)=> setCurrentPassword(e.target.value)}
                     placeholder= "Enter current password"
-                    style= {{padding: '5px', borderRadius: '4px', border: '1px solid #ccc', marginLeft: '5px'}}
+                    style= {{padding: '7px', borderRadius: '4px', border: '1px solid #ccc', marginLeft: '5px', width:'80%'}}
                   />
                 </div>
                 <div className= "passwordSection"> 
@@ -231,7 +247,7 @@ function UserProfile() {
                     value= {newPassword}
                     onChange= {(e)=> setNewPassword(e.target.value)}
                     placeholder='Enter new password'
-                    style={{ padding: '5px', borderRadius: '4px', border: '1px solid #ccc', marginLeft: '5px' }}
+                    style={{ padding: '7px', borderRadius: '4px', border: '1px solid #ccc', marginLeft: '5px', width:'80%' }}
                   />
                 </div>
               </div>

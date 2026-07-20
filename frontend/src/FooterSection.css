@@ -1,31 +1,27 @@
+
 .footer {
+    bottom:0px; 
     height: auto;
     background-color: #f2f1db;
     justify-content: flex-end; /* Center-align the logout option on phones */
 }
 
-
 @media (max-width: 768px) {
-    .home-body-userProfile {
-        flex: 1;
-    }
-
     .footer {
-        height: auto;
-        position:fixed;
-        bottom: 0px; 
-        width: 100%; 
-        z-index: 500; 
-        justify-content: flex-end /* Center-align the logout option on phones */
+        margin:auto;
+        width: 100%;
+        background-color: #f2f1db;
     }
 }
 
 
 .btn-logout {
   background: linear-gradient(135deg,#ef4444, #eb6348);
-  background: #E53935;
+  background:#ef4444;
   color: white;
+  font-weight: bold; 
   border: none;
+  
   padding: 10px 20px;
   border-radius: 10px;
   cursor: pointer;
