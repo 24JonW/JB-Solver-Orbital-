@@ -300,9 +300,15 @@ button:hover {
   margin-top: -20px; 
 }
 
+.bulk-payment-title {
+  margin-top: 5px;
+  margin-bottom: 10px; 
+}
+
+
 .profile-main-info {
   display: flex; 
-  flex-direction: column; 
+  flex-direction: row; 
   align-items: center; 
   justify-content: center; 
 }
@@ -406,9 +412,12 @@ button:hover {
   border: 1px solid #f0f2f5; 
   border-radius: 15px;
   padding: 15px; 
-  background-color:white; 
+  background-color:white;
+  max-height: 150px; 
+  overflow-y: auto;
   
 }
+
 
 
 .home-debt-scroll-container {
@@ -454,6 +463,10 @@ button:hover {
 }
 
 
+.chase-title {
+  margin-left: 20px; 
+}
+
 
 
 
@@ -488,8 +501,12 @@ button:hover {
     /* 3. Convert the grid blocks into a simple single-column stacked layout */
     .home-body {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      /* flex-direction: column; */
+      grid-template-columns: 1fr; 
+      grid-template-rows: 1fr; 
+      grid-template-areas: 'box1'
+                           'box2'
+                           'box3'
+                           'box4'; 
       height: auto;
       overflow: visible;
       margin: 10px;
@@ -535,11 +552,18 @@ button:hover {
       color: #dc2626;
     }
 
-    .tasks-todo {
+    .home-debt-scroll-container {
       max-height: 300px; 
+      overflow-y: auto;
+      
     }
 
-    .home-debt-scroll-container {
+
+    .tasks-todo {
+      border: 1px solid #f0f2f5; 
+      border-radius: 15px;
+      padding: 15px; 
+      background-color:white;
       max-height: 300px; 
       overflow-y: auto;
       
