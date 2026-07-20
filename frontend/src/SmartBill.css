@@ -11,11 +11,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Assures it stays on top of everything else */
+    z-index: 10000; /* Assures it stays on top of everything else */
 }
 
 .modal-content {
-    background-color: #ffffff;
+    background-color: white;
     
     width: 100%;
     max-width: 400px;
@@ -26,6 +26,8 @@
     overflow: hidden;
     animation: fadeIn 0.2s ease-out;
     color: black;
+    padding: 0px; 
+    padding-bottom: 30px; 
 }
   
 .modal-header {
