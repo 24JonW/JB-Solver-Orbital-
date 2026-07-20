@@ -77,6 +77,32 @@
   .action-btn.structural:hover {
     background:  #eeb526;
   }
+
+
+
+  .chatrooms-title-box {
+    display: flex; 
+    justify-content: center; 
+    margin-bottom: 10px; 
+  }
+  .chatrooms-title {
+    align-self: center;
+    position: sticky;
+    top: 0; 
+    background: white;
+    width: 70%; 
+    z-index: 10; 
+    background: linear-gradient(135deg, #fbc036,#f3cf2f);
+    background: linear-gradient(135deg, #4cd0b8, #72d6c4);
+    background: linear-gradient(135deg, #28549a 0%, #21498a 100%); 
+    border-radius: 10px;
+
+    padding: 10px 15px;
+    margin: 0;
+    font-size: 14px;
+    color: white;
+    text-align: center;
+  }
   
   .group-roster-list {
     flex: 2;
@@ -88,30 +114,10 @@
     flex-direction: column; 
     
   }
+
+
   
-  .group-roster-list h3 {
-    align-self: center;
-    position: sticky;
-    top: 0; 
-    background: white;
-    width: 70%; 
-    z-index: 10; 
-    background: linear-gradient(135deg, #fbc036,#f3cf2f);
-    background: linear-gradient(135deg, #4cd0b8, #72d6c4);
-    background: linear-gradient(135deg, #28549a 0%, #21498a 100%);
-    
-    border-radius: 10px;
-   
-  
-  }
-  
-  .group-roster-list h3 {
-    padding: 10px 15px;
-    margin: 0;
-    font-size: 14px;
-    color: white;
-    text-align: center;
-  }
+
 
 
 
@@ -146,6 +152,7 @@
     margin: 1em 1em 1em 0; 
     border-radius: 10px; 
     box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    max-height: 70vh;
     
   
    
@@ -317,7 +324,9 @@
     display: flex; 
     flex-direction: row;
     justify-content: center; 
-    margin-top: -5px; 
+    margin-top: -25px; 
+    margin-bottom: -25px;
+
   }
 
 
@@ -510,20 +519,36 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Assures it stays on top of everything else */
+    z-index: 200000; /* Assures it stays on top of everything else */
   }
   
   /* Central floating white modal dialog surface context box */
+
+
   .modal-content {
-    background-color: #ffffff;
-    width: 100%;
-    max-width: 400px;
-    border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: hidden; /* This crops out any layout leakage instantly */
     animation: fadeIn 0.2s ease-out;
+    max-height: 70vh; /* Prevents the modal from exceeding the browser screen height */
+  }
+
+  .modal-body {
+    padding: 15px 20px;
+    overflow-y: auto; /* Puts the scrollbar cleanly inside the card body */
+    box-sizing: border-box;
+    margin-bottom: -30px; 
+  }
+
+  .modal-body-dt {
+    display: flex; 
+    flex-direction: column;
+    gap: 15px; /* Adds clean structural spacing between form entry rows */
+    padding: 15px 20px; 
+    width: 100%;       
+    box-sizing: border-box;
+    overflow-y: auto;
   }
   
   .modal-header {
@@ -533,8 +558,10 @@
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #e1e1e1;
-    background-color: #eec926;
+    /* background-color: #eec926; */
+
     background-color: #eeb526;
+    
   }
   
   
@@ -557,40 +584,9 @@
     transform: none; /* Disables global button hover animations */
   }
   
-  .modal-body {
-    padding: 15px 20px;
-    max-height: 400px;
-    overflow-y: auto;
-    
-  }
+
   
-  
-  .modal-body-dt {
-    
-    /* display: flex; 
-    flex-direction: column;
-    justify-content: center;
-    padding: 15px 20px; 
-    max-height: 75%; 
-    width: 85%;
-    overflow-y: auto; */
-    
-    
-     display: block; 
-    padding: 15px 20px; 
-    max-height: 500px; 
-    width: auto;       
-    box-sizing: border-box;
-    
-    /* display: flex;
-    flex-direction: column;
-    padding: 0; 
-    max-height: 500px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    box-sizing: border-box;
-    background-color: #f8f9fa; */
-  }
+
   .member-count {
     font-size: 13px;
     color: #667781;
@@ -658,102 +654,110 @@
   
   }
 
-  @media (max-width: 768px) {
-  
-    /* 1. Stack the master layout container and allow normal vertical document growth */
-    .homepage-container {
-      height: auto;
-      min-height: 100vh;
-      overflow-y: auto;
-    }
-  
-    .chat-app-layout {
-      position: relative;
-      height: calc(100vh - 120px); /* Fill the vertical screen space remaining below the top navigation bar */
-      margin: 0;
-      background-color: #fff;
-    }
-  
-    /* 2. Make the Sidebar occupy full screen width by default */
-    .chat-sidebar {
-      width: 100% !important;
-      margin: 0;
-      border-radius: 0;
-      border-right: none;
-      height: 100%;
-    }
-  
-    /* 3. Force Chat Window Pane to overlay globally across full screen space */
-    .chat-window-pane {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      border-radius: 0;
-      z-index: 500;
-      background: #fff;
-      
-      /* Hide the chat pane off-screen completely by default */
-      display: none !important; 
-    }
-  
-    /* 4. When a group is active, force the chat window visible */
-    .chat-window-pane.active {
-      display: flex !important;
-    }
-  
-    /* 5. Mobile Back Button UI Styling */
-    .mobile-back-btn {
-      display: block !important;
-      background: none;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      padding: 0 10px 0 0;
-      color: #28549a;
-      font-weight: bold;
-    }
-  
-    /* 6. Adjust internal UI structures slightly to maximize mobile screen bounds */
-    .chat-header-title {
-      border-radius: 0;
-      padding: 12px 15px;
-    }
-  
-    .chat-bubble {
-      max-width: 85%; /* Let chat text bubbles expand wider on small phone viewports */
-    }
-  
-    .messages-stream {
-      margin: 8px;
-      border-radius: 8px;
-    }
-  
-    .chat-input-bar {
-      border-radius: 0;
-      padding: 10px;
-    }
-  
-    /* Hide the settings popover layer from floating out off-screen boundaries */
-    .settings-popup {
-      position: fixed;
-      top: auto;
-      bottom: 70px;
-      right: 15px;
-      flex-direction: column;
-      gap: 5px;
-    }
+@media (max-width: 768px) {
 
-    .chat-app-layout {
-      padding-top: 135px; 
-      
-    }
+  /* Allow page to grow normally */
+  .homepage-container {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+    margin-bottom: 70px; 
+  }
 
+  /* Main layout becomes vertical */
+  .chat-app-layout {
+    display: flex;
+    flex-direction: column;
+    padding-top: 135px;
+    height: calc(100vh - 135px);
+    background-color: #fff;
+
+  
+  }
+
+  /* Sidebar now stays at the TOP */
+  .chat-sidebar {
+    width: 90%;
+    height: 300px; /* adjust if needed */
+    flex-shrink: 0;
+
+    margin: 15px;
+    margin-right: 20px; 
+    border-radius: 15px;
+    
+
+  }
+
+  /* Group list scrolls independently */
+  .group-roster-list {
+    
+    overflow-y: auto;
+    max-height: none;
+  }
+
+  /* Chat window sits BELOW the sidebar */
+  .chat-window-pane {
+    position: static;
+    width: 94%;
+    flex: 1;
+    display: flex !important;
+    border-radius: 15px;
+    margin: 15px;
+    background: white;
     
     
   }
+
+
+  .active-chat-container {
+    height: 100%;
+    margin-top: -10px; 
+  }
+
+  /* Hide back button since sidebar is always visible */
+  .mobile-back-btn {
+    display: none;
+  }
+
+  /* Chat header */
+  .chat-header-title {
+    padding: 12px 15px;
+  }
+
+  /* Make bubbles wider */
+  .chat-bubble {
+    max-width: 85%;
+  }
+
+  /* Message area */
+  .messages-stream {
+    flex: 1;
+    margin: 8px;
+    border-radius: 8px;
+    overflow-y: auto;
+    max-height: 350px; 
+  }
+
+  /* Bottom input */
+  .chat-input-bar {
+    padding: 10px;
+  }
+
+  /* Settings popup */
+  .settings-popup {
+    position: fixed;
+
+    right: 15px;
+    bottom: 70px;
+
+    top: auto;
+
+    flex-direction: column;
+    gap: 5px;
+
+    z-index: 1000;
+  }
+}
   /* @media (min-width: 769px) {
     .mobile-back-btn {
       display: none; 

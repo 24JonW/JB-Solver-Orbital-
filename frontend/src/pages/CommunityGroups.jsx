@@ -382,9 +382,14 @@ function CommunityGroups() {
               <button type="submit" className="action-btn structural">Join</button>
             </form>
           </div>
+
+          <div className='chatrooms-title-box'> 
+              <h3 className='chatrooms-title'> My Chat Rooms</h3>
+          </div>
         
           <div className="group-roster-list"> 
-            <h3> My Chat Rooms</h3>
+            
+            
             {groups.map((group)=> (
               <div 
                 key={group.group_id}
