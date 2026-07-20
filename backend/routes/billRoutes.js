@@ -8,7 +8,9 @@ const {
     clearSharePayment, 
     clearPaidHistory, 
     getOutstandingPayments,
-    clearBulkPayments
+    clearBulkPayments, 
+    getReceivablesPayments, 
+    triggerChasePayment
 } = require('../controllers/billController');
 
 //@ Route: /api/bills
@@ -18,6 +20,9 @@ router.post('/settle-share', clearSharePayment); //Mark a specific individual de
 router.post('/clear-history', clearPaidHistory); //Wipe out or delete all settled 'paid' history logs for a specific group
 router.get('/outstanding/:userId', getOutstandingPayments); //Fetch all pending 'unpaid' debts across all groups for a specific user
 router.post('/settle-bulk', clearBulkPayments);
+
+router.get('/receivables/:userId', getReceivablesPayments); //Get people who owes you money 
+router.post('/chase-payment', triggerChasePayment); //Dispatch chat alert notification
 
 // Export the router module to be mounted in the main server routing lifecycle
 module.exports = router; 

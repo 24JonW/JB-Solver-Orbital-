@@ -353,6 +353,7 @@
     margin: 8px; 
     margin-bottom: 20px;
     padding: 10px; 
+    
   
   }
   
@@ -561,24 +562,35 @@
     padding: 15px 20px;
     max-height: 400px;
     overflow-y: auto;
+    
   }
   
   
   .modal-body-dt {
-    /*
-    display: flex; 
+    
+    /* display: flex; 
     flex-direction: column;
     justify-content: center;
     padding: 15px 20px; 
     max-height: 75%; 
     width: 85%;
-    overflow-y: auto;
-    */ 
-    display: block; /* Swapping from flex to block resolves the top clipping bug instantly */
+    overflow-y: auto; */
+    
+    
+     display: block; 
     padding: 15px 20px; 
-    max-height: 500px; /* Constrains the body wrapper cleanly */
-    width: auto;       /* Permits content blocks to fill normal bounds safely */
+    max-height: 500px; 
+    width: auto;       
     box-sizing: border-box;
+    
+    /* display: flex;
+    flex-direction: column;
+    padding: 0; 
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    background-color: #f8f9fa; */
   }
   .member-count {
     font-size: 13px;

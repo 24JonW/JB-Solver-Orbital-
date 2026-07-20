@@ -207,5 +207,96 @@ const clearBulkPayments = async (req, res) => {
     }
 };
 
-module.exports = { createSmartBill, getGroupLedger, clearSharePayment, clearPaidHistory, getOutstandingPayments, clearBulkPayments};
+const getReceivablesPayments= async (req, res)=> {
+    const {userId} = req.params; 
+    try {
+        const result= await db.query(
+            `SELECT * FROM people_who_owe_me WHERE creditor_user_id= $1`, [userId]
+        );
+        res.json(result.rows)
+    } catch (err) {
+        console.error(err); 
+        res.status(500).json({error: 'Server error retrieving receivables history data'})
+    }
+}
+
+const triggerChasePayment= async (req, res) => {
+    const {creditorId, creditorName, debtorId, debtorUsername, debtorEmail, amountOwed} = req.body; 
+    
+    try {
+        const mutualGroupResult= await db.query(
+            `SELECT gm1.group_id
+            FROM group_members gm1 
+            JOIN group_members gm2 ON gm1.group_id = gm2.group_id
+            WHERE gm1.user_id= $1 AND gm2.user_id = $2
+            LIMIT 1`, 
+            [creditorId, debtorId]
+        )
+        let targetGroupId; 
+        if (mutualGroupResult.rows.length >0) {
+            targetGroupId= mutualGroupResult.rows[0].group_id; 
+        } else {
+            return res.status(404).json({error: 'No mutual community group found between users. '});
+        }
+        const reminderText= `Payment reminder: @${debtorUsername}, you still have an outstanding balance of SGD $${amountOwed} with me. Please settle it when you are free!`; 
+        await db.query(
+            `INSERT INTO group_messages (sender_id, group_id, message_text, sent_at)
+             VALUES ($1, $2, $3, NOW())`, 
+            [creditorId, targetGroupId, reminderText]
+        );
+
+        const resendResponse = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${process.env.RESEND_API_KEY}`, 
+                'Content-Type': 'application/json'
+            }, 
+            body: JSON.stringify({
+                // Important: When using Resend's free tier without a custom domain, 
+                // you MUST use 'onboarding@resend.dev' as the sender address.
+                from: "JBSolver <onboarding@resend.dev>",
+                to: [debtorEmail], 
+                subject: `⚠️ Balance Settlement Reminder from ${creditorName}`,
+                html: `
+                  <div style="font-family: sans-serif; padding: 20px; color: #333; max-width: 600px; border: 1px solid #eee; border-radius: 12px;">
+                    <h2 style="color: #21498a;">Hi ${debtorUsername},</h2>
+                    <p>This is an automated reminder from your assistant app <strong>JBSolver</strong>.</p>
+                    <p><strong>${creditorName}</strong> has requested settlement for an outstanding balance of:</p>
+                    <div style="background-color: #fef2f2; border-left: 4px solid #dc2626; padding: 15px; margin: 20px 0; font-size: 18px; font-weight: bold; color: #dc2626;">
+                      SGD ${amountOwed}
+                    </div>
+                    <p>Please log in to your dashboard to reconcile and settle this bill share.</p>
+                    <hr style="border: none; border-top: 1px solid #eee; margin-top: 30px;" />
+                    <small style="color: #999;">If you've already transferred the funds, please follow up with ${creditorName} to update the tracking state.</small>
+                  </div>
+                `
+            })
+        }); 
+        const resendData= await resendResponse.json(); 
+        if (!resendResponse.ok) {
+            console.error("Resend API Error details:", resendData);
+            // Don't crash the request if the email fails, since the chat insert succeeded
+        }
+
+        res.json({ 
+            message: 'Chase alert message posted to group and real email dispatched!',
+            groupIdMatched: targetGroupId 
+        });
+
+    } catch (err) {
+        console.error(err); 
+        res.status(500).json({error: 'Failed to process push/email notifications'})
+    }
+} 
+
+module.exports = { 
+    createSmartBill, 
+    getGroupLedger, 
+    clearSharePayment, 
+    clearPaidHistory, 
+    getOutstandingPayments, 
+    clearBulkPayments, 
+    getReceivablesPayments, 
+    triggerChasePayment
+};
 

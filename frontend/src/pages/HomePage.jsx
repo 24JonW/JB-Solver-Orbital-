@@ -21,6 +21,7 @@ function HomePage() {
   const [username, setUsername] = useState(''); 
   const [outstandingLedger, setOutstandingLedger]= useState([]); // Stores the array of unpaid debts
 
+  const [peopleWhoOweMe, setPeopleWhoOweMe] = useState([]) //4th Grid state 
   const [seed, setSeed]= useState('default')
 
   // 2 API Endpoints 
@@ -59,6 +60,16 @@ function HomePage() {
         }
       }).catch((err)=> {
         console.error('Error fetching outstanding payments:', err);
+      })
+    
+    // Data Fetching: Fetch people who still owes you 
+    axios.get(`${API_BILLS_URL}/receivables/${storedUserId}`) 
+      .then((res)=> {
+        if (Array.isArray(res.data)) {
+          setPeopleWhoOweMe(res.data);
+        }
+      }).catch((err)=> {
+        console.error('Error fetching receivables:', err);
       })
 
   }, [navigate]); // 'Navigate' as the only dependency array
@@ -110,6 +121,23 @@ function HomePage() {
     .catch((err) => console.error("Error with bulk settlement:", err));
   };
 
+  const handleChasePayment = (debtor)=> {
+    const confirmed= window.confirm(`Send payment reminders to ${debtor.debtor_username}`); 
+    if (!confirmed) return; 
+    axios.post(`${API_BILLS_URL}/chase-payment`, {
+      creditorId: userId, 
+      creditorName: username, 
+      debtorId: debtor.debtor_user_id, 
+      debtorUsername: debtor.debtor_username, 
+      debtorEmail: debtor.debtor_email, 
+      amountOwed: parseFloat(debtor.total_owed).toFixed(2)
+    })
+    .then(()=> {
+      alert(`Reminder notifications send to ${debtor.debtor_username}!`); 
+    })
+    .catch((err)=> console.error("Error chasing payment:", err));
+  }
+
   return (
     <div className="homepage-container">
       {/* Global Navigation bar */}
@@ -123,10 +151,18 @@ function HomePage() {
               <img src={`https://api.dicebear.com/9.x/big-smile/svg?seed=${encodeURIComponent(seed)}`} className='profilePicture-img' />
               <div className='profile-main-info'>
                   <h2>Username: {username}</h2> {/* <p>Community Member</p> */}
+                  <p><strong>Email:</strong> {email}</p>
+                  <p><strong>ID:</strong> {userId}</p>
+                  <button className='edit-profile-btn' onClick= {()=> {
+                    navigate("/profile");
+                  }}>
+                    Edit Profile      
+                  </button>
+
                   
               </div>
           </div>
-          <div className='profile-details'>
+          {/* <div className='profile-details'>
               <p><strong>Email:</strong> {email}</p>
               <p><strong>ID:</strong> {userId}</p>
           </div>
@@ -137,7 +173,7 @@ function HomePage() {
                 Edit Profile      
             </button>
 
-          </div>
+          </div> */}
           
           
         </div>
@@ -145,7 +181,7 @@ function HomePage() {
         <div className='profile-card' style={{ gridArea: 'box2'}}>
           <div className='profile-main-info'>
               <FcAdvertising className='task-icon' size={45}/>
-              <h2> Tasks to do!</h2>
+              <h2> Tasks to do!: Quick Bulk payment (By person) </h2>
               
 
           </div>
@@ -154,8 +190,7 @@ function HomePage() {
           
   
           {/* CARD 2: Converted Quick Payment / Task Management features */}
-          <div>
-            <h3>Quick Bulk Payment (By Person)</h3>
+          <div style= {{ overflowY: 'auto' }}>
             <div>
               {quickPaymentLedger.length === 0 ? (
                 <p>
@@ -163,7 +198,7 @@ function HomePage() {
                 </p>
               ) : (
                 quickPaymentLedger.map((summary) => (
-                  <div key={summary.creditor_user_id} className="home-ledger-row" style={{ padding: '10px 0', borderBottom: '1px solid #f0f2f5', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div key={summary.creditor_user_id} className="home-ledger-row" style={{ padding: '10px 0', borderBottom: '1px solid #f0f2f5', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                     <div>
                       <h4 className="totalOwed">Total Owed to {summary.creditor_name}</h4>
                       <span className='bulkPaymentAmount'>
@@ -187,14 +222,11 @@ function HomePage() {
           </div>
           
         </div>
+        
 
         {/* CARD 3. Updated Outstanding Payments UI block */}
         <div className='profile-card' style={{ gridArea: 'box3', display: 'flex', flexDirection: 'column' }}>
-          <div className='profile-main-info'>
-            <FcDebt className='task-icon' size={45}/>
-            <h2>Outstanding Payments </h2>
-          </div>
-          
+          <h2>Outstanding Payments </h2>
           <div className="home-debt-scroll-container" style={{ flex: 1, overflowY: 'auto', marginTop: '10px', textAlign: 'left' }}>
             {outstandingLedger.length === 0 ? (
               <p style={{ textAlign: 'center', color: '#667781', marginTop: '20px' }}>
@@ -225,6 +257,38 @@ function HomePage() {
                 </div>
               ))
             )}
+          </div>
+        </div>
+
+        {/* NEW CARD 4: People who still Owe you */}
+        <div className= 'profile-card' style={{ gridArea: 'box4',  display: 'flex', flexDirection: 'column' }}> 
+          <h2>People who still owes you</h2>
+          <div className= "home-debt-scroll-container" style= {{flex: 1, overflowY: 'auto', marginTop: '10px'}}> 
+            {peopleWhoOweMe.length=== 0 ? (
+              <p style={{ textAlign: 'center', color: '#667781', marginTop: '25px' }}> 
+                No active receivables found.
+              </p>
+            ): (
+              peopleWhoOweMe.map((debtor)=> (
+                <div key= {debtor.debtor_user_id} className= "home-leder-row" style= {{padding: '10px 0', borderBottom: '1px solid #f0f2f5', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}> 
+                  <div> 
+                    <h4 style={{ margin: '0 0 4px 0', fontSize: '16px' }}>{debtor.debtor_username}</h4>
+                    <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#16a34a' }}>
+                      SGD {parseFloat(debtor.total_owed).toFixed(2)}
+                    </span>
+                  </div>
+                  <div> 
+                    <button 
+                      className= "chasePaymentButton"
+                      onClick= {()=> handleChasePayment(debtor)}
+                    >
+                      Chase Payment
+                    </button>
+                  </div>
+                </div> 
+              ))
+            )}
+
           </div>
         </div>
 
