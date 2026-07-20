@@ -277,7 +277,9 @@
   letter-spacing: 0.05em;
   order: -1; /* Puts the title ABOVE the big number naturally in flexbox */
   margin-bottom: 0.5rem;
+  
 }
+
 
 
 .percentage-description {

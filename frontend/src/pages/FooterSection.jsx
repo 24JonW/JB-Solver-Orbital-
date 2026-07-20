@@ -5,10 +5,10 @@ export function FooterSection() {
     const navigate = useNavigate();
     return (
         <div className='footer'>
-        <button className='btn-logout' onClick={() => navigate('/')}>
-          Log Out
-        </button>
-      </div>
+            <button className='btn-logout' onClick={() => navigate('/')}>
+            Log Out
+            </button>
+        </div>
     )
 }
 

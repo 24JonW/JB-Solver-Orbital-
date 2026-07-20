@@ -29,6 +29,7 @@ import { Bar, Line, Pie } from 'react-chartjs-2';
 
 import { TopSectionBar } from './TopSectionBar'; 
 import { FooterSection } from './FooterSection';
+import { RxFontStyle } from 'react-icons/rx';
 
 // Register ChartJS sub-modules securely
 ChartJS.register(
