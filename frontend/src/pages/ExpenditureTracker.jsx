@@ -28,6 +28,7 @@ import {
 import { Bar, Line, Pie } from 'react-chartjs-2';
 
 import { TopSectionBar } from './TopSectionBar'; 
+import { FooterSection } from './FooterSection';
 
 // Register ChartJS sub-modules securely
 ChartJS.register(
@@ -744,9 +745,7 @@ function ExpenditureTracker() {
           </div>
       )}
 
-      <div className='footer'>
-        <button className='btn-logout' onClick={() => navigate('/')}>Log Out</button>
-      </div>
+      <FooterSection/>
     </div>
   );
 }

@@ -29,6 +29,7 @@ import { GrReturn } from "react-icons/gr";
 import { FaUser } from "react-icons/fa";
 
 import { TopSectionBar } from './TopSectionBar'; 
+import { FooterSection } from './FooterSection';
 
 function CommunityGroups() {
   const navigate = useNavigate();
@@ -628,11 +629,7 @@ function CommunityGroups() {
         </div>       
       </div>
 
-      <div className='footer'>
-        <button className='btn-logout' onClick={() => navigate('/')}>
-          Log Out
-        </button>
-      </div>
+      <FooterSection/>
     </div>
   );
 }

@@ -6,7 +6,7 @@
     grid-template-areas: 
     "box-1 box-2 box-2 box-3";
 
-    gap: 20px;
+    gap: 5px;
     padding: 20px;
     flex: 1;
     box-sizing: border-box;
@@ -140,6 +140,7 @@
         padding: 15px;
         gap: 0;
         flex: none;
+        padding-top: 50px; 
     }
 
     /* 3. Hide the empty left and right spacer boxes completely on mobile screens */
