@@ -64,11 +64,35 @@ const createPersonalExpense = async (req, res) => {
 const deleteTransactionRecord = async (req, res) => {
     const { billId } = req.params; 
     try {
-        await db.query(`DELETE FROM bills WHERE bill_id = $1`, [billId]);
-        res.status(200).json({message: 'Transaction record successfully deleted'}); 
+      // 1. Fetch group_id and description from bills table first
+      const billRes = await db.query(
+        `SELECT group_id, description FROM bills WHERE bill_id = $1`, 
+        [billId]
+      );
+  
+      if (billRes.rows.length === 0) {
+        return res.status(404).json({ error: 'Bill record not found.' });
+      }
+  
+      const { group_id, description } = billRes.rows[0];
+  
+      // 2. Delete the bill record
+      await db.query(`DELETE FROM bills WHERE bill_id = $1`, [billId]);
+  
+      // 3. Delete matching summary message from group_messages
+      if (group_id && description) {
+        await db.query(
+          `DELETE FROM group_messages 
+           WHERE group_id = $1 
+           AND message_text LIKE $2`,
+          [group_id, `%${description}%`]
+        );
+      }
+  
+      res.status(200).json({ message: 'Transaction record and group chat summary successfully deleted.' }); 
     } catch (err) {
-        console.error(err); 
-        res.status(500).json({ error: 'Database server failed to erase transaction row.'}); 
+      console.error(err); 
+      res.status(500).json({ error: 'Database server failed to erase transaction row.' }); 
     }
 };
 
