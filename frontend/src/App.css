@@ -1,5 +1,6 @@
 
 
+
 .entirePage {
   width: 100vw;
   height: 100vh;
@@ -476,7 +477,6 @@ button:hover {
   
     /* 1. Allow the container to expand vertically instead of forcing a tight viewport height */
     .homepage-container {
-      height: auto;
       min-height: 100vh;
       overflow-y: auto;
     }
@@ -513,7 +513,8 @@ button:hover {
       gap: 15px;
       padding-top: 135px;
       max-height:70%;
-      margin-bottom: 90px; 
+      margin-bottom: 10px; 
+      
     }
 
 

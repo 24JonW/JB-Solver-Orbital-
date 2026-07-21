@@ -78,18 +78,22 @@
 
 .editProfileButton{
     padding: 10px; 
-    border-radius: 5px;
-    background-color: rgb(18, 129, 18);
+    border-radius: 10px;
+    background-color: #10b981;
+    border: 1px solid #9ea0a3; 
     color: white; 
+    font-weight: bold;
     margin: 5px; 
     width: 50%;
 }
 
 .deleteProfileButton {
     padding: 10px; 
-    border-radius: 5px;
-    background-color: rgb(240, 34, 34);
+    border-radius: 10px;
+    background-color: #ef4444;
+    border: 1px solid #9ea0a3; 
     color: white; 
+    font-weight: bold; 
     margin: 5px; 
     width: 50%;
 
@@ -126,8 +130,31 @@
 
 .setPasswordNotification {
     color: #718096;
-    font-size: 0.9 rem;
+    font-size: 13px;
     margin-bottom: 10px;
+}
+
+.userprofile-details {
+    font-size: 25px; 
+    margin-bottom: 20px; 
+}
+
+
+.divider-box {
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+}
+
+.divider2-box {
+    display: flex; 
+    flex-direction: row; 
+    align-items: center; 
+}
+
+.divider-title {
+    margin-left: 15px; 
+    font-size: 22px; 
 }
 
 
@@ -172,19 +199,19 @@
         font-size: medium;
     }
     .editProfileButton {
-    width: 100%;
-    margin: 0;
-    padding: 12px; /* Increases tap target height for thumbs */
-    font-size: 14px;
-    background-color: rgb(18, 129, 18);
-  }
+        width: 100%;
+        margin: 0;
+        padding: 12px; /* Increases tap target height for thumbs */
+        font-size: 14px;
+        background-color: #10b981;
+    }
   .deleteProfileButton {
-    background-color: rgb(240, 34, 34);
-    width: 100%;
-    margin: 0;
-    padding: 12px; /* Increases tap target height for thumbs */
-    font-size: 14px;
-    
-  }
+        background-color: #ef4444;
+        width: 100%;
+        margin: 0;
+        padding: 12px; /* Increases tap target height for thumbs */
+        font-size: 14px;
+        
+    }
     
 }
