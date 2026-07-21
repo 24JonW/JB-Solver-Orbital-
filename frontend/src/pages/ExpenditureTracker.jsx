@@ -9,7 +9,6 @@ import { FcPlus } from "react-icons/fc";
 import { FcSalesPerformance } from "react-icons/fc";
 import { TbPigMoney } from "react-icons/tb";
 import { GiPayMoney } from "react-icons/gi";
-import { FcBarChart } from "react-icons/fc";
 import { FcPieChart } from "react-icons/fc";
 import { FcBullish } from "react-icons/fc";
 
@@ -606,10 +605,17 @@ function ExpenditureTracker() {
                   <div key={index} className='transaction-row'>
                     <p>Category: {item.category}</p>
                     <p className='desc'>Description: {item.description} </p>
-                    <p className='amt'>({item.currency} {item.net_amount})</p>
-                    <p>{new Date(item.bill_date).toLocaleDateString()}</p>
-                    <button onClick={() => handleDelete(item.bill_id)}
-                            className='btn-delete-item'><FcCancel size={30}/></button>
+                    <div className='divider2-box' style={{justifyContent: 'center'}}>
+                      <div className='divider-box'>
+                        <p className='amt'>({item.currency} {item.net_amount})</p>
+                        <p>{new Date(item.bill_date).toLocaleDateString()}</p>
+                      </div>
+                      
+                      <button onClick={() => handleDelete(item.bill_id)}
+                              className='btn-delete-item'><FcCancel size={30}/>
+                      </button>
+                    </div>
+                    
             
                   </div>
                 ))}

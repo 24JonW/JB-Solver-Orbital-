@@ -89,6 +89,9 @@
     width: 50%;
 }
 
+.editProfileButton:hover {
+    background-color:  #eeb526 !important; 
+}
 .deleteProfileButton {
     padding: 10px; 
     border-radius: 10px;
@@ -99,6 +102,10 @@
     margin: 5px; 
     width: 50%;
 
+}
+
+.deleteProfileButton:hover {
+    background-color:  #eeb526 !important; 
 }
 
 .userProfileInfo {
