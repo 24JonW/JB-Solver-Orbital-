@@ -127,22 +127,53 @@ function SmartSplitCalculator({
   const generateBillSummary = (transactions) => {
   let summary = `💰 Bill Summary\n${billData.description}\n\n`;
 
-  transactions.forEach(tx => {
-    const debtor = groupMembers.find(
-      m => m.user_id == tx.debtorId
-    );
+    transactions.forEach(tx => {
+      const debtor = groupMembers.find(
+        m => m.user_id == tx.debtorId
+      );
 
-    const creditor = groupMembers.find(
-      m => m.user_id == tx.creditorId
-    );
+      const creditor = groupMembers.find(
+        m => m.user_id == tx.creditorId
+      );    
 
-    summary += `${debtor?.username} owes ${creditor?.username} ${targetCurrency} ${Number(tx.amount).toFixed(2)}\n`;
-  });
+      summary += `${debtor?.username} owes ${creditor?.username} ${targetCurrency} ${Number(tx.amount).toFixed(2)}\n`;
+    });
 
-  return summary;
-};
+    return summary;
+  };
   // Action Handler: Dispatches bill metrics calculations blocks to backend database routes
-// Action Handler: ONLY calculates split metrics without database insertion
+  // Action Handler: ONLY calculates split metrics without database insertion
+
+  const resetFormAndPreview = () => {
+    setBillData({
+      description: '',
+      category: 'Food',
+      currency: 'SGD',
+      splitMethod: 'equal',
+      gst: 9,
+      tax: 0,
+      sharedCost: 0
+    });
+    setBillTransactions([]);
+    setBillPreview(""); // 👈 Clears the previous bill settlement preview!
+    
+    if (groupMembers && groupMembers.length > 0) {
+      setPayers(
+        groupMembers.map(member => ({
+          userId: member.user_id,
+          username: member.username,
+          paid: 0
+        }))
+      );
+      setIndividualItems(
+        groupMembers.map(member => ({
+          userId: member.user_id,
+          username: member.username,
+          itemCost: 0
+        }))
+      );
+    }
+  };
   const submitBill = async () => {
     try {
       const activePayers = payers.filter(p => p.paid > 0);
@@ -257,6 +288,7 @@ function SmartSplitCalculator({
         );
 
         alert('Bill saved securely and summary sent to your group chat!'); 
+        resetFormAndPreview();
         onClose();
     } catch (err) {
         console.error(err); 

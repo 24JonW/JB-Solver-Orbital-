@@ -531,7 +531,7 @@
     flex-direction: column;
     overflow: hidden; /* This crops out any layout leakage instantly */
     animation: fadeIn 0.2s ease-out;
-    max-height: 70vh; /* Prevents the modal from exceeding the browser screen height */
+    max-height: 90vh; /* Prevents the modal from exceeding the browser screen height */
   }
 
   .modal-body {
