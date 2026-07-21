@@ -1,3 +1,5 @@
+
+
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react'; 
 import axios from 'axios'; 
@@ -9,6 +11,7 @@ import { TbPigMoney } from "react-icons/tb";
 import { GiPayMoney } from "react-icons/gi";
 import { FcBarChart } from "react-icons/fc";
 import { FcPieChart } from "react-icons/fc";
+import { FcBullish } from "react-icons/fc";
 
 import '../App.css'; 
 import '../ExTracker.css'; 
@@ -527,10 +530,14 @@ function ExpenditureTracker() {
           </div>
         </div>
         
-        <div className="card" style={{ gridArea: "box-5", minHeight: '320px', padding: '15px', display: 'flex', flexDirection: 'column' }}>
+        <div className="card" style={{ gridArea: "box-5", minHeight: '320px', padding: '15px', display: 'flex', flexDirection: 'column', height: '80%'}}>
           {/* <h3 style={{ margin: '0 0 10px 0' }}>Spending Trend</h3> */}
-          <div className='linechart_title' style= {{display: 'flex', alignItems: 'center', minHeight: '34px', marginBottom: '10px'}}>  
-            <h3 style= {{margin: 0 }}>Spending Trend</h3>
+          <div className='linechart_title' style= {{display: 'flex', alignItems: 'center', minHeight: '34px', marginBottom: '10px'}}>
+            <div className='divider2-box'>
+              <FcBullish className='trend-logo' size={35}/>  
+              <h3>Spending Trend</h3>
+            </div>
+            
             <select className='slider' value={lineChartViewMode} onChange={(e) => setLineChartViewMode(e.target.value)}>
               <option value="daily">Daily</option>
               <option value="monthly">Monthly</option>
@@ -557,9 +564,13 @@ function ExpenditureTracker() {
           </div>
         </div>
 
-        <div className='card' style={{ gridArea: 'box-6', minHeight: '320px', padding: '15px', display: 'flex', flexDirection: 'column' }}> 
+        <div className='card' style={{ gridArea: 'box-6', minHeight: '320px', padding: '15px', display: 'flex', flexDirection: 'column',  height: '80%'}}> 
           <div className= 'category_breakdown_title'> 
+            <div className='divider2-box'>
+              <FcPieChart className='trend-logo' size={35}/>
             <h3 style= {{margin: 0}}>Category Breakdown</h3> 
+            </div>
+            
             <select className="slider" onClick={(e) => setChartViewMode(e.target.value)}>
               <option value='pie'>Pie Chart View</option>
               <option value='bar'>Bar Chart View</option>
@@ -576,7 +587,7 @@ function ExpenditureTracker() {
           </div>
         </div>
 
-        <div className='card' style={{gridArea: 'box-7'}}>
+        <div className='card' style={{gridArea: 'box-7', marginBottom: '5%'}}>
           <div className= "transactionHistory_header"> 
             <h3>Transaction History</h3>
             <input
@@ -752,4 +763,5 @@ function ExpenditureTracker() {
 }
 
 export default ExpenditureTracker;
+
 

@@ -195,7 +195,7 @@ function HomePage() {
                   <div key={summary.creditor_user_id} className="home-ledger-row" style={{ padding: '10px 0', borderBottom: '1px solid #f0f2f5', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                     <div>
                       <h4 className="totalOwed">Total Owed to {summary.creditor_name}</h4>
-                      <span className='bulkPaymentAmount'>
+                      <span className='bulkPaymentAmount' style={{color:'#ef4444', fontSize:'16px'}}>
                         {summary.target_currency} {summary.total_owed.toFixed(2)}
                       </span>
                     </div>
@@ -234,11 +234,11 @@ function HomePage() {
               outstandingLedger.map((item) => (
                 <div key={item.share_id} className="home-ledger-row" style={{ padding: '10px 0', borderBottom: '1px solid #f0f2f5', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
-                    <h4 style={{ margin: '0 0 4px 0', fontSize: '16px' }}>{item.description}</h4>
-                    <p style={{ margin: 0, fontSize: '16px', color: '#4b5563' }}>
+                    <h4 style={{ margin: '0 0 4px 0', fontSize: '17px' }}>{item.description}</h4>
+                    <p style={{ margin: 0, fontSize: '17px', color: '#4b5563' }}>
                       You owe <strong>{item.creditor_name}</strong>
                     </p>
-                    <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#dc2626' }}>
+                    <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#ef4444' }}>
                       {item.target_currency} {parseFloat(item.amount_owed).toFixed(2)}
                     </span>
                   </div>
@@ -274,8 +274,8 @@ function HomePage() {
               peopleWhoOweMe.map((debtor)=> (
                 <div key= {debtor.debtor_user_id} className= "home-leder-row" style= {{padding: '10px 0', borderBottom: '1px solid #f0f2f5', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}> 
                   <div> 
-                    <h4 style={{ margin: '0 0 4px 0', fontSize: '16px' }}>{debtor.debtor_username}</h4>
-                    <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#16a34a' }}>
+                    <h4 style={{ margin: '0 0 4px 0', fontSize: '17px' }}>{debtor.debtor_username}</h4>
+                    <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#10b981' }}>
                       SGD {parseFloat(debtor.total_owed).toFixed(2)}
                     </span>
                   </div>

@@ -223,31 +223,33 @@ function UserProfile() {
             {isEditing && (
               <div> 
                 
+                <div className='warning-line'>
+                  <FcHighPriority className='warning-logo' size={20}/>
+                  <p className= "setPasswordNotification" style={{color:'red', fontWeight:'bold' }}> 
+                    Leave password fields blank if you don't wish to change it.
+                  </p>
+                </div>
                 
-                <FcHighPriority size={40}/>
-                <p className= "setPasswordNotification" style={{color:'red', fontWeight:'bold', fontsize:'5px' }}> 
-                  Leave password fields blank if you don't wish to change it.
-                </p>
                 <div className="passwordSection"> 
-                  <strong>Current Password: </strong>
+                  <strong style={{fontSize: '22px'}}>Current Password: </strong>
                   <br/>
                   <input 
                     type= "password"
                     value= {currentPassword}
                     onChange= {(e)=> setCurrentPassword(e.target.value)}
                     placeholder= "Enter current password"
-                    style= {{padding: '7px', borderRadius: '4px', border: '1px solid #ccc', marginLeft: '5px', width:'80%'}}
+                    style= {{padding: '7px', borderRadius: '4px', border: '1px solid #ccc', marginLeft: '5px', width:'80%', marginTop: '12px'}}
                   />
                 </div>
                 <div className= "passwordSection"> 
-                  <strong>New Password: </strong>
+                  <strong style={{fontSize: '22px'}}>New Password: </strong>
                   <br/>
                   <input 
                     type= "password"
                     value= {newPassword}
                     onChange= {(e)=> setNewPassword(e.target.value)}
                     placeholder='Enter new password'
-                    style={{ padding: '7px', borderRadius: '4px', border: '1px solid #ccc', marginLeft: '5px', width:'80%' }}
+                    style={{ padding: '7px', borderRadius: '4px', border: '1px solid #ccc', marginLeft: '5px', width:'80%', marginTop: '12px'}}
                   />
                 </div>
               </div>
@@ -261,8 +263,7 @@ function UserProfile() {
             {isEditing ? (
               // Cancel button if user changes mind
               <button 
-                className="deleteProfileButton" 
-                style={{ backgroundColor: 'gray' }} 
+                className="deleteProfileButton"
                 onClick={() => {
                   setEditUsername(username); // Reset tracking values
                   setEditEmail(email);
