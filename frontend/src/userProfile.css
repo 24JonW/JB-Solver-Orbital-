@@ -125,18 +125,19 @@
 
 .passwordSection {
     margin: 10px 0;
+    margin-top: 15px;
 
 }
 
 .setPasswordNotification {
     color: #718096;
-    font-size: 13px;
+    font-size: 14px;
     margin-bottom: 10px;
 }
 
 .userprofile-details {
     font-size: 25px; 
-    margin-bottom: 20px; 
+    margin-bottom: 15px; 
 }
 
 
@@ -157,6 +158,18 @@
     font-size: 22px; 
 }
 
+
+
+.warning-line {
+    display: flex; 
+    flex-direction: row; 
+    justify-content: center; 
+    margin-bottom: -10px; 
+}
+
+.warning-logo {
+    margin-right: 10px;
+}
 
 @media (max-width: 768px) {
     .homepage-container {
