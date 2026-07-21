@@ -530,7 +530,7 @@ function ExpenditureTracker() {
           </div>
         </div>
         
-        <div className="card" style={{ gridArea: "box-5", minHeight: '320px', padding: '15px', display: 'flex', flexDirection: 'column', height: '80%'}}>
+        <div className="card" style={{ gridArea: "box-5", padding: '15px', display: 'flex', flexDirection: 'column'}}>
           {/* <h3 style={{ margin: '0 0 10px 0' }}>Spending Trend</h3> */}
           <div className='linechart_title' style= {{display: 'flex', alignItems: 'center', minHeight: '34px', marginBottom: '10px'}}>
             <div className='divider2-box'>
@@ -564,7 +564,7 @@ function ExpenditureTracker() {
           </div>
         </div>
 
-        <div className='card' style={{ gridArea: 'box-6', minHeight: '320px', padding: '15px', display: 'flex', flexDirection: 'column',  height: '80%'}}> 
+        <div className='card' style={{ gridArea: 'box-6', padding: '15px', display: 'flex', flexDirection: 'column'}}> 
           <div className= 'category_breakdown_title'> 
             <div className='divider2-box'>
               <FcPieChart className='trend-logo' size={35}/>
@@ -587,7 +587,7 @@ function ExpenditureTracker() {
           </div>
         </div>
 
-        <div className='card' style={{gridArea: 'box-7', marginBottom: '5%'}}>
+        <div className='card' style={{gridArea: 'box-7', marginBottom: '0'}}>
           <div className= "transactionHistory_header"> 
             <h3>Transaction History</h3>
             <input

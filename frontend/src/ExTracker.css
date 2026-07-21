@@ -20,6 +20,7 @@
     overflow-x: hidden; 
     
     grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: 1fr, 2fr !important;
     grid-template-areas: 
         "box-1 box-2 box-3 box-4 box-7"
         "box-5 box-5 box-6 box-6 box-7"
@@ -395,6 +396,16 @@
 
 .trend-logo {
   margin-right: 10px; 
+}
+
+
+
+/* Keeps Chart.js canvases under control */
+.card > div[style*="position: relative"] {
+    flex: 1;
+    min-height: 250px;
+    max-height: 300px; /* Prevents vertical stretching */
+    width: 100%;
 }
 
 @media(max-width: 769px) {
