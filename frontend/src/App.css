@@ -92,6 +92,9 @@
   font-weight: bold;
 }
 
+.btn-login:hover {
+  background-color:  #eeb526 !important; 
+}
 .btn-register {
   background: #16a34a;
   color: white;
@@ -100,6 +103,10 @@
   border-radius: 4px;
   cursor: pointer;
   font-weight: bold;
+}
+
+.btn-register:hover {
+  background-color:  #eeb526 !important; 
 }
 
 .switch-view-text {
@@ -212,8 +219,8 @@
 button:hover {
   transform: translateY(-10px); 
   transition: 0.5s ease; 
-  background: linear-gradient(135deg, #edb601,#eec926);
-  background: white;
+  /* background: linear-gradient(135deg, #edb601,#eec926); */
+  background: None !important;  
   
 }
 
@@ -336,8 +343,10 @@ button:hover {
   border-radius: 10px; 
   border: 0.1px solid rgb(100, 100, 100);
 
+}
 
-
+.edit-profile-btn:hover {
+  background-color:  #eeb526 !important; 
 }
 
 .chasePaymentButton {
@@ -354,7 +363,7 @@ button:hover {
 }
 
 .chasePaymentButton:hover {
-  background-color: #d97706;
+  background-color: #d97706 !important;
 }
 
 /* Ensure consistent card stretching inside flex blocks */
@@ -540,7 +549,7 @@ button:hover {
     button:hover {
       transform: translateY(-10px); 
       transition: 0.5s ease; 
-      background: white;
+      background: None; 
     }
 
 

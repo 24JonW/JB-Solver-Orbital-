@@ -31,3 +31,7 @@
   
   
 }
+
+.btn-logout:hover {
+    background-color:  #eeb526 !important; 
+}

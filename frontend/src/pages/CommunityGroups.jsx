@@ -26,7 +26,6 @@ import { FcCheckmark } from "react-icons/fc";
 import { FcMoneyTransfer } from "react-icons/fc";
 import { IoIosAddCircle } from "react-icons/io";
 import { GrReturn } from "react-icons/gr";
-import { FaUser } from "react-icons/fa";
 
 import { TopSectionBar } from './TopSectionBar'; 
 import { FooterSection } from './FooterSection';
