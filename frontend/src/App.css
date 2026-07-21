@@ -479,6 +479,8 @@ button:hover {
     .homepage-container {
       min-height: 100vh;
       overflow-y: auto;
+      margin: 0 !important;
+      padding: 0 !important;
     }
   
     /* 2. Convert Top Navigation Bar from a side-by-side layout into a stacked layout */
@@ -565,6 +567,21 @@ button:hover {
       overflow-y: auto;
       
     }
+
+    .footer, 
+    footer {
+      width: 100% !important;
+      margin-top: auto !important; /* Clamps footer to the bottom of flex container */
+      margin-bottom: 0 !important; /* Ensures zero pixels exist below the footer */
+      padding-bottom: 0 !important;
+      flex-shrink: 0; /* Stops flexbox from distorting footer bounds */
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+
   }
+
 
 
