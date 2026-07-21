@@ -4,7 +4,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import * as matchers from '@testing-library/jest-dom/matchers';
 import axios from 'axios'; 
-import HomePage from './pages/HomePage'; 
+import HomePage from '../pages/HomePage'; 
 
 // Extend Vitest expect assertions with Testing Library DOM matchers
 expect.extend(matchers);
@@ -22,7 +22,7 @@ vi.mock('react-router-dom', async () => {
 });
 
 // Mock the global layout top navigation bar component out of the suite environment
-vi.mock("./pages/TopSectionBar", () => ({
+vi.mock("../pages/TopSectionBar", () => ({
   TopSectionBar: () => <div data-testid="top-bar">Top Bar</div>,
 }));
 

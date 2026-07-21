@@ -4,7 +4,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import * as matchers from '@testing-library/jest-dom/matchers';
 import axios from 'axios';
-import CommunityGroups from './pages/CommunityGroups'; 
+import CommunityGroups from '../pages/CommunityGroups'; 
 
 expect.extend(matchers);
 
@@ -17,15 +17,15 @@ vi.mock('jwt-decode', () => ({
 }));
 
 // 🚀 FIXED: Paths updated to './pages/...' so Vitest intercepts the exact import string inside CommunityGroups.jsx
-vi.mock('./pages/TopSectionBar', () => ({
+vi.mock('../pages/TopSectionBar', () => ({
   TopSectionBar: () => <div data-testid="top-bar">Top Bar</div>,
 }));
 
-vi.mock('./pages/FooterSection', () => ({
+vi.mock('../pages/FooterSection', () => ({
   FooterSection: () => <div data-testid="footer-bar">Footer Bar</div>,
 }));
 
-vi.mock('./pages/SmartSplitCalculator', () => ({
+vi.mock('../pages/SmartSplitCalculator', () => ({
   default: () => <div data-testid="calculator-modal">Mock Calculator</div>,
 }));
 

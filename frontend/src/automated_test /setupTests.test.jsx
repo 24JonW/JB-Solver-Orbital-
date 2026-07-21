@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import React from 'react';
 import * as matchers from '@testing-library/jest-dom/matchers';
 import axios from 'axios'; 
-import HomePage from './pages/HomePage'; 
+import HomePage from '../pages/HomePage'; 
 
 expect.extend(matchers);
 
@@ -15,7 +15,7 @@ vi.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
-vi.mock("./pages/TopSectionBar", () => ({
+vi.mock("../pages/TopSectionBar", () => ({
   TopSectionBar: () => <div data-testid="top-bar">Top Bar</div>,
 }));
 
