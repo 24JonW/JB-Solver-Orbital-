@@ -126,6 +126,8 @@ function UserProfile() {
   }
   const currentAvatarUrl= `https://api.dicebear.com/9.x/big-smile/svg?seed=${encodeURIComponent(isEditing ? editSeed : avatarSeed)}`;
 
+
+  
   return (
     <div className="homepage-container">
       <TopSectionBar/>

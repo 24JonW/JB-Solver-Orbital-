@@ -3,7 +3,7 @@
     bottom:0px; 
     height: auto;
     background-color: #f2f1db;
-    justify-content: flex-end; /* Center-align the logout option on phones */
+    justify-content: flex-end; 
 }
 
 @media (max-width: 768px) {

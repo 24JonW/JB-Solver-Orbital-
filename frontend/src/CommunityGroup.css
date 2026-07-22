@@ -123,11 +123,6 @@
 
 
   
-
-
-
-
-  /* Individual Roster Element Row */
 .roster-item {
     display: flex;
     align-items: center;
@@ -545,8 +540,6 @@
     z-index: 200000; /* Assures it stays on top of everything else */
   }
   
-  /* Central floating white modal dialog surface context box */
-
 
   .modal-content {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
@@ -554,12 +547,12 @@
     flex-direction: column;
     overflow: hidden; /* This crops out any layout leakage instantly */
     animation: fadeIn 0.2s ease-out;
-    max-height: 90vh; /* Prevents the modal from exceeding the browser screen height */
+    max-height: 90vh; 
   }
 
   .modal-body {
     padding: 15px 20px;
-    overflow-y: auto; /* Puts the scrollbar cleanly inside the card body */
+    overflow-y: auto; 
     box-sizing: border-box;
     margin-bottom: -30px; 
   }
@@ -567,7 +560,7 @@
   .modal-body-dt {
     display: flex; 
     flex-direction: column;
-    gap: 15px; /* Adds clean structural spacing between form entry rows */
+    gap: 15px; 
     padding: 15px 20px; 
     width: 100%;       
     box-sizing: border-box;
@@ -655,17 +648,16 @@
     margin-left: 4px;
   }
   
-  /* Subtle open animation scale wrapper sequence */
   @keyframes fadeIn {
     from { opacity: 0; transform: scale(0.95); }
     to { opacity: 1; transform: scale(1); }
   }
   
   .system-notification-pill {
-    align-self: center; /* Centers the system pill horizontally */
+    align-self: center;
     background-color: rgba(255, 255, 255, 0.85);
     box-shadow: 0 1px 2px rgba(0,0,0,0.08);
-    color: #54656f; /* Subdued gray styling text color */
+    color: #54656f; 
     font-size: 10px;
     font-weight: 500;
     padding: 4px 11px;
@@ -686,7 +678,6 @@
 
 @media (max-width: 768px) {
 
-  /* Allow page to grow normally */
   .homepage-container {
     height: auto;
     min-height: 100vh;
@@ -705,10 +696,10 @@
   
   }
 
-  /* Sidebar now stays at the TOP */
+  /* Sidebar now stays at the top */
   .chat-sidebar {
     width: 90%;
-    height: 300px; /* adjust if needed */
+    height: 300px; 
     flex-shrink: 0;
 
     margin: 15px;
@@ -725,7 +716,7 @@
     max-height: none;
   }
 
-  /* Chat window sits BELOW the sidebar */
+  /* Chat window sits below the sidebar */
   .chat-window-pane {
     position: static;
     width: 94%;
@@ -788,8 +779,4 @@
     z-index: 1000;
   }
 }
-  /* @media (min-width: 769px) {
-    .mobile-back-btn {
-      display: none; 
-    }
-  } */
+

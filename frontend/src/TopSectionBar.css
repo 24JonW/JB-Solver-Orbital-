@@ -124,20 +124,11 @@ button:hover {
 
 
 
-
-
-
 .homePageSettleButton {
   border:None; 
   background-color: white;
   border-radius: None; 
 }
-
-
-
-
-/* Backdrop layer dimming the background screen workspace */
-
 
 .buttons {
   display: flex; 
@@ -147,18 +138,16 @@ button:hover {
 
 
 
-/*  Mobile & Tablet responsive styles (Max 768px) */
+/*  Mobile & Tablet responsive styles */
   
 @media (max-width: 768px) {
 
-    /* 1. Allow the container to expand vertically instead of forcing a tight viewport height */
     .homepage-container {
         height: auto;
         min-height: 100vh;
         overflow-y: auto;
     }
 
-    /* 2. Convert Top Navigation Bar from a side-by-side layout into a stacked layout */
     .topSectionBar {
         height: auto;
         flex-direction: row;
@@ -171,7 +160,7 @@ button:hover {
     }
 
     .logo-img {
-        max-width: 245px; /* Shrink logo slightly so it fits nicely */
+        max-width: 245px;
     }
 
     .right-buttons-4 {
@@ -216,7 +205,7 @@ button:hover {
         width: 100%; /* Make the button easy to tap with a thumb on mobile phones */
     }
 
-    /* 5. Clean up the footer structure at the bottom */
+    /* Clean up the footer structure at the bottom */
     .footer {
         height: auto;
         justify-content: center; /* Center-align the logout option on phones */

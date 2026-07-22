@@ -74,7 +74,7 @@ const createSmartBill = async (req, res) => {
             totalGroupMembers
         });
 
-        // 🛑 CRITICAL CHECK: If dryRun is true, stop here and return calculations without DB writes
+        // If dryRun is true, stop here and return calculations without DB writes
         if (dryRun) {
             return res.status(200).json({ 
                 message: 'Dry run calculated successfully!', 

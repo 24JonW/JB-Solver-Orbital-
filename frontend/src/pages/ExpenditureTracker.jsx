@@ -9,6 +9,7 @@ import { TbPigMoney } from "react-icons/tb";
 import { GiPayMoney } from "react-icons/gi";
 import { FcPieChart } from "react-icons/fc";
 
+// import css files 
 import '../App.css'; 
 import '../ExTracker.css'; 
 
@@ -26,6 +27,7 @@ import {
 } from 'chart.js';
 import { Bar, Line, Pie } from 'react-chartjs-2';
 
+// import React components 
 import { TopSectionBar } from './TopSectionBar'; 
 import { FooterSection } from './FooterSection';
 
@@ -191,7 +193,7 @@ const getDynamicLineDataYears = (ledgerItems) => {
     const amount = Number((item.net_amount || item.total_amount)) || 0;
     yearTotals[year] = (yearTotals[year] || 0) + amount;
   });
-
+  // create a sorted array of keys (years)
   const sortedYears = Object.keys(yearTotals).sort();
   if (sortedYears.length === 0) {
     const currentYear = new Date().getFullYear();
@@ -494,6 +496,8 @@ function ExpenditureTracker() {
   return (
     <div className="homepage-container">
       <TopSectionBar/>
+
+      {/* box 1-7 are the cards in the page*/}
     
       <div className='home-body-ex'>
         <div className='card' style={{gridArea: 'box-1'}}>
@@ -605,7 +609,8 @@ function ExpenditureTracker() {
               </div>
             )}
           </div>
-            
+          
+          {/* tool-tip provides description to the button when hovered */}
           <div className='btns'>
               <div className="button-wrapper">
                   <button className="exp-btn" onClick={() => setIsModalOpen(true)}>
@@ -624,6 +629,7 @@ function ExpenditureTracker() {
         </div>
       </div>
 
+      {/* modal to add personal expenditure after clicking the add expenditure button */}
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -726,6 +732,7 @@ function ExpenditureTracker() {
         </div>
       )}
 
+      {/* modal to set budget after clicking the set budget button  */}
       {isBudgetModalOpen && (
           <div className="modal-overlay">
             <div className="modal-content-2">

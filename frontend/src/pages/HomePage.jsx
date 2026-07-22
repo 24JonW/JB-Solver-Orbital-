@@ -173,7 +173,7 @@ function HomePage() {
           
           
         </div>
-        {/* CARD 2: Placeholder Box for Task Management features */}
+        {/* Card 2: Quick Payment Box*/}
         <div className='profile-card' style={{ gridArea: 'box2'}}>
           <div className='profile-main-info'>
               <FcAdvertising className='task-icon' size={45}/>
@@ -181,8 +181,6 @@ function HomePage() {
             
           </div>
          
-  
-          {/* CARD 2: Converted Quick Payment / Task Management features */}
           <div>
             {/* <h4 className='bulk-payment-title'>Quick Bulk Payment By Person</h4> */}
             <div className='tasks-todo'>
@@ -218,7 +216,7 @@ function HomePage() {
         </div>
         
 
-        {/* CARD 3. Updated Outstanding Payments UI block */}
+        {/* CARD 3. Outstanding Payments Box */}
         <div className='profile-card' style={{ gridArea: 'box3', display: 'flex', flexDirection: 'column' }}>
           <div className='profile-main-info'>
             <FcDebt className='task-icon' size={45}/>
@@ -258,7 +256,7 @@ function HomePage() {
           </div>
         </div>
 
-        {/* NEW CARD 4: People who still Owe you */}
+        {/* CARD 4: Records who still Owe you */}
         <div className= 'profile-card' style={{ gridArea: 'box4',  display: 'flex', flexDirection: 'column' }}> 
           <div className='profile-main-info'>
               <FcCallTransfer size={45}/>

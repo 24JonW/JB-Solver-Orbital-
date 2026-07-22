@@ -8,6 +8,7 @@ import { MdCalculate } from "react-icons/md";
 import { GrSend } from "react-icons/gr";
 
 
+// smart split calculator modal that appears after clicking the calculator button in expenditure tracker
 function SmartSplitCalculator({
   show,
   onClose,
@@ -79,7 +80,7 @@ function SmartSplitCalculator({
 
   if (!show) return null;
 
-  // Handler: Generic inputs controller mapper tracking basic text strings and select values changes
+  // Generic inputs controller mapper tracking basic text strings and select values changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setBillData(prev => ({
@@ -87,7 +88,7 @@ function SmartSplitCalculator({
       [name]: value
     }));
   };
-  // Handler: Form updates dispatcher targeting numerical value inside 'who paid section'
+  // Form updates dispatcher targeting numerical value inside 'who paid section'
   const updatePayerAmount = (userId, value) => {
     const parsedValue= value === "" ? "": parseFloat(value); 
     setPayers(prev =>
@@ -96,7 +97,7 @@ function SmartSplitCalculator({
       )
     );
   };
-  // Handler: Form updates dispatcher targeting specialized individual orders tracking lines
+  // Form updates dispatcher targeting specialized individual orders tracking lines
   const updateItemAmount = (userId, amount) => {
     const parsedValue= amount === "" ? "" : parseFloat(amount); 
     setIndividualItems(prev =>
@@ -141,8 +142,8 @@ function SmartSplitCalculator({
 
     return summary;
   };
-  // Action Handler: Dispatches bill metrics calculations blocks to backend database routes
-  // Action Handler: ONLY calculates split metrics without database insertion
+  // ispatches bill metrics calculations blocks to backend database routes
+  // ONLY calculates split metrics without database insertion
 
   const resetFormAndPreview = () => {
     setBillData({
@@ -245,7 +246,7 @@ function SmartSplitCalculator({
     }
   }; 
 
-  // Action Handler: Commits the bill data permanently to DB, then pushes to chat
+  // Commits the bill data permanently to DB, then pushes to chat
   const sendBillSummaryToGroup = async () => {
     if (billTransactions.length === 0) {
         alert('Please calculate the bill preview first before saving.');
