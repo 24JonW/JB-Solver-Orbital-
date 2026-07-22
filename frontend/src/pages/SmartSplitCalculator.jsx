@@ -20,7 +20,7 @@ function SmartSplitCalculator({
     category: 'Food',
     currency: 'SGD',
     splitMethod: 'equal',
-    gst: 9,
+    gst: 0,
     tax: 0,
     sharedCost: 0
   });
@@ -150,7 +150,7 @@ function SmartSplitCalculator({
       category: 'Food',
       currency: 'SGD',
       splitMethod: 'equal',
-      gst: 9,
+      gst: 0,
       tax: 0,
       sharedCost: 0
     });
