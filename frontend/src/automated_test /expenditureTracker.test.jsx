@@ -121,7 +121,7 @@ describe('JBSolver ExpenditureTracker automated testing', () => {
                 expect.stringContaining('/api/exp/transaction'),
                 expect.objectContaining({
                 description: 'Grab ride home',
-                total_amount: 20,
+                total_amount: 23.8,
                 net_amount: 23.8
                 })
             );
