@@ -286,9 +286,9 @@
 
 .number {
   color: var(--text-main);
-  font-size: 1.875rem; /* Large and highly legible */
+  font-size: 1.875rem; 
   font-weight: 700;
-  letter-spacing: -0.03em; /* Tight tracking like professional banking apps */
+  letter-spacing: -0.03em; 
   line-height: 1.1;
   margin-bottom: 0.5rem;
 }
@@ -297,9 +297,9 @@
   color: var(--text-muted);
   font-size: 0.75rem;
   font-weight: 600;
-  text-transform: uppercase; /* Gives an enterprise SaaS look */
+  text-transform: uppercase;
   letter-spacing: 0.05em;
-  order: -1; /* Puts the title ABOVE the big number naturally in flexbox */
+  order: -1; /* Puts the title above the big number naturally in flexbox */
   margin-bottom: 0.5rem;
   font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   
@@ -340,7 +340,7 @@
   margin: 5px;
 }
 .button-wrapper:hover {
-  z-index: 10; /* Temporarily lifts this specific button box above its neighbor */
+  z-index: 10; 
 }
 .hover-tooltip {
   position: absolute; 

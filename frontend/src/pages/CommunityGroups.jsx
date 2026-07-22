@@ -15,7 +15,6 @@ import EmojiPicker from 'emoji-picker-react';
 
 //Import icons from react-icons
 import { X } from 'lucide-react'; 
-
 import { FcCalculator } from "react-icons/fc";
 import { FcSettings } from "react-icons/fc";
 import { FcClearFilters } from "react-icons/fc";
@@ -27,6 +26,7 @@ import { FcMoneyTransfer } from "react-icons/fc";
 import { IoIosAddCircle } from "react-icons/io";
 import { GrReturn } from "react-icons/gr";
 
+// import React components 
 import { TopSectionBar } from './TopSectionBar'; 
 import { FooterSection } from './FooterSection';
 

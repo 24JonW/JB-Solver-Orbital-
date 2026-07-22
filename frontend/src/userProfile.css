@@ -55,8 +55,8 @@
     overflow-y: auto; 
   
     /* Optional: Prevents awkward horizontal scrollbars from appearing */
-    height: 70vh;             /* Fixes the height to 75% of the screen height */
-    overflow-y: auto;         /* Triggers scrollbar when content goes past 75vh */
+    height: 70vh;             /* Fixes the height to 70% of the screen height */
+    overflow-y: auto;         /* Triggers scrollbar when content goes past 70vh */
     overflow-x: hidden;
 
     
@@ -128,7 +128,7 @@
     margin-top: 20px; /* Gives some clean space above the buttons */
     display: flex;
     justify-content: center;
-    gap: 10px; /* Clean gap between your two buttons instead of individual margins */
+    gap: 10px; /* Clean gap between two buttons instead of individual margins */
 
 }
 
@@ -200,7 +200,7 @@
         
     }
 
-    /* 3. Hide the empty left and right spacer boxes completely on mobile screens */
+    /* Hide the empty left and right spacer boxes completely on mobile screens */
     
     .body-item-userProfile.box1,
     .body-item-userProfile.box3 {
@@ -224,7 +224,7 @@
     .editProfileButton {
         width: 100%;
         margin: 0;
-        padding: 12px; /* Increases tap target height for thumbs */
+        padding: 12px; 
         font-size: 14px;
         background-color: #10b981;
     }
@@ -232,7 +232,7 @@
         background-color: #ef4444;
         width: 100%;
         margin: 0;
-        padding: 12px; /* Increases tap target height for thumbs */
+        padding: 12px; 
         font-size: 14px;
         
     }
