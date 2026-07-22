@@ -251,8 +251,8 @@ function ExpenditureTracker() {
   const [ ledger, setLedger ] = useState([]); 
   const [currentUser, setCurrentUser] = useState(null); 
 
-  const API_EXP_URL = 'http://localhost:5001/api/exp';
-  // const API_EXP_URL = 'https://jb-solver-orbital.onrender.com/api/exp';
+  // const API_EXP_URL = 'http://localhost:5001/api/exp';
+  const API_EXP_URL = 'https://jb-solver-orbital.onrender.com/api/exp';
   
   const [isModalOpen, setIsModalOpen ] = useState(false); 
   const [formData, setFormData] = useState({
