@@ -7,7 +7,6 @@ import { FcPlus } from "react-icons/fc";
 import { FcSalesPerformance } from "react-icons/fc";
 import { TbPigMoney } from "react-icons/tb";
 import { GiPayMoney } from "react-icons/gi";
-import { FcBarChart } from "react-icons/fc";
 import { FcPieChart } from "react-icons/fc";
 
 import '../App.css'; 
