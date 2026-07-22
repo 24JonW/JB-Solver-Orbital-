@@ -1,5 +1,3 @@
-
-
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react'; 
 import axios from 'axios'; 
@@ -11,7 +9,6 @@ import { TbPigMoney } from "react-icons/tb";
 import { GiPayMoney } from "react-icons/gi";
 import { FcBarChart } from "react-icons/fc";
 import { FcPieChart } from "react-icons/fc";
-import { FcBullish } from "react-icons/fc";
 
 import '../App.css'; 
 import '../ExTracker.css'; 
@@ -32,7 +29,6 @@ import { Bar, Line, Pie } from 'react-chartjs-2';
 
 import { TopSectionBar } from './TopSectionBar'; 
 import { FooterSection } from './FooterSection';
-import { RxFontStyle } from 'react-icons/rx';
 
 // Register ChartJS sub-modules securely
 ChartJS.register(
@@ -74,7 +70,7 @@ const getDynamicBarData = (ledgerItems) => {
   const categoryTotals = {};  
   ledgerItems.forEach(item => {
     const category = item.category || "Others"; 
-    const amount = parseFloat((item.net_amount || item.total_amount)* (item.exchange_rate || 1)) || 0; 
+    const amount = parseFloat((item.net_amount || item.total_amount)) || 0; 
     categoryTotals[category] = (categoryTotals[category] || 0) + amount;  
   });
   return {
@@ -123,7 +119,7 @@ const getDynamicLineData = (ledgerItems, selectedMonth) => {
             day: "2-digit"
         }).format(new Date(item.bill_date)); 
 
-        const amount = Number((item.net_amount || item.total_amount)* (item.exchange_rate || 1)) || 0;
+        const amount = Number((item.net_amount || item.total_amount)) || 0;
         dateTotals[normalizedDate] = (dateTotals[normalizedDate] || 0) + amount;
     });
 
@@ -164,7 +160,7 @@ const getDynamicLineDataMonths = (ledgerItems, selectedMonth) => {
     if (!item.bill_date) return;
     const itemYearMonth = formatYearMonth(item.bill_date); // YYYY-MM
     if (itemYearMonth.startsWith(year)) {
-      const amount = Number((item.net_amount || item.total_amount) * (item.exchange_rate || 1)) || 0;
+      const amount = Number((item.net_amount || item.total_amount)) || 0;
       monthTotals[itemYearMonth] = (monthTotals[itemYearMonth] || 0) + amount;
     }
   });
@@ -193,7 +189,7 @@ const getDynamicLineDataYears = (ledgerItems) => {
   ledgerItems.forEach(item => {
     if (!item.bill_date) return;
     const year = new Date(item.bill_date).getFullYear();
-    const amount = Number((item.net_amount || item.total_amount) * (item.exchange_rate || 1)) || 0;
+    const amount = Number((item.net_amount || item.total_amount)) || 0;
     yearTotals[year] = (yearTotals[year] || 0) + amount;
   });
 
@@ -319,7 +315,7 @@ function ExpenditureTracker() {
       return items.reduce((total, item) => {
           if (!item.bill_date) return total;
           if (formatYearMonth(item.bill_date) === prevMonthStr) {
-              return total + Number((item.net_amount || item.total_amount)*(item.exchange_rate || 1));
+              return total + Number((item.net_amount || item.total_amount));
           }
           return total;
       }, 0);
@@ -327,7 +323,7 @@ function ExpenditureTracker() {
   };
 
 
-  const totalAmountMonth = filterLedger.reduce((sum, item) => sum + Number((item.net_amount || item.total_amount)*(item.exchange_rate || 1)), 0);
+  const totalAmountMonth = filterLedger.reduce((sum, item) => sum + Number((item.net_amount || item.total_amount)), 0);
   const totalAmountPrevMonth = calculatePrevMonthSpend(ledger, selectedMonth); 
 
   const handleInputChange = (e) => {
@@ -343,7 +339,8 @@ function ExpenditureTracker() {
       description: formData.description, 
       category: formData.category, 
       bill_date: formData.bill_date, 
-      total_amount: parseFloat(formData.total_amount) || 0, 
+      total_amount: parseFloat(finalConvertedTotal.toFixed(2) || 0), 
+      // total_amount: parseFloat(formData.total_amount) || 0, 
       net_amount: parseFloat(finalConvertedTotal.toFixed(2) || 0), 
       currency: formData.currency, 
       target_currency: formData.target_currency,
@@ -352,6 +349,7 @@ function ExpenditureTracker() {
       exchangeRates: derivedExchangeRate,
       group_id: null
     }
+
 
     axios.post(`${API_EXP_URL}/transaction`, newTransaction)
          .then(res => {
@@ -530,14 +528,10 @@ function ExpenditureTracker() {
           </div>
         </div>
         
-        <div className="card" style={{ gridArea: "box-5", padding: '15px', display: 'flex', flexDirection: 'column'}}>
+        <div className="card" style={{ gridArea: "box-5", minHeight: '320px', padding: '15px', display: 'flex', flexDirection: 'column' }}>
           {/* <h3 style={{ margin: '0 0 10px 0' }}>Spending Trend</h3> */}
-          <div className='linechart_title' style= {{display: 'flex', alignItems: 'center', minHeight: '34px', marginBottom: '10px'}}>
-            <div className='divider2-box'>
-              <FcBullish className='trend-logo' size={35}/>  
-              <h3>Spending Trend</h3>
-            </div>
-            
+          <div className='linechart_title' style= {{display: 'flex', alignItems: 'center', minHeight: '34px', marginBottom: '10px'}}>  
+            <h3 style= {{margin: 0 }}>Spending Trend</h3>
             <select className='slider' value={lineChartViewMode} onChange={(e) => setLineChartViewMode(e.target.value)}>
               <option value="daily">Daily</option>
               <option value="monthly">Monthly</option>
@@ -564,13 +558,9 @@ function ExpenditureTracker() {
           </div>
         </div>
 
-        <div className='card' style={{ gridArea: 'box-6', padding: '15px', display: 'flex', flexDirection: 'column'}}> 
+        <div className='card' style={{ gridArea: 'box-6', minHeight: '320px', padding: '15px', display: 'flex', flexDirection: 'column' }}> 
           <div className= 'category_breakdown_title'> 
-            <div className='divider2-box'>
-              <FcPieChart className='trend-logo' size={35}/>
             <h3 style= {{margin: 0}}>Category Breakdown</h3> 
-            </div>
-            
             <select className="slider" onClick={(e) => setChartViewMode(e.target.value)}>
               <option value='pie'>Pie Chart View</option>
               <option value='bar'>Bar Chart View</option>
@@ -587,7 +577,7 @@ function ExpenditureTracker() {
           </div>
         </div>
 
-        <div className='card' style={{gridArea: 'box-7', marginBottom: '0'}}>
+        <div className='card' style={{gridArea: 'box-7'}}>
           <div className= "transactionHistory_header"> 
             <h3>Transaction History</h3>
             <input
@@ -606,7 +596,7 @@ function ExpenditureTracker() {
                   <div key={index} className='transaction-row'>
                     <p>Category: {item.category}</p>
                     <p className='desc'>Description: {item.description} </p>
-                    <p className='amt'>({item.currency} {item.net_amount})</p>
+                    <p className='amt'>({item.target_currency} {item.net_amount})</p>
                     <p>{new Date(item.bill_date).toLocaleDateString()}</p>
                     <button onClick={() => handleDelete(item.bill_id)}
                             className='btn-delete-item'><FcCancel size={30}/></button>
@@ -763,5 +753,4 @@ function ExpenditureTracker() {
 }
 
 export default ExpenditureTracker;
-
 
