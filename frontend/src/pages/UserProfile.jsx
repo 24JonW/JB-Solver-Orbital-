@@ -33,8 +33,8 @@ function UserProfile() {
   const [avatarSeed, setAvatarSeed]= useState('32');
   const [editSeed, setEditSeed]= useState('32');
 
-  // const API_BASE_URL= 'http://localhost:5001/api/accounts'; 
-  const API_BASE_URL = 'https://jb-solver-orbital.onrender.com/api/accounts';
+  const API_BASE_URL= 'http://localhost:5001/api/accounts'; 
+  // const API_BASE_URL = 'https://jb-solver-orbital.onrender.com/api/accounts';
 
   
 
@@ -127,7 +127,7 @@ function UserProfile() {
   const currentAvatarUrl= `https://api.dicebear.com/9.x/big-smile/svg?seed=${encodeURIComponent(isEditing ? editSeed : avatarSeed)}`;
 
 
-  
+
   return (
     <div className="homepage-container">
       <TopSectionBar/>
@@ -230,6 +230,7 @@ function UserProfile() {
                   <p className= "setPasswordNotification" style={{color:'red', fontWeight:'bold' }}> 
                     Leave password fields blank if you don't wish to change it.
                   </p>
+                  
                 </div>
                 
                 <div className="passwordSection"> 

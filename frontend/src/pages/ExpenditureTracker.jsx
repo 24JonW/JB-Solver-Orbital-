@@ -4,6 +4,7 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode'; 
 import { FcCancel } from "react-icons/fc";
 import { FcPlus } from "react-icons/fc";
+import { FcAddDatabase } from "react-icons/fc";
 import { FcSalesPerformance } from "react-icons/fc";
 import { TbPigMoney } from "react-icons/tb";
 import { GiPayMoney } from "react-icons/gi";
@@ -251,8 +252,8 @@ function ExpenditureTracker() {
   const [ ledger, setLedger ] = useState([]); 
   const [currentUser, setCurrentUser] = useState(null); 
 
-  // const API_EXP_URL = 'http://localhost:5001/api/exp';
-  const API_EXP_URL = 'https://jb-solver-orbital.onrender.com/api/exp';
+  const API_EXP_URL = 'http://localhost:5001/api/exp';
+  // const API_EXP_URL = 'https://jb-solver-orbital.onrender.com/api/exp';
   
   const [isModalOpen, setIsModalOpen ] = useState(false); 
   const [formData, setFormData] = useState({
@@ -565,8 +566,8 @@ function ExpenditureTracker() {
           <div className= 'category_breakdown_title'> 
             <h3 style= {{margin: 0}}>Category Breakdown</h3> 
             <select className="slider" onClick={(e) => setChartViewMode(e.target.value)}>
-              <option value='pie'>Pie Chart View</option>
-              <option value='bar'>Bar Chart View</option>
+              <option value='pie'>Pie Chart</option>
+              <option value='bar'>Bar Chart</option>
             </select>
           </div> 
           <div style={{ flex: 1, position: 'relative', width: '100%', height: '100%' }}>
@@ -599,10 +600,16 @@ function ExpenditureTracker() {
                   <div key={index} className='transaction-row'>
                     <p>Category: {item.category}</p>
                     <p className='desc'>Description: {item.description} </p>
-                    <p className='amt'>({item.target_currency} {item.net_amount})</p>
+                    <div className='divider2-box' style={{justifyContent: 'center'}}>
+                      <div className='divider-box'>
+                        <p className='amt'>({item.target_currency} {item.net_amount})</p>
                     <p>{new Date(item.bill_date).toLocaleDateString()}</p>
-                    <button onClick={() => handleDelete(item.bill_id)}
+                      </div>
+                      <button onClick={() => handleDelete(item.bill_id)}
                             className='btn-delete-item'><FcCancel size={30}/></button>
+                    </div>
+                    
+                    
             
                   </div>
                 ))}
@@ -614,14 +621,14 @@ function ExpenditureTracker() {
           <div className='btns'>
               <div className="button-wrapper">
                   <button className="exp-btn" onClick={() => setIsModalOpen(true)}>
-                      <FcPlus size={40} />
+                      <FcAddDatabase size={50} />
                   </button>
                   <span className="hover-tooltip">Add Expenditure</span>
               </div>
 
               <div className="button-wrapper">
                   <button className="exp-btn" onClick={() => { setIsBudgetModalOpen(true); setBudgetInput(budget); }}>
-                      <FcSalesPerformance size={40} />
+                      <FcSalesPerformance size={50} />
                   </button>
                   <span className="hover-tooltip">Set Budget</span>
               </div>
@@ -743,9 +750,10 @@ function ExpenditureTracker() {
                     <p> Set your budget for the month: </p>
                     <input type="number" name="budget" className= "budget_input_text" value={budgetInput} onChange={e => setBudgetInput(e.target.value)} />
                   </div>
+                  
                   <div className= "budget_btn_division"> 
                     <button type='button' className='btn-cancel' onClick={() => setIsBudgetModalOpen(false)}>Cancel</button>
-                    <button type='submit' className='btn-submit'>Save</button>
+                    <button style={{marginLeft: '5px'}} type='submit' className='btn-submit'>Save</button>
                   </div>
                   
                 </form>

@@ -160,7 +160,9 @@ button:hover {
     }
 
     .logo-img {
-        max-width: 245px;
+        max-width: 200px !important;
+        margin-left: -5px;
+        margin-right: 0;
     }
 
     .right-buttons-4 {
@@ -170,9 +172,18 @@ button:hover {
       gap: 0px;
       align-items: center;
       flex-wrap: nowrap; 
-      
-      
+      margin-right: 10px;
+      margin-left: -5px;
     }
+
+    
+
+    
+  
+    
+  
+    
+  
 
     .homepageButton, .communityGroupButton, .expenditureTracker, .userProfileButton {
       
@@ -181,10 +192,10 @@ button:hover {
       background: linear-gradient(135deg, #4cd0b8, #6cc4cb);
       */
       background: linear-gradient(135deg, #28549a 0%, #21498a 100%);
-      background: None; 
+      background: None;  
       position: relative; 
       border: None; 
-      margin-right: 0px; 
+      margin-right: -5px !important; 
       border-radius: 10px; 
     
 
@@ -192,7 +203,7 @@ button:hover {
 
    
     .nav-icon {
-      font-size: 35px; 
+      font-size: 32px; 
     }
 
     .logo-img {
