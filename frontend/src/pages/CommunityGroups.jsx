@@ -62,11 +62,11 @@ function CommunityGroups() {
   const pickerRef = useRef(null); 
 
 
-  // const API_BASE_URL= 'http://localhost:5001/api/groups'; 
-  // const API_BILLS_URL= 'http://localhost:5001/api/bills';
+  const API_BASE_URL= 'http://localhost:5001/api/groups'; 
+  const API_BILLS_URL= 'http://localhost:5001/api/bills';
 
-  const API_BASE_URL = 'https://jb-solver-orbital.onrender.com/api/groups'; 
-  const API_BILLS_URL = 'https://jb-solver-orbital.onrender.com/api/bills';
+  // const API_BASE_URL = 'https://jb-solver-orbital.onrender.com/api/groups'; 
+  // const API_BILLS_URL = 'https://jb-solver-orbital.onrender.com/api/bills';
 
   //Get user identity from localStorage token on mount
   useEffect(()=> {
@@ -413,7 +413,7 @@ function CommunityGroups() {
             <div className="active-chat-container">
               <div className="chat-header-title">
                 <button className='mobile-back-btn' onClick={() => setSelectedGroup(null)}> <GrReturn /> </button> 
-                <h3>{selectedGroup.group_name} <span className="id-badge">(Group ID: {selectedGroup.group_id})</span></h3>
+                <h3 className='group-info'>{selectedGroup.group_name} <span className="id-badge">(Group ID: {selectedGroup.group_id})</span></h3>
                 <div className='settings-container'>
                   <FcCalculator className='calculator-btn' onClick={() => setShowCalculatorModal(!showCalculatorModal)} size={35}/>
                   <FcSettings className='settings-btn' onClick={() => setShowSettingsMenu(!showSettingsMenu)} size={35} />

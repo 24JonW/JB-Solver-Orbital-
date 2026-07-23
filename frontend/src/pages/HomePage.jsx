@@ -28,11 +28,11 @@ function HomePage() {
   const [seed, setSeed]= useState('default')
 
   // 2 API Endpoints 
-  // const API_BASE_URL= 'http://localhost:5001/api/accounts'; 
-  // const API_BILLS_URL= 'http://localhost:5001/api/bills'; 
+  const API_BASE_URL= 'http://localhost:5001/api/accounts'; 
+  const API_BILLS_URL= 'http://localhost:5001/api/bills'; 
 
-  const API_BASE_URL = 'https://jb-solver-orbital.onrender.com/api/accounts'; 
-  const API_BILLS_URL = 'https://jb-solver-orbital.onrender.com/api/bills';
+  // const API_BASE_URL = 'https://jb-solver-orbital.onrender.com/api/accounts'; 
+  // const API_BILLS_URL = 'https://jb-solver-orbital.onrender.com/api/bills';
 
   
 
@@ -257,7 +257,7 @@ function HomePage() {
         </div>
 
         {/* CARD 4: Records who still Owe you */}
-        <div className= 'profile-card' style={{ gridArea: 'box4',  display: 'flex', flexDirection: 'column' }}> 
+        <div className= 'profile-card' style={{ gridArea: 'box4',  display: 'flex', flexDirection: 'column', marginBottom: '10px'}}> 
           <div className='profile-main-info'>
               <FcCallTransfer size={45}/>
               <h2 className='chase-title'><b> Chase people who still owes you</b></h2>

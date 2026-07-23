@@ -56,3 +56,4 @@ describe('Basic JBSolver Frontend Sanity Check', () => {
     expect(username).toBeInTheDocument(); 
   });
 });
+
