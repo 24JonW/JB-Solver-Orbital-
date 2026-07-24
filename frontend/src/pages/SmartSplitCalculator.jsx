@@ -279,8 +279,8 @@ function SmartSplitCalculator({
 
         // 2. Transmit the calculated plain-text string out to the group conversation timeline
         await axios.post(
-            'https://jb-solver-orbital.onrender.com/api/groups/message',
-            // 'http://localhost:5001/api/groups/message', 
+            // 'https://jb-solver-orbital.onrender.com/api/groups/message',
+            'http://localhost:5001/api/groups/message', 
             {
                 groupId: selectedGroup.group_id, 
                 senderId: currentUser.user_id, 

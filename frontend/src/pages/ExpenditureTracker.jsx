@@ -252,8 +252,8 @@ function ExpenditureTracker() {
   const [ ledger, setLedger ] = useState([]); 
   const [currentUser, setCurrentUser] = useState(null); 
 
-  // const API_EXP_URL = 'http://localhost:5001/api/exp';
-  const API_EXP_URL = 'https://jb-solver-orbital.onrender.com/api/exp';
+  const API_EXP_URL = 'http://localhost:5001/api/exp';
+  // const API_EXP_URL = 'https://jb-solver-orbital.onrender.com/api/exp';
   
   const [isModalOpen, setIsModalOpen ] = useState(false); 
   const [formData, setFormData] = useState({
@@ -664,7 +664,14 @@ function ExpenditureTracker() {
               </div>
               <div className="form-group">
                 <label>Total Amount:</label>
-                <input type="number" step="0.01" name="total_amount" value={formData.total_amount} onChange={handleInputChange} required />
+                <input 
+                  type="number" 
+                  min="0"
+                  step="0.01" 
+                  name="total_amount" 
+                  value={formData.total_amount} 
+                  onChange={handleInputChange} 
+                  required />
               </div>
               <div className="form-group">
                 <label className= "GSTLabel">GST (%): </label>
@@ -748,7 +755,13 @@ function ExpenditureTracker() {
                     <GiPayMoney size= {50}/>
                     <TbPigMoney size={50}/>
                     <p> Set your budget for the month: </p>
-                    <input type="number" name="budget" className= "budget_input_text" value={budgetInput} onChange={e => setBudgetInput(e.target.value)} />
+                    <input 
+                      type="number" 
+                      name="budget"
+                      min="0" 
+                      className= "budget_input_text" 
+                      value={budgetInput} 
+                      onChange={e => setBudgetInput(e.target.value)} />
                   </div>
                   
                   <div className= "budget_btn_division"> 

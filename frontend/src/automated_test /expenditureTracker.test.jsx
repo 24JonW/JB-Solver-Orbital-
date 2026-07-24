@@ -177,32 +177,6 @@ describe('JBSolver ExpenditureTracker automated testing', () => {
         });
     });
 
-    it('should verify behavior when entering a negative total amount value', async () => {
-        const { container } = render(
-        <MemoryRouter>
-            <ExpenditureTracker />
-        </MemoryRouter>
-        );
-
-        await screen.findByText('$500.00');
-
-        const addExpenseBtn = container.querySelector('.exp-btn');
-        fireEvent.click(addExpenseBtn);
-
-        fireEvent.change(container.querySelector('input[name="description"]'), { target: { value: 'Negative value test' } });
-        fireEvent.change(container.querySelector('input[name="total_amount"]'), { target: { value: '-25.50' } });
-
-        const saveButton = screen.getByRole('button', { name: /Save/i });
-        fireEvent.click(saveButton);
-
-        await waitFor(() => {
-        expect(axios.post).toHaveBeenCalledWith(
-            expect.any(String),
-            expect.objectContaining({ total_amount: -25.50 })
-        );
-        });
-    });
-
     it('should compute cross-border currency exchange conversion correctly when base and target profiles differ', async () => {
         const { container } = render(
         <MemoryRouter>
