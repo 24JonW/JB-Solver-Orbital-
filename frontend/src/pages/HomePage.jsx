@@ -16,6 +16,7 @@ import { FooterSection } from './FooterSection';
 import { FcAdvertising } from "react-icons/fc";
 import { FcDebt } from "react-icons/fc";
 import { FcCallTransfer } from "react-icons/fc";
+import { FaBook } from "react-icons/fa";
 
 function HomePage() {
   const navigate = useNavigate(); // Hook to handle client-side programmatic routing
@@ -24,15 +25,16 @@ function HomePage() {
   const [username, setUsername] = useState(''); 
   const [outstandingLedger, setOutstandingLedger]= useState([]); // Stores the array of unpaid debts
 
-  const [peopleWhoOweMe, setPeopleWhoOweMe] = useState([]) //4th Grid state 
-  const [seed, setSeed]= useState('default')
+  const [peopleWhoOweMe, setPeopleWhoOweMe] = useState([]); //4th Grid state 
+  const [seed, setSeed]= useState('default');
+  const [ isGuideOpen, setIsGuideOpen ] = useState(false)
 
   // 2 API Endpoints 
-  // const API_BASE_URL= 'http://localhost:5001/api/accounts'; 
-  // const API_BILLS_URL= 'http://localhost:5001/api/bills'; 
+  const API_BASE_URL= 'http://localhost:5001/api/accounts'; 
+  const API_BILLS_URL= 'http://localhost:5001/api/bills'; 
 
-  const API_BASE_URL = 'https://jb-solver-orbital.onrender.com/api/accounts'; 
-  const API_BILLS_URL = 'https://jb-solver-orbital.onrender.com/api/bills';
+  // const API_BASE_URL = 'https://jb-solver-orbital.onrender.com/api/accounts'; 
+  // const API_BILLS_URL = 'https://jb-solver-orbital.onrender.com/api/bills';
 
   
 
@@ -164,9 +166,9 @@ function HomePage() {
           </div>
           <div>
             <button className='edit-profile-btn' onClick= {()=> {
-              navigate("/profile");
+                setIsGuideOpen(true);
               }}>
-                Edit Profile      
+                Quick User Guide   
             </button>
 
           </div>
@@ -293,6 +295,125 @@ function HomePage() {
         </div>
 
       </div>
+
+      {isGuideOpen ? 
+        <div className='modal-backdrop' onClick={() => {setIsGuideOpen(false)}}>
+          <div className='modal-content'>
+            <div className='modal-header' style={{justifyContent:'center'}}>
+              <FaBook size={20} style={{marginRight: '10px'}}/>
+              <b>Instruction guide</b>
+              
+              </div>
+            <div className='modal-body'>
+              <div className='instruction-body'>
+                <h4><b>To edit profile setting:</b></h4>
+                <ol>
+                  <li>Navigate to the 'User Profle' page</li>
+                  <li>Click on the setting icon</li>
+                  <li>Click on 'debt tracking'</li>
+                </ol>
+                
+                <h4><b>To pay all debt owed to a specific person：</b></h4>
+                <ol>
+                  <li>Navigate to Homepage</li>
+                  <li>Under "Tasks to do!", search that specific person</li>
+                  <li>Click on the paper money icon beside that person's name</li>
+                  <li>Click on "Ok"</li>
+                </ol>
+
+                <h4><b>To pay a specific debt：</b></h4>
+                <ol>
+                  <li>Navigate to Homepage</li>
+                  <li>Under "Outstanding Payments!", search that specific debt</li>
+                  <li>Click on the paper money icon</li>
+                  <li>Click on "Ok"</li>
+                </ol>
+
+                <h4><b>To chase payment from a particular friend:</b></h4>
+                <ol>
+                  <li>Navigate to Homepage</li>
+                  <li>under the 'Chase people who still owes you', click on the 'Chase payment' button</li>
+                  <li>A message notification will be sent to your group chat to inform him/her</li>
+                </ol>
+                
+                <h4><b>To create group chat:</b></h4>
+                <ol>
+                  <li>Navigate to the 'Community Groups' page</li>
+                  <li>Add group name</li>
+                  <li>Click on Ccreate' to create group</li>
+                </ol>
+
+                <h4><b>To join a group chat your friend has created:</b></h4>
+                <ol>
+                  <li>Navigate to the 'Community Groups' page</li>
+                  <li>Key in the group verification code your friend send you</li>
+                  <li>Click on 'join' group</li>
+                </ol>
+                
+                <h4><b>To create split-bill expenditure for a specific group:</b></h4>
+                <ol>
+                  <li>Navigate to the 'Community Groups' page</li>
+                  <li>Select that specific community group</li>
+                  <li>Click on the calculator icon</li>
+                  <li>Add in expenditure details</li>
+                  <li>Click "Calculate"</li>
+                  <li>Click "Send bill summary to group"</li>
+                </ol>
+
+                <h4><b>To view debt tracking records for a specific group:</b></h4>
+                <ol>
+                  <li>Navigate to the 'Community group' page. Open that specific group chat</li>
+                  <li>Click on the setting icon</li>
+                  <li>Click on 'debt tracking'</li>
+                </ol>
+
+                <h4><b>To add individual expenditure:</b></h4>
+                <ol>
+                  <li>Navigate to the 'Expenditure Tracker' page</li>
+                  <li>Under the 'Transaction history' section, Click on the icon "Add Expenditure"</li>
+                  <li>Key in expenditure details</li>
+                  <li>Scroll down, click 'save'</li>
+                  <li>The expenditure record will be shown on the transaction history</li>
+                </ol>
+
+                <h4><b>To delete group split bill expenditure records or individual expenditure records:</b></h4>
+                <ol>
+                  <li>Navigate to the 'Expenditure Tracker' page</li>
+                  <li>nder the 'Transaction History' section, search for the record you want to delete</li>
+                  <li>Click on the red cancel icon to delete record</li>
+                  <li>The expenditure record will be cleared/erase</li>
+                  <li>Note that if it is the group expenditure record, it will be erased from the group chat</li>
+                </ol>
+
+                <h4><b>To set budget:</b></h4>
+                <ol>
+                  <li>Navigate to the 'Expenditure Tracker' page</li>
+                  <li>Under 'Transaction History', click on the coins icon</li>
+                  <li>Set personal Budget and click on 'Save'</li>
+                </ol>
+
+                <h4><b>To change profile picture:</b></h4>
+                <ol>
+                  <li>Navigate to the 'User Profile' page</li>
+                  <li>Click on 'Edit profile setting'</li>
+                  <li>Set random seed</li>
+                  <li>Click 'Save'</li>
+                </ol>
+              </div> 
+            </div>
+            <br/>
+            <div className='btn-close-box'>
+              <button className='btn-close' onClick={() => {setIsGuideOpen(false)}}>Close</button>
+            </div>
+            
+          </div>
+          
+        </div> 
+        
+        : 
+        <div>
+          
+        </div>}
       <FooterSection />
       
     </div>

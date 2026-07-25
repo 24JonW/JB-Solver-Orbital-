@@ -475,6 +475,38 @@ button:hover {
 }
 
 
+.btn-close-box {
+  display: flex; 
+  justify-content: center; 
+  margin-bottom: -10px; 
+  margin-top: 20px; 
+ 
+
+}
+
+.btn-close {
+  background-color: #ef4444;
+  color: white;
+  font-weight: bold;
+  font-size: 15px; 
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  
+}
+
+.btn-close:hover {
+  background-color: #eeb526 !important;
+}
+
+
+.instruction-body {
+      border: 1px solid #e4e5e7; 
+      border-radius: 15px;
+      padding: 15px; 
+      padding-top: 0px; 
+}
 
 
 /*  Mobile & Tablet responsive styles */

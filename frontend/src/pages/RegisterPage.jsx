@@ -9,11 +9,15 @@ function RegisterPage() {
     const [ username, setUsername ] = useState(''); 
     const [ password, setPassword ] = useState(''); 
     const [ email, setEmail ] = useState(''); 
-    // const API_URL = 'http://localhost:5001/api/accounts'; 
+    const API_URL = 'http://localhost:5001/api/accounts'; 
 
-    const API_URL = 'https://jb-solver-orbital.onrender.com/api/accounts'; 
+    // const API_URL = 'https://jb-solver-orbital.onrender.com/api/accounts'; 
 
     const handleRegister = (e) => {
+        if (username.length > 8) {
+            alert("Username cannot exceed 8 characters.");
+            return;
+        }
         e.preventDefault(); 
         axios.post(`${API_URL}/register`, { username, password, email})
              .then(() => {
