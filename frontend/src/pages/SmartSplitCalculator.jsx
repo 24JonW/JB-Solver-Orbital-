@@ -249,7 +249,7 @@ function SmartSplitCalculator({
   // Commits the bill data permanently to DB, then pushes to chat
   const sendBillSummaryToGroup = async () => {
     if (billTransactions.length === 0) {
-        alert('Please calculate the bill preview first before saving or check your calculatioin logic.');
+        alert('Please calculate the bill preview first before saving or check your calculation logic.');
         return; 
     }
     try {
