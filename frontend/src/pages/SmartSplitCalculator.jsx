@@ -126,7 +126,7 @@ function SmartSplitCalculator({
 
 
   const generateBillSummary = (transactions) => {
-  let summary = `💰 Bill Summary\n${billData.description}\n\n`;
+  let summary = `💰 Bill Summary\nSplit method: (${billData.splitMethod})\n${billData.description}\n\n`;
 
     transactions.forEach(tx => {
       const debtor = groupMembers.find(
@@ -279,8 +279,8 @@ function SmartSplitCalculator({
 
         // 2. Transmit the calculated plain-text string out to the group conversation timeline
         await axios.post(
-            // 'https://jb-solver-orbital.onrender.com/api/groups/message',
-            'http://localhost:5001/api/groups/message', 
+            'https://jb-solver-orbital.onrender.com/api/groups/message',
+            // 'http://localhost:5001/api/groups/message', 
             {
                 groupId: selectedGroup.group_id, 
                 senderId: currentUser.user_id, 
@@ -452,6 +452,8 @@ function SmartSplitCalculator({
                       />
                     </div>
                   ))}
+                  <br></br>
+                  <p> Total amount of all individual orders should equal to the total amount paid</p>
                 </>
               )}
 
@@ -475,7 +477,7 @@ function SmartSplitCalculator({
                   ))}
                   <hr />
                   <strong style={{ fontSize: "large", padding: '10px' }}>Shared items</strong>
-                  <p style={{ padding: '10px' }}>Example: appetizers, shared fries, group platter, shared drinks</p>
+                  <p style={{ padding: '10px' }}>Example: Cost of appetizers, shared fries, group platter, shared drinks</p>
                   <input
                     type="number"
                     min="0"
