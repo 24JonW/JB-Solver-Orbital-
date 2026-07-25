@@ -214,8 +214,8 @@ function SmartSplitCalculator({
 
       // Issue payload bundle mapping parameters configuration to the server controller endpoint with dryRun: true
       const response = await axios.post(
-        'https://jb-solver-orbital.onrender.com/api/bills/split_smart',
-        // 'http://localhost:5001/api/bills/split_smart',
+        // 'https://jb-solver-orbital.onrender.com/api/bills/split_smart',
+        'http://localhost:5001/api/bills/split_smart',
         {
           groupId: selectedGroup.group_id,
           description: billData.description,
@@ -258,8 +258,8 @@ function SmartSplitCalculator({
 
         // 1. Permanently record bill details to database right now
         const dbResponse = await axios.post(
-          'https://jb-solver-orbital.onrender.com/api/bills/split_smart',
-          // 'http://localhost:5001/api/bills/split_smart',
+          // 'https://jb-solver-orbital.onrender.com/api/bills/split_smart',
+          'http://localhost:5001/api/bills/split_smart',
           {
             groupId: selectedGroup.group_id,
             description: billData.description,
