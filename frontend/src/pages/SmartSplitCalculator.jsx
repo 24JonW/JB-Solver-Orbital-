@@ -249,7 +249,7 @@ function SmartSplitCalculator({
   // Commits the bill data permanently to DB, then pushes to chat
   const sendBillSummaryToGroup = async () => {
     if (billTransactions.length === 0) {
-        alert('Please calculate the bill preview first before saving.');
+        alert('Please calculate the bill preview first before saving or check your calculatioin logic.');
         return; 
     }
     try {
@@ -411,7 +411,7 @@ function SmartSplitCalculator({
                   <div key={payer.userId} className="payer-row">
                     <span className= "payerRowLabel">
                       {payer.username}
-                      {currentUser && payer.userId === currentUser.user_id ? ' (You)' : ''}
+                      {currentUser && payer.userId === currentUser.user_id ? '' : ''}
                     </span>
                     <input
                       type="number"
