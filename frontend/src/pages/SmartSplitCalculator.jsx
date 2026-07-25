@@ -126,7 +126,7 @@ function SmartSplitCalculator({
 
 
   const generateBillSummary = (transactions) => {
-  let summary = `💰 Bill Summary\n${billData.description}\n\n`;
+  let summary = `💰 Bill Summary\nSplit method: (${billData.splitMethod})\n${billData.description}\n\n`;
 
     transactions.forEach(tx => {
       const debtor = groupMembers.find(
@@ -452,6 +452,8 @@ function SmartSplitCalculator({
                       />
                     </div>
                   ))}
+                  <br></br>
+                  <p> Total amount of all individual orders should equal to the total amount paid</p>
                 </>
               )}
 
@@ -475,7 +477,7 @@ function SmartSplitCalculator({
                   ))}
                   <hr />
                   <strong style={{ fontSize: "large", padding: '10px' }}>Shared items</strong>
-                  <p style={{ padding: '10px' }}>Example: appetizers, shared fries, group platter, shared drinks</p>
+                  <p style={{ padding: '10px' }}>Example: Cost of appetizers, shared fries, group platter, shared drinks</p>
                   <input
                     type="number"
                     min="0"
