@@ -30,11 +30,11 @@ function HomePage() {
   const [ isGuideOpen, setIsGuideOpen ] = useState(false)
 
   // 2 API Endpoints 
-  const API_BASE_URL= 'http://localhost:5001/api/accounts'; 
-  const API_BILLS_URL= 'http://localhost:5001/api/bills'; 
+  // const API_BASE_URL= 'http://localhost:5001/api/accounts'; 
+  // const API_BILLS_URL= 'http://localhost:5001/api/bills'; 
 
-  // const API_BASE_URL = 'https://jb-solver-orbital.onrender.com/api/accounts'; 
-  // const API_BILLS_URL = 'https://jb-solver-orbital.onrender.com/api/bills';
+  const API_BASE_URL = 'https://jb-solver-orbital.onrender.com/api/accounts'; 
+  const API_BILLS_URL = 'https://jb-solver-orbital.onrender.com/api/bills';
 
   
 
