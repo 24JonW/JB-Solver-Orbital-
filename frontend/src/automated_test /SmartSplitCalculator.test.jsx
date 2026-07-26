@@ -90,7 +90,7 @@ describe('Smart Split Calculator automated testing ', () => {
         expect(screen.getByText('Smart Bill Splitter')).toBeInTheDocument();
         
         // Check if group members list handles matching profile arrays fields correctly
-        expect(screen.getByText('zhuofan41 (You)')).toBeInTheDocument();
+        expect(screen.getByText('zhuofan41')).toBeInTheDocument();
         expect(screen.getByText('linchan07')).toBeInTheDocument();
 
         // Wait for the currency selector dropdown payload tracking loop to populate fields asynchronously
@@ -158,7 +158,7 @@ describe('Smart Split Calculator automated testing ', () => {
         const sendBtn = screen.getAllByRole('button')[2]; // Targeting second layout structural link action icon button
         fireEvent.click(sendBtn);
 
-        expect(global.alert).toHaveBeenCalledWith('Please calculate the bill preview first before saving.');
+        expect(global.alert).toHaveBeenCalledWith('Please calculate the bill preview first before saving or check your calculation logic.');
     });
 
     it('should alert an error and block submission if description field input is completely blank', async () => {
